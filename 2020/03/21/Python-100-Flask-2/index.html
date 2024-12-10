@@ -3,10 +3,9 @@
 <head>
   <meta charset="utf-8">
   
-
   
   <title>Python-Flask基础篇(二) | ash</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="前言前面介绍了Flask和HTTP的基础知识，下面会介绍Flask的基础用法 第4章 表单在Web程序中，表单是和用户交互最常见的方式之一。用户注册、登录、撰写文章、编辑设置，无一不用到表单。不过，表单的处理却并不简单。你不仅要创建表单，验证用户输入的内容，向用户显示错误提示，还要获取并保存数据。幸运的是，强大的WTForms可以帮我们解决这些问题。WTForms是一个使用Python编写的表单库">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python-Flask基础篇(二)">
@@ -37,12 +36,18 @@
     <link rel="alternate" href="/memoirs/atom.xml" title="ash" type="application/atom+xml">
   
   
-    <link rel="icon" href="/favicon.png">
+    <link rel="shortcut icon" href="/memoirs/favicon.png">
   
   
   
 <link rel="stylesheet" href="/memoirs/css/style.css">
 
+  
+    
+<link rel="stylesheet" href="/memoirs/fancybox/jquery.fancybox.min.css">
+
+  
+  
 <meta name="generator" content="Hexo 7.3.0"></head>
 
 <body>
@@ -56,10 +61,14 @@
         <a href="/memoirs/" id="logo">ash</a>
       </h1>
       
+        <h2 id="subtitle-wrap">
+          <a href="/memoirs/" id="subtitle">我只是一个影子，虽然我发着光。。。</a>
+        </h2>
+      
     </div>
     <div id="header-inner" class="inner">
       <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
         
           <a class="main-nav-link" href="/memoirs/">Home</a>
         
@@ -68,21 +77,23 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/memoirs/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+          <a class="nav-icon" href="/memoirs/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://aichiko0225.github.com/memoirs"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://aichiko0225.github.com/memoirs"></form>
       </div>
     </div>
   </div>
 </header>
+
       <div class="outer">
-        <section id="main"><article id="post-Python-100-Flask-2" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-Python-100-Flask-2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/memoirs/2020/03/21/Python-100-Flask-2/" class="article-date">
-  <time datetime="2020-03-21T11:12:10.000Z" itemprop="datePublished">2020-03-21</time>
+  <time class="dt-published" datetime="2020-03-21T11:12:10.000Z" itemprop="datePublished">2020-03-21</time>
 </a>
     
   <div class="article-category">
@@ -96,14 +107,14 @@
       <header class="article-header">
         
   
-    <h1 class="article-title" itemprop="name">
+    <h1 class="p-name article-title" itemprop="headline name">
       Python-Flask基础篇(二)
     </h1>
   
 
       </header>
     
-    <div class="article-entry" itemprop="articleBody">
+    <div class="e-content article-entry" itemprop="articleBody">
       
         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前面介绍了Flask和HTTP的基础知识，下面会介绍Flask的基础用法</p>
 <h2 id="第4章-表单"><a href="#第4章-表单" class="headerlink" title="第4章 表单"></a>第4章 表单</h2><p>在<code>Web</code>程序中，表单是和用户交互最常见的方式之一。用户注册、登录、撰写文章、编辑设置，无一不用到表单。不过，表单的处理却并不简单。<br>你不仅要创建表单，验证用户输入的内容，向用户显示错误提示，还要获取并保存数据。幸运的是，强大的<code>WTForms</code>可以帮我们解决这些问题。<br><code>WTForms</code>是一个使用<code>Python</code>编写的表单库，它使得表单的定 义、验证（服务器端）和处理变得非常轻松。这一章我们会介绍在Web 程序中处理表单的方法和技巧。</p>
@@ -371,7 +382,8 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://aichiko0225.github.com/memoirs/2020/03/21/Python-100-Flask-2/" data-id="cm4i68duw000db6ev0oc14scc" class="article-share-link">Share</a>
+      <a data-url="https://aichiko0225.github.com/memoirs/2020/03/21/Python-100-Flask-2/" data-id="cm4i68duw000db6ev0oc14scc" data-title="Python-Flask基础篇(二)" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/memoirs/tags/Flask/" rel="tag">Flask</a></li></ul>
@@ -383,7 +395,7 @@
 <nav id="article-nav">
   
     <a href="/memoirs/2020/09/11/other/macbook-%E9%94%AE%E7%9B%98%E8%BF%9E%E5%87%BB%E9%97%AE%E9%A2%98/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">前一篇</strong>
       <div class="article-nav-title">
         
           macbook-键盘连击问题
@@ -393,7 +405,7 @@
   
   
     <a href="/memoirs/2020/03/16/Python-100-Flask-1/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
+      <strong class="article-nav-caption">后一篇</strong>
       <div class="article-nav-title">Python-Flask基础篇(一)</div>
     </a>
   
@@ -401,6 +413,7 @@
 
   
 </article>
+
 
 </section>
         
@@ -483,11 +496,13 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
+      
       &copy; 2024 ash<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
+
     </div>
     <nav id="mobile-nav">
   
@@ -498,19 +513,19 @@
 </nav>
     
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="/memoirs/js/jquery-3.6.4.min.js"></script>
+
 
 
   
-<link rel="stylesheet" href="/memoirs/fancybox/jquery.fancybox.css">
-
-  
-<script src="/memoirs/fancybox/jquery.fancybox.pack.js"></script>
+<script src="/memoirs/fancybox/jquery.fancybox.min.js"></script>
 
 
 
 
 <script src="/memoirs/js/script.js"></script>
+
 
 
 

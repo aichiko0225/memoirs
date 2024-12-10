@@ -3,10 +3,9 @@
 <head>
   <meta charset="utf-8">
   
-
   
   <title>ObjectMapper实践（一） | ash</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="前言在OC阶段使用模型转换的框架有很多，代表有：JSONModel、 YYModel、MJExtension。OC的原理主要是通过runtime 获取类的属性，在运行时获取Model的字段名集合，遍历该集合，拿Key去JSON中取值并完成赋值。而且Swift 的属性默认并不是动态属性，我们能在运行时获取一个Model实例的所有字段、字段值，但却无法给它赋值。事实上，我们拿到的value是原值的一个">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ObjectMapper实践（一）">
@@ -24,12 +23,18 @@
     <link rel="alternate" href="/memoirs/atom.xml" title="ash" type="application/atom+xml">
   
   
-    <link rel="icon" href="/favicon.png">
+    <link rel="shortcut icon" href="/memoirs/favicon.png">
   
   
   
 <link rel="stylesheet" href="/memoirs/css/style.css">
 
+  
+    
+<link rel="stylesheet" href="/memoirs/fancybox/jquery.fancybox.min.css">
+
+  
+  
 <meta name="generator" content="Hexo 7.3.0"></head>
 
 <body>
@@ -43,10 +48,14 @@
         <a href="/memoirs/" id="logo">ash</a>
       </h1>
       
+        <h2 id="subtitle-wrap">
+          <a href="/memoirs/" id="subtitle">我只是一个影子，虽然我发着光。。。</a>
+        </h2>
+      
     </div>
     <div id="header-inner" class="inner">
       <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
         
           <a class="main-nav-link" href="/memoirs/">Home</a>
         
@@ -55,21 +64,23 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/memoirs/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+          <a class="nav-icon" href="/memoirs/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://aichiko0225.github.com/memoirs"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://aichiko0225.github.com/memoirs"></form>
       </div>
     </div>
   </div>
 </header>
+
       <div class="outer">
-        <section id="main"><article id="post-iOS/objectMapper-1" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-iOS/objectMapper-1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/memoirs/2018/08/03/iOS/objectMapper-1/" class="article-date">
-  <time datetime="2018-08-03T14:09:00.000Z" itemprop="datePublished">2018-08-03</time>
+  <time class="dt-published" datetime="2018-08-03T14:09:00.000Z" itemprop="datePublished">2018-08-03</time>
 </a>
     
   <div class="article-category">
@@ -83,14 +94,14 @@
       <header class="article-header">
         
   
-    <h1 class="article-title" itemprop="name">
+    <h1 class="p-name article-title" itemprop="headline name">
       ObjectMapper实践（一）
     </h1>
   
 
       </header>
     
-    <div class="article-entry" itemprop="articleBody">
+    <div class="e-content article-entry" itemprop="articleBody">
       
         <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在OC阶段使用模型转换的框架有很多，代表有：<a target="_blank" rel="noopener" href="https://github.com/JSONModel/JSONModel">JSONModel</a>、 <a target="_blank" rel="noopener" href="https://github.com/ibireme/YYModel">YYModel</a>、<a target="_blank" rel="noopener" href="https://github.com/CoderMJLee/MJExtension">MJExtension</a>。<br>OC的原理主要是通过runtime 获取类的属性，在运行时获取Model的字段名集合，遍历该集合，拿Key去JSON中取值并完成赋值。而且Swift 的属性默认并不是动态属性，<strong>我们能在运行时获取一个Model实例的所有字段、字段值，但却无法给它赋值。</strong>事实上，我们拿到的value是原值的一个只读拷贝，即使获取到这个拷贝的地址写入新值，也是无效的。<br>OC的转换方式虽然在OC中完全适用，但是缺点也很严重，一方面只能只能继承 <code>NSObject</code> ，并不支持Struct；还有一个更严重的问题，optional 的属性不能正确解析，反正坑还是挺多的。</p>
 <span id="more"></span>
@@ -196,7 +207,8 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://aichiko0225.github.com/memoirs/2018/08/03/iOS/objectMapper-1/" data-id="cm4i68dve0027b6evbwv32lzy" class="article-share-link">Share</a>
+      <a data-url="https://aichiko0225.github.com/memoirs/2018/08/03/iOS/objectMapper-1/" data-id="cm4i68dve0027b6evbwv32lzy" data-title="ObjectMapper实践（一）" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
       
       
     </footer>
@@ -206,7 +218,7 @@
 <nav id="article-nav">
   
     <a href="/memoirs/2020/01/23/wuhan/wuhan/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">前一篇</strong>
       <div class="article-nav-title">
         
           2020-01-23 武汉封城第一天
@@ -216,7 +228,7 @@
   
   
     <a href="/memoirs/2017/07/06/linux/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
+      <strong class="article-nav-caption">后一篇</strong>
       <div class="article-nav-title">Linux 基础</div>
     </a>
   
@@ -224,6 +236,7 @@
 
   
 </article>
+
 
 </section>
         
@@ -306,11 +319,13 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
+      
       &copy; 2024 ash<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
+
     </div>
     <nav id="mobile-nav">
   
@@ -321,19 +336,19 @@
 </nav>
     
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="/memoirs/js/jquery-3.6.4.min.js"></script>
+
 
 
   
-<link rel="stylesheet" href="/memoirs/fancybox/jquery.fancybox.css">
-
-  
-<script src="/memoirs/fancybox/jquery.fancybox.pack.js"></script>
+<script src="/memoirs/fancybox/jquery.fancybox.min.js"></script>
 
 
 
 
 <script src="/memoirs/js/script.js"></script>
+
 
 
 
