@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Linux 基础 | ash</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一、Linux的简介 Linux的概述 Linux是基于Unix的开源免费的操作系统，由于系统的稳定性和安全性几乎成为程序代码运行的最佳系统环境。Linux是由Linus Torvalds（林纳斯·托瓦兹）起初开发的，由于源代码的开放性，现在已经衍生出了千上百种不同的Linux系统。 Linux系统的应用非常广泛，不仅可以长时间的运行我们编写的程序代码，还可以安装在各种计算机硬件设备中，比如手机、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 基础">
+<meta property="og:url" content="https://aichiko0225.github.com/memoirs/2017/07/06/linux/index.html">
+<meta property="og:site_name" content="ash">
+<meta property="og:description" content="一、Linux的简介 Linux的概述 Linux是基于Unix的开源免费的操作系统，由于系统的稳定性和安全性几乎成为程序代码运行的最佳系统环境。Linux是由Linus Torvalds（林纳斯·托瓦兹）起初开发的，由于源代码的开放性，现在已经衍生出了千上百种不同的Linux系统。 Linux系统的应用非常广泛，不仅可以长时间的运行我们编写的程序代码，还可以安装在各种计算机硬件设备中，比如手机、">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/2478081-1b1d85b997ac4839.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600">
+<meta property="article:published_time" content="2017-07-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-02-07T10:51:22.886Z">
+<meta property="article:author" content="ash">
+<meta property="article:tag" content="基础知识">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/2478081-1b1d85b997ac4839.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600">
+  
+    <link rel="alternate" href="/memoirs/atom.xml" title="ash" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/memoirs/css/style.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/memoirs/" id="logo">ash</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/memoirs/">Home</a>
+        
+          <a class="main-nav-link" href="/memoirs/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/memoirs/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://aichiko0225.github.com/memoirs"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-linux" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/memoirs/2017/07/06/linux/" class="article-date">
+  <time datetime="2017-07-05T16:00:00.000Z" itemprop="datePublished">2017-07-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux 基础
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="一、Linux的简介"><a href="#一、Linux的简介" class="headerlink" title="一、Linux的简介"></a>一、Linux的简介</h3><ol>
+<li>Linux的概述<br> Linux是基于Unix的开源免费的操作系统，由于系统的稳定性和安全性几乎成为程序代码运行的最佳系统环境。Linux是由Linus Torvalds（林纳斯·托瓦兹）起初开发的，由于源代码的开放性，现在已经衍生出了千上百种不同的Linux系统。<br> Linux系统的应用非常广泛，不仅可以长时间的运行我们编写的程序代码，还可以安装在各种计算机硬件设备中，比如手机、平板电脑、路由器等。尤其在这里提及一下，我们熟知是Android程序最底层就是运行在linux系统上的。<span id="more"></span></li>
+<li>Linux的分类</li>
+</ol>
+<p>(1) Linux根据市场需求不同，基本分为两个方向：</p>
+<ul>
+<li>1）图形化界面版：注重用户体验，类似window操作系统，但目前成熟度不够</li>
+<li>2）服务器版：没有好看的界面，是以在控制台窗口中输入命令操作系统的，类似于DOS，是我们假设服务器的最佳选择</li>
+</ul>
+<p>(2)Linux根据原生程度，又分为两种：</p>
+<ul>
+<li>1）内核版本：在Linus领导下的内核小组开发维护的系统内核的版本号</li>
+<li>2）发行版本：一些组织或公司在内核版基础上进行二次开发而重新发行的版本</li>
+</ul>
+<h3 id="二、Linux的基本命令"><a href="#二、Linux的基本命令" class="headerlink" title="二、Linux的基本命令"></a>二、Linux的基本命令</h3><p>   服务器版的Linux安装 完毕 了，但没有图形化界面，我们只能通过控制台去操作系统，我们就要使用类似DOS命令的Linux命令去操作系统，那么 下面我们就进行Linux的命令的学习。Linux命令成百上千，课程不能一一涉及，也没有必要一一涉及，根据我们程序员在日常工作中的需求，总结出如下几种供学习。</p>
+<h4 id="1-目录切换命令"><a href="#1-目录切换命令" class="headerlink" title="1. 目录切换命令"></a>1. 目录切换命令</h4><p>   window中通过图形化界面和鼠标可以任意切  换需要进入的目录，但Linux必须通过cd命令切换目录。但在学习cd命令之前，我们有必要分清Linux的目录结构（<a target="_blank" rel="noopener" href="https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0">linux目录结构详细说明</a>）</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2478081-1b1d85b997ac4839.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="Linux 目录结构"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd usr		切换到该目录下usr目录</span><br><span class="line">cd ../		切换到上一层目录</span><br><span class="line">cd /		切换到系统根目录</span><br><span class="line">cd ~		切换到用户主目录</span><br><span class="line">cd -		切换到上一个所在目录</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-目录的操作命令（增删改查）"><a href="#2-目录的操作命令（增删改查）" class="headerlink" title="2. 目录的操作命令（增删改查）"></a>2. 目录的操作命令（增删改查）</h4><ul>
+<li>增加目录操作（增）<br>命令：mkdir 目录名称<br>示例：在根目录 &#x2F; 下 mkdir test，就会在根目录 &#x2F; 下产生一个test问目录</li>
+<li>查看目录（查）<br>命令：ls [-al] 父目录<br>示例：在根目录 &#x2F; 下使用ls，可以看到该目录下的所有的目录和文件<br>示例：在根目录 &#x2F; 下使用ls -a，可以看到该目录下的所有文件和目录，包括隐藏的<br>示例：在根目录 &#x2F; 下使用ls -l，可以看到该目录下的所有目录和文件的详细信息</li>
+<li>寻找目录（查）<br>命令：find 目录 参数<br>示例：查找&#x2F;root下的与test相关的目录(文件)  find &#x2F;root -name ‘test*’</li>
+<li>修改目录的名称（改）<br>命令：mv 目录名称 新目录名称<br>示例：test目录下有一个oldTest目录，使用mv oldTest newTest命令修改<br><strong>注意：mv的语法不仅可以对目录进行重命名而且也可以对各种文件，压缩包等进行	重命名的操作</strong></li>
+<li>移动目录的位置—剪切（改）<br>命令：mv 目录名称 目录的新位置<br>示例：在test下将newTest目录剪切到 &#x2F;usr下面，使用mv newTest &#x2F;usr<br><strong>注意：mv语法不仅可以对目录进行剪切操作，对文件和压缩包等都可执行剪切操作</strong></li>
+<li>拷贝目录（改）<br>命令：cp -r 目录名称 目录拷贝的目标位置 —–r代表递归拷贝<br>示例：将&#x2F;usr下的newTest拷贝到根目录下的test中，使用cp -r &#x2F;usr&#x2F;newTest &#x2F;test<br><strong>注意：cp命令不仅可以拷贝目录还可以拷贝文件，压缩包等，拷贝文件和压缩包时不	用写-r递归</strong></li>
+<li>删除目录（删）<br>命令：rm [-rf] 目录<br>示例：删除&#x2F;usr下的newTest，进入&#x2F;usr下使用rm -r newTest<br>示例：删除&#x2F;test下的newTest而不需要询问强制删除，在&#x2F;test下使用rm -rf newTest<br><strong>注意：rm不仅可以删除目录，也可以删除其他文件或压缩包，为了增强大家的记忆，	无论删除任何目录或文件，都直接使用rm -rf 目录&#x2F;文件&#x2F;压缩包</strong></li>
+</ul>
+<h4 id="3-文件的操作命令（增删改查）"><a href="#3-文件的操作命令（增删改查）" class="headerlink" title="3. 文件的操作命令（增删改查）"></a>3. 文件的操作命令（增删改查）</h4><ul>
+<li>文件的创建（增）<br>命令：touch 文件名称  —– 空文件<br>示例：在test目录下创建一个空文件 touch aaa.txt</li>
+<li>文件的查看（查）<br>命令：cat&#x2F;more&#x2F;less&#x2F;tail 文件<br>示例：使用cat查看&#x2F;etc&#x2F;sudo.conf文件，只能显示最后一屏内容</br><br>示例：使用more查看&#x2F;etc&#x2F;sudo.conf文件，可以显示百分比，回车可以向下一行，	空格可以向下一页，q可以退出查看</br><br>示例：使用less查看&#x2F;etc&#x2F;sudo.conf文件，可以使用键盘上的PgUp和PgDn向上	和向下翻页，q结束查看</br><br>示例：使用tail -10 查看&#x2F;etc&#x2F;sudo.conf文件的后10行，Ctrl+C结束<br>**注意：命令 tail -f 文件 可以对某个文件进行动态监控，例如tomcat的日志文件，	会随着程序的运行，日志会变化，可以使用tail -f catalina-2016-11-11.log 监控	文	件的变化 **</li>
+<li>修改文件的内容（改）<br>命令：vim 文件<br>示例：编辑&#x2F;test下的aaa.txt文件，使用vim aaa.txt<br>但此时并不能编辑，因为此时处于命令模式，点击键盘i&#x2F;a&#x2F;o进入编辑模式，可以	编辑文件<br>vim编辑器是Linux中的强大组件，是vi编辑器的加强版，vim编辑器的命令和快捷方式有很多，但此处不一一阐述，大家也无需研究的很透彻，使用vim编辑修改文件的方式基本会使用就可以了。附：<code>《vi使用方法介绍》</code>和<code>《vim命令合集》</code></br><br>关于vim使用过程：<br>在实际开发中，使用vim编辑器主要作用就是修改配置文件<br>vim 文件——&gt;进入文件—–&gt;命令模式——&gt;按i进入编辑模式—–&gt;编辑文件	——-&gt;按Esc进入底行模式—–&gt;输入:wq&#x2F;q!</li>
+<li>删除文件（删）<br>同目录删除：熟记 rm -rf 文件 即可</li>
+</ul>
+<h4 id="4-压缩文件的操作命令"><a href="#4-压缩文件的操作命令" class="headerlink" title="4. 压缩文件的操作命令"></a>4. 压缩文件的操作命令</h4><ol>
+<li>打包并压缩文件<br>Linux中的打包文件一般是以.tar结尾的，压缩的命令一般是以.gz结尾的。<br>而一般情况下打包和压缩是一起进行的，打包并压缩后的文件的后缀名一般.tar.gz。<br>命令：tar -zcvf 打包压缩后的文件名 要打包压缩的文件<br>其中：z：调用gzip压缩命令进行压缩<br>  c：打包文件<br>  v：显示运行过程<br>  f：指定文件名<br>示例：打包并压缩&#x2F;test下的所有文件 压缩后的压缩包指定名称为xxx.tar.gz<br><code>tar -zcvf xxx.tar.gz aaa.txt bbb.txt ccc.txt</code><br>或：<code>tar -zcvf xxx.tar.gz /test/*</code></li>
+<li>解压压缩包**<a style = "color:  red">（重点）</a>**<br>命令：tar [-xvf] 压缩文件<br>其中：x：代表解压<br>示例：将&#x2F;test下的xxx.tar.gz解压到当前目录下<br><code>tar -xvf xxx.tar.gz</code></br><br>示例：将&#x2F;test下的xxx.tar.gz解压到根目录&#x2F;usr下<br><code>tar -xvf xxx.tar.gz -C /usr------C</code>代表指定解压的位置</li>
+</ol>
+<h4 id="5-其他命令"><a href="#5-其他命令" class="headerlink" title="5. 其他命令"></a>5. 其他命令</h4><ul>
+<li>显示当前所在位置<br>pwd</li>
+<li>搜索命令<br>命令：grep 要搜索的字符串 要搜索的文件<br>示例：搜索&#x2F;usr&#x2F;sudu.conf文件中包含字符串to的行<br>示例：搜索&#x2F;usr&#x2F;sudu.conf文件中包含字符串to的行 to要高亮显示</li>
+<li>管道命令<br>命令：|   将前一个命令的输出作为本次目录的输入<br>示例：查看当前系统中所有的进程中包括system字符串的进程</li>
+<li>查看进程<br>命令：ps -ef<br>示例：查看当前系统中运行的进程 </li>
+<li>杀死进程<br>命令：kill -9 进程的pid</li>
+<li>网络通信命令<br>查看当前系统的网卡信息：ifconfig</br><br>查看与某台机器的连接情况：ping</br><br>查看当前系统的端口使用：netstat -an</li>
+</ul>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>这里只是列举了Linux简单的用法，还有很多其他的用法之后会慢慢更新。<br><a target="_blank" rel="noopener" href="http://man.linuxde.net/">Linux 命令大全</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://aichiko0225.github.com/memoirs/2017/07/06/linux/" data-id="cm4i68dv0000ob6ev1dca24xz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/memoirs/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/memoirs/2018/08/03/iOS/objectMapper-1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ObjectMapper实践（一）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/memoirs/2017/02/11/iOS/ios-gif/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">iOS GIF图片的加载和合成</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/JavaScript/">JavaScript</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/Python/">Python</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/iOS/">iOS</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E5%85%B3%E4%BA%8E%E4%B8%96%E7%95%8C%E7%9A%84%E4%B8%80%E5%88%87/">关于世界的一切</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E5%B7%A5%E4%BD%9C%E6%97%A5%E5%B8%B8/">工作日常</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E6%AD%A6%E6%B1%89/">武汉</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E9%80%86%E5%90%91/">逆向</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E9%9A%8F%E4%BE%BF%E5%86%99%E5%86%99/">随便写写</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/Flask/" rel="tag">Flask</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/React/" rel="tag">React</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/Runtime/" rel="tag">Runtime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/%E9%80%86%E5%90%91/" rel="tag">逆向</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/memoirs/tags/Flask/" style="font-size: 13.33px;">Flask</a> <a href="/memoirs/tags/React/" style="font-size: 10px;">React</a> <a href="/memoirs/tags/Runtime/" style="font-size: 10px;">Runtime</a> <a href="/memoirs/tags/Web/" style="font-size: 13.33px;">Web</a> <a href="/memoirs/tags/iOS/" style="font-size: 16.67px;">iOS</a> <a href="/memoirs/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 20px;">基础知识</a> <a href="/memoirs/tags/%E6%9D%82%E8%B0%88/" style="font-size: 16.67px;">杂谈</a> <a href="/memoirs/tags/%E9%80%86%E5%90%91/" style="font-size: 13.33px;">逆向</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/07/">七月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/06/">六月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/10/">十月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2016/11/">十一月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/memoirs/2021/09/15/%E4%B9%A1%E5%9C%9F%E4%B8%AD%E5%9B%BD/">乡土中国</a>
+          </li>
+        
+          <li>
+            <a href="/memoirs/2021/08/20/%E5%A5%97%E8%B7%AF%E7%9C%9F%E5%A4%9A/">套路真多</a>
+          </li>
+        
+          <li>
+            <a href="/memoirs/2021/07/29/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/">乌合之众</a>
+          </li>
+        
+          <li>
+            <a href="/memoirs/2021/06/19/ReactStack-1/">React 技术栈（一）</a>
+          </li>
+        
+          <li>
+            <a href="/memoirs/2020/11/02/JavaScript-study-record-2/">JavaScript 温习记录（二）</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 ash<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/memoirs/" class="mobile-nav-link">Home</a>
+  
+    <a href="/memoirs/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/memoirs/fancybox/jquery.fancybox.css">
+
+  
+<script src="/memoirs/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/memoirs/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
