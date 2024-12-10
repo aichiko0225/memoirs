@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>逆向工程进阶 | ash</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="前言如果您是iOS开发，具备相应的开发储备，除了需要了解逆向的基础，同样需要知道程序的运行原理。 下面会介绍逆向工程相关的进阶知识，理论知识比较枯燥，但是确实必须要掌握的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向工程进阶">
+<meta property="og:url" content="https://aichiko0225.github.com/memoirs/2020/02/17/reverse-progression/index.html">
+<meta property="og:site_name" content="ash">
+<meta property="og:description" content="前言如果您是iOS开发，具备相应的开发储备，除了需要了解逆向的基础，同样需要知道程序的运行原理。 下面会介绍逆向工程相关的进阶知识，理论知识比较枯燥，但是确实必须要掌握的。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://aichiko0225.github.com/memoirs/images/Math-O_1.png">
+<meta property="og:image" content="https://aichiko0225.github.com/memoirs/images/mach-o/mach-wechat.png">
+<meta property="og:image" content="https://aichiko0225.github.com/memoirs/images/mach-o/mach-wechat-1.png">
+<meta property="article:published_time" content="2020-02-17T07:16:48.000Z">
+<meta property="article:modified_time" content="2020-02-22T11:20:30.108Z">
+<meta property="article:author" content="ash">
+<meta property="article:tag" content="逆向">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://aichiko0225.github.com/memoirs/images/Math-O_1.png">
+  
+    <link rel="alternate" href="/memoirs/atom.xml" title="ash" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/memoirs/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/memoirs/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/memoirs/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/memoirs/" id="logo">ash</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/memoirs/" id="subtitle">我只是一个影子，虽然我发着光。。。</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/memoirs/">Home</a>
+        
+          <a class="main-nav-link" href="/memoirs/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/memoirs/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://aichiko0225.github.com/memoirs"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-reverse-progression" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/memoirs/2020/02/17/reverse-progression/" class="article-date">
+  <time class="dt-published" datetime="2020-02-17T07:16:48.000Z" itemprop="datePublished">2020-02-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/memoirs/categories/%E9%80%86%E5%90%91/">逆向</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      逆向工程进阶
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>如果您是iOS开发，具备相应的开发储备，除了需要了解逆向的基础，同样需要<br>知道程序的运行原理。</p>
+<p>下面会介绍逆向工程相关的进阶知识，理论知识比较枯燥，但是确实必须要掌握的。</p>
+<span id="more"></span>
+<h2 id="程序加载"><a href="#程序加载" class="headerlink" title="程序加载"></a>程序加载</h2><p>在编写一个应用程序时，我们看到的入口函数是<code>main.m</code>里面的<code>main</code>函数，因此我们一般会以为程序是从这里开始执行的。其实不然，程序在执行<code>main</code>函数之前已经执行了<code>+load</code>和<code>constructor</code>构造函数。接下来，让我们一起看看在<code>main</code>函数执行之前都发生了什么。</p>
+<h3 id="dyld简介"><a href="#dyld简介" class="headerlink" title="dyld简介"></a>dyld简介</h3><p>程序在运行时会依赖很多系统动态库。系统动态库会通过动态库加载器（默认是<code>/usr/lib/dyld</code>）加载到内存中，系统内核在做好启动程序的准备工作之后就会将工作交给<code>dyld</code>。由于很多程序都需要使用系统动态库，不可能每个程序加载时都去加载所有的系统动态库，为了优化程序启动速度和利用动态库缓存，<code>iOS</code>系统采用了共享缓存技术。<code>dyld</code>缓存在<code>iOS</code>系统中，位于<code>/System/Library/Caches/com.apple.dyld/</code>目录下，按照不同架构保存不同的文件。</p>
+<h3 id="dyld加载流程"><a href="#dyld加载流程" class="headerlink" title="dyld加载流程"></a>dyld加载流程</h3><p>要想知道<code>+load</code>和<code>constructor</code>是在什么时候调用的，就需要分析<code>dyld</code>加载<code>Mach-O</code>文件的流程。<code>dyld</code>的代码可以从苹果开源网站下载。从<code>dyldStartup.s</code>文件开始执行，其中用汇编实现的<code>__dyld_start</code>方法里面调用了<code>dyldbootstrap::start()</code>方法，然后调用了<code>dyld</code>的<code>main</code>函数。</p>
+<p><code>dyld</code>的加载流程主要包括9个步骤</p>
+<ol>
+<li>设置上下文信息，配置进程是否受限</li>
+<li>配置环境变量，获取当前运行架构</li>
+<li>加载可执行文件，生成一个<code>ImageLoader</code>实例对象</li>
+<li>检查共享缓存是否映射到了共享区域</li>
+<li>加载所有插入的库</li>
+<li>链接主程序</li>
+<li>链接所有插入的库，执行符号替换</li>
+<li>执行初始化方法</li>
+<li>寻找主程序入口</li>
+</ol>
+<p><code>initializeMainExecutable</code>执行初始化方法，<code>+load</code>和<code>constructor</code>方法就是在这里执行的。</p>
+<h2 id="Mach-O文件格式"><a href="#Mach-O文件格式" class="headerlink" title="Mach-O文件格式"></a>Mach-O文件格式</h2><p><code>Mach-O</code> 文件比较重要，了解<code>Mach-O</code>文件结构后可以更好地进行逆向工程。</p>
+<h3 id="Mach-O文件的基础格式"><a href="#Mach-O文件的基础格式" class="headerlink" title="Mach-O文件的基础格式"></a>Mach-O文件的基础格式</h3><p><code>Mach-O</code>的文件结构包括：Mach-O头部、Load Command、Section、Other Data。</p>
+<p><img src="/memoirs/images/Math-O_1.png" alt="Math-O文件的基础结构"></p>
+<h3 id="Mach-O头部"><a href="#Mach-O头部" class="headerlink" title="Mach-O头部"></a>Mach-O头部</h3><p>Header部分由以下部分组成:</p>
+<ul>
+<li>magic: Mach-O 文件的魔数。FAT为<code>0xcafebabe</code>，ARMv7为<code>0xfeedface</code>，ARM64为<code>0xfeedfacf</code>（Mac是小端模式）</li>
+<li>cputype、cpusubtype: <code>CPU</code>架构和子版本</li>
+<li>filetype: 文件类型。</li>
+<li>ncmds: 加载命令的数量</li>
+<li>sizeofcmds: 所有加载命令的大小</li>
+<li>flags: <code>dyld</code>加载需要的一些标记。其中，<code>MH_PIE</code>表示启用地址空间布局随机化。</li>
+<li>reserved: 64位的保留字段。</li>
+</ul>
+<p>下面是微信的Header部分</p>
+<p><img src="/memoirs/images/mach-o/mach-wechat.png" alt="Wechat Mach-O Header"></p>
+<h3 id="Load-Command"><a href="#Load-Command" class="headerlink" title="Load Command"></a>Load Command</h3><p>Load Command 告诉操作系统应当如何加载文件中的数据，对系统内核加载器和动态链接器起指导作用。<br>可以使用MachOView 查看 Load Command部分。</p>
+<p>Load Command 包含以下部分:</p>
+<ul>
+<li>LC_SEGMENT_64: 定义一个段，加载后被映射到内存中，包括里面的节。</li>
+<li>LC_DYLD_INFO_ONLY: 记录了有关链接的重要信息，包括在__LINKEDIT中动态链接相关信息的具体偏移和大小。ONLY表示这个加载指令是程序运行所必需的，如果旧的链接器无法识别它，程序就会出错。</li>
+<li>LC_SYMTAB: 为文件定义符号表和字符串表，在链接文件时被链接器使用，同时也用于调试器映射符号到源文件。符号表定义的本地符号仅用于调试，而已定义和未定义的 <code>external</code> 符号被链接器使用。</li>
+<li>LC_DYSYMTAB: 将符号表中给出符号的额外符号信息提供给动态链接器。</li>
+<li>LC_LOAD_DYLINKER: 默认的加载器路径。</li>
+<li>LC_UUUID: 用于标识 Mach-O 文件的ID，也用于崩溃堆栈和符号文件的对应解析。</li>
+<li>LC_VERSION_MIN_IPHONES: 系统要求的最低版本。</li>
+<li>LC_SOURCE_VERSION: 构建二进制文件的源代码版本号。</li>
+<li>LC_MAIN: 程序的入口。<code>dyld</code>获取地址，然后跳转到该处执行。</li>
+<li>LC_ENCRYPTION_INFO_64: 文件是否加密的标志，加密内容的偏移和大小。</li>
+<li>LC_LOAD_DYLIB: 依赖的动态库，包括动态库名称、当前版本号、兼容版本号。可以使用 <code>otool -L xxx</code> 命令查看。</li>
+<li>LC_RPATH: Runpath Search Paths，@rpath 搜索的路径。</li>
+<li>LC_FUNCTION_STARTS: 函数起始地址表，是调试器和其他程序能很容易地看到一个地址是否在函数内。</li>
+<li>LC_DATA_IN_CODE: 定义在代码段内的非指令的表。</li>
+<li>LC_CODE_SIGNAURE: 代码签名信息。</li>
+</ul>
+<p><img src="/memoirs/images/mach-o/mach-wechat-1.png" alt="Mach-O Load Command"></p>
+<p>我们看到Load Command还包含以下4种段</p>
+<ul>
+<li>__PAGEZERO: 空指针陷阱段，映射到虚拟内存空间的第一页，用于捕捉对<code>NULL</code>指针的引用。</li>
+<li>__TEXT: 代码段&#x2F;只读数据段。</li>
+<li>__DATA: 读取和写入数据的段。</li>
+<li>__LINKEDIT: 动态链接器需要使用的信息，包括重定位信息、绑定信息、懒加载信息等。</li>
+</ul>
+<h3 id="懒加载和非懒加载"><a href="#懒加载和非懒加载" class="headerlink" title="懒加载和非懒加载"></a>懒加载和非懒加载</h3><p>iOS系统为了加快系统启动速度，将符号分成了懒加载符号和非懒加载符号。非懒加载符号在<code>dyld</code>加载时就会绑定真实的值；而懒加载符号不会，只有第1次去调用它时才会绑定真实的地址，在第2次调用时直接使用真实的地址。</p>
+<p>这也是<code>fishhook</code>替换符号实现逆向功能的原理，原理会以后详细介绍。</p>
+<p>后面还有 动态库，以及逆向原理会介绍。</p>
+<hr>
+<p>未完待续</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://aichiko0225.github.com/memoirs/2020/02/17/reverse-progression/" data-id="cm4i68dv2000ub6ev5x9d8gyz" data-title="逆向工程进阶" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/memoirs/tags/iOS/" rel="tag">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/memoirs/tags/%E9%80%86%E5%90%91/" rel="tag">逆向</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/memoirs/2020/03/05/Python-100-1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Python-100天(一)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/memoirs/2020/02/12/reverse-basics/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">逆向工程基础</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/JavaScript/">JavaScript</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/Python/">Python</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/iOS/">iOS</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E5%85%B3%E4%BA%8E%E4%B8%96%E7%95%8C%E7%9A%84%E4%B8%80%E5%88%87/">关于世界的一切</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E5%B7%A5%E4%BD%9C%E6%97%A5%E5%B8%B8/">工作日常</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E6%AD%A6%E6%B1%89/">武汉</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E9%80%86%E5%90%91/">逆向</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E9%9A%8F%E4%BE%BF%E5%86%99%E5%86%99/">随便写写</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/Flask/" rel="tag">Flask</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/React/" rel="tag">React</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/Runtime/" rel="tag">Runtime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/%E9%80%86%E5%90%91/" rel="tag">逆向</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/memoirs/tags/Flask/" style="font-size: 13.33px;">Flask</a> <a href="/memoirs/tags/React/" style="font-size: 10px;">React</a> <a href="/memoirs/tags/Runtime/" style="font-size: 10px;">Runtime</a> <a href="/memoirs/tags/Web/" style="font-size: 13.33px;">Web</a> <a href="/memoirs/tags/iOS/" style="font-size: 16.67px;">iOS</a> <a href="/memoirs/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 20px;">基础知识</a> <a href="/memoirs/tags/%E6%9D%82%E8%B0%88/" style="font-size: 16.67px;">杂谈</a> <a href="/memoirs/tags/%E9%80%86%E5%90%91/" style="font-size: 13.33px;">逆向</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/07/">七月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/06/">六月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/10/">十月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2016/11/">十一月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/memoirs/2021/09/15/%E4%B9%A1%E5%9C%9F%E4%B8%AD%E5%9B%BD/">乡土中国</a>
+          </li>
+        
+          <li>
+            <a href="/memoirs/2021/08/20/%E5%A5%97%E8%B7%AF%E7%9C%9F%E5%A4%9A/">套路真多</a>
+          </li>
+        
+          <li>
+            <a href="/memoirs/2021/07/29/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/">乌合之众</a>
+          </li>
+        
+          <li>
+            <a href="/memoirs/2021/06/19/ReactStack-1/">React 技术栈（一）</a>
+          </li>
+        
+          <li>
+            <a href="/memoirs/2020/11/02/JavaScript-study-record-2/">JavaScript 温习记录（二）</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 ash<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/memoirs/" class="mobile-nav-link">Home</a>
+  
+    <a href="/memoirs/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/memoirs/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/memoirs/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/memoirs/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
