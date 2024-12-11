@@ -1,12 +1,26 @@
-<!DOCTYPE html>
-<html>
+
+<!DOCTYPE html><html lang="zh-CN">
+
 <head>
   <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
   
+  <meta name="generator" content="Hexo 7.3.0">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
   
-  <title>Python-Flask基础篇(二) | ash</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="前言前面介绍了Flask和HTTP的基础知识，下面会介绍Flask的基础用法 第4章 表单在Web程序中，表单是和用户交互最常见的方式之一。用户注册、登录、撰写文章、编辑设置，无一不用到表单。不过，表单的处理却并不简单。你不仅要创建表单，验证用户输入的内容，向用户显示错误提示，还要获取并保存数据。幸运的是，强大的WTForms可以帮我们解决这些问题。WTForms是一个使用Python编写的表单库">
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>Python-Flask基础篇(二) - ash</title>
+
+  
+    <meta name="description" content="前言前面介绍了Flask和HTTP的基础知识，下面会介绍Flask的基础用法 第4章 表单在Web程序中，表单是和用户交互最常见的方式之一。用户注册、登录、撰写文章、编辑设置，无一不用到表单。不过，表单的处理却并不简单。你不仅要创建表单，验证用户输入的内容，向用户显示错误提示，还要获取并保存数据。幸运的是，强大的WTForms可以帮我们解决这些问题。WTForms是一个使用Python编写的表单库">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python-Flask基础篇(二)">
 <meta property="og:url" content="https://aichiko0225.github.com/memoirs/2020/03/21/Python-100-Flask-2/index.html">
@@ -33,90 +47,64 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://aichiko0225.github.com/memoirs/images/flask/w1.png">
   
-    <link rel="alternate" href="/memoirs/atom.xml" title="ash" type="application/atom+xml">
   
+  
+  <meta name="keywords" content="Flask">
+
+  <!-- feed -->
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.29.1">
+
   
     <link rel="shortcut icon" href="/memoirs/favicon.png">
   
-  
-  
-<link rel="stylesheet" href="/memoirs/css/style.css">
 
   
-    
-<link rel="stylesheet" href="/memoirs/fancybox/jquery.fancybox.min.css">
 
   
-  
-<meta name="generator" content="Hexo 7.3.0"></head>
-
+</head>
 <body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/memoirs/" id="logo">ash</a>
-      </h1>
+
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/memoirs/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="undefined" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/memoirs/"><div class="main" ff="title">ash</div><div class="sub cap">我只是一个影子，虽然我发着光。。。</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+<nav class="menu dis-select"></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/memoirs/2021/09/15/%E4%B9%A1%E5%9C%9F%E4%B8%AD%E5%9B%BD/"><span class="title">乡土中国</span></a><a class="item title" href="/memoirs/2021/06/19/ReactStack-1/"><span class="title">React 技术栈（一）</span></a><a class="item title" href="/memoirs/2021/08/20/%E5%A5%97%E8%B7%AF%E7%9C%9F%E5%A4%9A/"><span class="title">套路真多</span></a><a class="item title" href="/memoirs/2021/07/29/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/"><span class="title">乌合之众</span></a><a class="item title" href="/memoirs/2020/11/02/JavaScript-study-record-2/"><span class="title">JavaScript 温习记录（二）</span></a><a class="item title" href="/memoirs/2020/10/30/JavaScript-study-record/"><span class="title">JavaScript 温习记录（一）</span></a><a class="item title" href="/memoirs/2020/09/11/other/macbook-%E9%94%AE%E7%9B%98%E8%BF%9E%E5%87%BB%E9%97%AE%E9%A2%98/"><span class="title">macbook-键盘连击问题</span></a><a class="item title" href="/memoirs/2020/03/21/Python-100-Flask-2/"><span class="title">Python-Flask基础篇(二)</span></a><a class="item title" href="/memoirs/2020/03/16/Python-100-Flask-1/"><span class="title">Python-Flask基础篇(一)</span></a><a class="item title" href="/memoirs/2020/03/12/Python-100-3/"><span class="title">Python-100天(三)-数据库基础和进阶</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/memoirs/memoirs/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/memoirs/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/memoirs/categories/Python/">Python</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2020-03-21T11:12:10.000Z">2020-03-21</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2020-09-11T06:02:38.576Z">2020-09-11</time></span></div></div></div>
+    
+    <div class="bottom only-title">
       
-        <h2 id="subtitle-wrap">
-          <a href="/memoirs/" id="subtitle">我只是一个影子，虽然我发着光。。。</a>
-        </h2>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+      <div class="text-area">
+        <h1 class="text title"><span>Python-Flask基础篇(二)</span></h1>
         
-          <a class="main-nav-link" href="/memoirs/">Home</a>
-        
-          <a class="main-nav-link" href="/memoirs/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/memoirs/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://aichiko0225.github.com/memoirs"></form>
       </div>
     </div>
+    
   </div>
-</header>
-
-      <div class="outer">
-        <section id="main"><article id="post-Python-100-Flask-2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/memoirs/2020/03/21/Python-100-Flask-2/" class="article-date">
-  <time class="dt-published" datetime="2020-03-21T11:12:10.000Z" itemprop="datePublished">2020-03-21</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/memoirs/categories/Python/">Python</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      Python-Flask基础篇(二)
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前面介绍了Flask和HTTP的基础知识，下面会介绍Flask的基础用法</p>
+  </div><article class="md-text content"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前面介绍了Flask和HTTP的基础知识，下面会介绍Flask的基础用法</p>
 <h2 id="第4章-表单"><a href="#第4章-表单" class="headerlink" title="第4章 表单"></a>第4章 表单</h2><p>在<code>Web</code>程序中，表单是和用户交互最常见的方式之一。用户注册、登录、撰写文章、编辑设置，无一不用到表单。不过，表单的处理却并不简单。<br>你不仅要创建表单，验证用户输入的内容，向用户显示错误提示，还要获取并保存数据。幸运的是，强大的<code>WTForms</code>可以帮我们解决这些问题。<br><code>WTForms</code>是一个使用<code>Python</code>编写的表单库，它使得表单的定 义、验证（服务器端）和处理变得非常轻松。这一章我们会介绍在Web 程序中处理表单的方法和技巧。</p>
 <h3 id="使用Flask-WTF处理表单"><a href="#使用Flask-WTF处理表单" class="headerlink" title="使用Flask-WTF处理表单"></a>使用Flask-WTF处理表单</h3><p>扩展<code>Flask-WTF</code>集成了<code>WTForms</code>，使用它可以在<code>Flask</code>中更方便地使用<code>WTForms</code>。<code>Flask-WTF</code>将表单数据解析、<code>CSRF</code>保护、文件上传等功能与<code>Flask</code>集成，另外还附加了<code>reCAPTCHA</code>支持。</p>
 <p>Flask-WTF默认为每个表单启用CSRF保护，它会为我们自动生成和 验证CSRF令牌。默认情况下，Flask-WTF使用程序密钥来对CSRF令牌 进行签名，所以我们需要为程序设置密钥：</p>
@@ -126,9 +114,9 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> wtforms <span class="keyword">import</span> Form, StringField, PasswordField, BooleanField, SubmitField</span><br><span class="line"><span class="keyword">from</span> wtforms.validators <span class="keyword">import</span> DataRequired, Length</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.2.1 basic form example</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LoginForm</span>(<span class="title class_ inherited__">FlaskForm</span>):</span><br><span class="line">    username = StringField(<span class="string">&#x27;Username&#x27;</span>, validators=[DataRequired()])</span><br><span class="line">    password = PasswordField(<span class="string">&#x27;Password&#x27;</span>, validators=[DataRequired(), Length(<span class="number">8</span>, <span class="number">128</span>)])</span><br><span class="line">    remember = BooleanField(<span class="string">&#x27;Remember me&#x27;</span>)</span><br><span class="line">    submit = SubmitField(<span class="string">&#x27;Log in&#x27;</span>)</span><br></pre></td></tr></table></figure>
 
 <p>每个字段属性通过实例化WTForms提供的字段类表示。字段属性的名称将作为对应HTML<code>&lt;input&gt;</code>元素的name属性及id属性值。</p>
-<p><img src="/memoirs/images/flask/w1.png" alt="常用的WTForms字段"></p>
-<p><img src="/memoirs/images/flask/w2.png" alt="实例化字段类常用参数"></p>
-<p><img src="/memoirs/images/flask/w3.png" alt="常用的WTForms验证器"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w1.png" alt="常用的WTForms字段"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w2.png" alt="实例化字段类常用参数"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w3.png" alt="常用的WTForms验证器"></p>
 <p>当使用<code>Flask-WTF</code>定义表单时，我们仍然使用<code>WTForms</code>提供的字段类和验证器，创建的方式也完全相同，只不过表单类要继承<code>Flask-WTF</code>提供的<code>FlaskForm</code>类。<code>FlaskForm</code>类继承自<code>Form</code>类，进行了一些设置，并附加了一些辅助方法，以便与<code>Flask</code>集成。</p>
 <span id="more"></span>
 <h4 id="输出HTML代码"><a href="#输出HTML代码" class="headerlink" title="输出HTML代码"></a>输出HTML代码</h4><p>以我们使用WTForms创建的LoginForm为例，实例化表单类，然后将实例属性转换成字符串或直接调用就可以获取表单字段对应的HTML代码：</p>
@@ -163,7 +151,7 @@
 </ol>
 <p>除非是简单的程序，否则手动处理不太现实，使用Flask-WTF和 WTForms可以极大地简化这些步骤。</p>
 <h4 id="提交表单"><a href="#提交表单" class="headerlink" title="提交表单"></a>提交表单</h4><p>在HTML中，当<code>&lt;form&gt;</code>标签声明的表单中类型为submit的提交字段被单击时，就会创建一个提交表单的HTTP请求，请求中包含表单各个字段的数据。<br>表单的提交行为主要由三个属性控制，如下图所示。</p>
-<p><img src="/memoirs/images/flask/w4.png" alt="HTML表单中控制提交行为的属性"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w4.png" alt="HTML表单中控制提交行为的属性"></p>
 <p>form标签的action属性用来指定表单被提交的目标URL，默认为当前URL，也就是渲染该模板的路由所在的URL。如果你要把表单数据发送到其他URL，可以自定义这个属性值。</p>
 <h4 id="验证表单数据"><a href="#验证表单数据" class="headerlink" title="验证表单数据"></a>验证表单数据</h4><p>表单数据的验证是Web表单中最重要的主题之一，这一节我们会学习如何使用Flask-WTF验证并获取表单数据。</p>
 <ol>
@@ -237,7 +225,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> flask_sqlalchemy <span class="keyword">import</span> SQLAlchemy</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.jinja_env.trim_blocks = <span class="literal">True</span></span><br><span class="line">app.jinja_env.lstrip_blocks = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">app.config[<span class="string">&#x27;SECRET_KEY&#x27;</span>] = os.getenv(<span class="string">&#x27;SECRET_KEY&#x27;</span>, <span class="string">&#x27;secret string&#x27;</span>)</span><br><span class="line"></span><br><span class="line">app.config[<span class="string">&#x27;SQLALCHEMY_DATABASE_URI&#x27;</span>] = os.getenv(</span><br><span class="line">    <span class="string">&#x27;DATABASE_URL&#x27;</span>, <span class="string">&#x27;sqlite:///&#x27;</span> + os.path.join(app.root_path, <span class="string">&#x27;data.db&#x27;</span>))</span><br><span class="line">app.config[<span class="string">&#x27;SQLALCHEMY_TRACK_MODIFICATIONS&#x27;</span>] = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">db = SQLAlchemy(app=app)</span><br></pre></td></tr></table></figure>
 
 <h4 id="连接数据库服务器"><a href="#连接数据库服务器" class="headerlink" title="连接数据库服务器"></a>连接数据库服务器</h4><p>DBMS通常会提供数据库服务器运行在操作系统中。要连接数据库服务器，首先要为我们的程序指定数据库URI（Uniform Resource<br>Identifier，统一资源标识符）。数据库URI是一串包含各种属性的字符串，其中包含了各种用于连接数据库的信息。</p>
-<p><img src="/memoirs/images/flask/w5.png" alt="常用的数据库URI格式"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w5.png" alt="常用的数据库URI格式"></p>
 <p>在<code>Flask-SQLAlchemy</code>中，数据库的URI通过配置变量<code>SQLALCHEMY_DATABASE_URI</code>设置，默认为SQLite内存型数据库<code>(sqlite:///:memory:)</code>。<code>SQLite</code>是基于文件的<code>DBMS</code>，不需要设置数据库服务器，只需要指定数据库文件的绝对路径。</p>
 <p>在生产环境下更换到其他类型的<code>DBMS</code>时，数据库URL会包含敏感 信息，所以这里优先从环境变量<code>DATABASE_URL</code>获取(注意这里为了便于理解使用了URL，而不是URI)。</p>
 <p>安装并初始化<code>Flask-SQLAlchemy</code>后，启动程序时会看到命令行下有一行警告信息。这是因为<code>Flask-SQLAlchemy</code>建议你设置 <code>SQLALCHEMY_TRACK_MODIFICATIONS</code>配置变量，这个配置变量决定是否追踪对象的修改，这用于<code>Flask-SQLAlchemy</code>的事件通知系统。这 个配置键的默认值为None，如果没有特殊需要，我们可以把它设为False来关闭警告信息。</p>
@@ -247,10 +235,10 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Note</span>(db.Model):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    创建一个数据库Model</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="built_in">id</span> = db.Column(db.Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    body = db.Column(db.Text)</span><br></pre></td></tr></table></figure>
 
 <p>在上面的模型类中，表的字段（列）由db.Column类的实例表示，字段的类型通过Column类构造方法的第一个参数传入。在这个模型中，我们创建了一个类型为db.Integer的id字段和类型为db.Text的body列，分别存储整型和文本。</p>
-<p><img src="/memoirs/images/flask/w6.png" alt="SQLAlchemy常用的字段类型"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w6.png" alt="SQLAlchemy常用的字段类型"></p>
 <p>字段类型一般直接声明即可，如果需要传入参数，你也可以添加括号。对于类似String的字符串列，有些数据库会要求限定长度，因此最 好为其指定长度。虽然使用Text类型可以存储相对灵活的变长文本，但从性能上考虑，我们仅在必须的情况下使用Text类型，比如用户发表的文章和评论等不限长度的内容。</p>
 <p>一般情况下，字段的长度是由程序设计者自定的。尽管如此，也有一些既定的约束标准，比如姓名（英语）的长度一般不超过70个字符，中文名一般不超过20个字符，电子邮件地址的长度不超过254个字符，虽然各主流浏览器支持长达2048个字符的URL，但在网站中用户资料设置的限度一般为255。尽管如此，对于超过一定长度的Email和URL，比如20个字符，会在显示时添加省略号的形式。显示的用户名（username）允许重复，通常要短一些，以不超过36个字符为佳。当然，在程序中，你可以根据需要来自由设定这些限制值。</p>
-<p><img src="/memoirs/images/flask/w7.png" alt="常用的SQLAlchemy字段参数"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w7.png" alt="常用的SQLAlchemy字段参数"></p>
 <h4 id="创建数据库和表"><a href="#创建数据库和表" class="headerlink" title="创建数据库和表"></a>创建数据库和表</h4><p>如果把数据库（文件）看作一个仓库，为了方便取用，我们需要把货物按照类型分别放置在不同货架上，这些货架就是数据库中的表。创建模型类后，我们需要手动创建数据库和对应的表，也就是我们常说的建库和建表。这通过对我们的db对象调用create_all()方法实现。</p>
 <h3 id="数据库操作"><a href="#数据库操作" class="headerlink" title="数据库操作"></a>数据库操作</h3><p>现在我们创建了模型，也生成了数据库和表，是时候来学习常用的数据库操作了。数据库操作主要是<code>CRUD</code>，即Create（创建）、Read（读取&#x2F;查询）、Update（更新）和Delete（删除）。<br><code>SQLAlchemy</code>使用数据库会话来管理数据库操作，这里的数据库会话也称为事务(<code>transaction</code>)。<code>Flask-SQLAlchemy</code>自动帮我们创建会话，可以通过<code>db.session</code>属性获取。<br>数据库中的会话代表一个临时存储区，你对数据库做出的改动都会存放在这里。你可以调用<code>add()</code>方法将新创建的对象添加到数据库会话中，或是对会话中的对象进行更新。只有当你对数据库会话对象调用<code>commit()</code>方法时，改动才被提交到数据库，这确保了数据提交的一致性。另外，数据库会话也支持回滚操作。当你对会话调用<code>rollback()</code>方法时，添加到会话中且未提交的改动都将被撤销。</p>
 <h4 id="CRUD"><a href="#CRUD" class="headerlink" title="CRUD"></a>CRUD</h4><p>这一节我们会在<code>Python Shell</code>中演示<code>CRUD</code>操作。默认情况下，<code>Flask-SQLAlchemy</code>(&gt;&#x3D;2.3.0版本)会自动为模型类生成一个<code>__repr__()</code>方法。当在<code>Python Shell</code>中调用模型的对象时，<code>__repr__()</code>方法会返回一条类似“&lt;模型类名主键值&gt;”的字符串，比如<code>&lt;Note&gt;</code>。</p>
@@ -268,9 +256,9 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;模型类&gt;.query.&lt;过滤方法&gt;.&lt;查询方法&gt;</span><br></pre></td></tr></table></figure>
 
 <p>从某个模型类出发，通过在query属性对应的Query对象上附加的过滤方法和查询函数对模型类对应的表中的记录进行各种筛选和调整，最终返回包含对应数据库记录数据的模型类实例，对返回的实例调用属性即可获取对应的字段数据。</p>
-<p><img src="/memoirs/images/flask/w8.png" alt="常用的SQLAlchemy查询方法"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w8.png" alt="常用的SQLAlchemy查询方法"></p>
 <p>精确的查询，比如获取指定字段值的记录。对模型类的query属性存储的Query对象调用过滤方法将返回一个更精确的Query对象(后面我们简称为查询对象)。因为每个过滤方法都会返回新的查询对象，所以过滤器可以叠加使用。在查询对象上调用前面介绍的查询方法，即可获得一个包含过滤后的记录的列表。</p>
-<p><img src="/memoirs/images/flask/w9.png" alt="常用的SQLAlchemy过滤方法"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w9.png" alt="常用的SQLAlchemy过滤方法"></p>
 <ol start="3">
 <li><p>Update<br>更新一条记录非常简单，直接赋值给模型类的字段属性就可以改变 字段值，然后调用commit()方法提交会话即可。<br>只有要插入新的记录或要将现有的记录添加到会话中时才需要使用 add()方法，单纯要更新现有的记录时只需要直接为属性赋新值，然 后提交会话。</p>
 </li>
@@ -303,7 +291,7 @@
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># handlers</span></span><br><span class="line"><span class="meta">@app.shell_context_processor</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">make_shell_context</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">dict</span>(db=db, Note=Note)</span><br></pre></td></tr></table></figure>
 
 <h4 id="一对多"><a href="#一对多" class="headerlink" title="一对多"></a>一对多</h4><p>我们将以作者和文章来演示一对多关系：一个作者可以写作多篇文章。</p>
-<p><img src="/memoirs/images/flask/w10.png" alt="一对多示意图"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w10.png" alt="一对多示意图"></p>
 <p>Author类用来表示作者，Article类用来表示文章</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Author</span>(db.Model):</span><br><span class="line">    <span class="built_in">id</span> = db.Column(db.Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = db.Column(db.String(<span class="number">70</span>), unique=<span class="literal">True</span>)</span><br><span class="line">    phone = db.Column(db.String(<span class="number">20</span>))</span><br><span class="line">    articles = db.relationship(<span class="string">&#x27;Article&#x27;</span>)  <span class="comment"># collection</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Article</span>(db.Model):</span><br><span class="line">    <span class="built_in">id</span> = db.Column(db.Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    title = db.Column(db.String(<span class="number">50</span>), index=<span class="literal">True</span>)</span><br><span class="line">    body = db.Column(db.Text)</span><br><span class="line">    author_id = db.Column(db.Integer, db.ForeignKey(<span class="string">&#x27;author.id&#x27;</span>))</span><br></pre></td></tr></table></figure>
 
@@ -318,8 +306,8 @@
 </ol>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.外键字段赋值</span></span><br><span class="line">spam.author_id = <span class="number">1</span></span><br><span class="line">db.session.commit()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.关系属性赋给实际的对象</span></span><br><span class="line">foo.articles.append(spam)</span><br><span class="line">foo.articles.append(ham)</span><br><span class="line">db.session.commit()</span><br></pre></td></tr></table></figure>
 
-<p><img src="/memoirs/images/flask/w11.png" alt="常用的SQLAlchemy关系函数参数"></p>
-<p><img src="/memoirs/images/flask/w12.png" alt="常用的SQLAlchemy关系记录加载方式（lazy参数可选值）"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w11.png" alt="常用的SQLAlchemy关系函数参数"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w12.png" alt="常用的SQLAlchemy关系记录加载方式（lazy参数可选值）"></p>
 <ol start="4">
 <li>建立双向关系<br>我们在Author类中定义了集合关系属性articles，用来获取某个作者 拥有的多篇文章记录。在某些情况下，你也许希望能在Article类中定义 一个类似的author关系属性，当被调用时返回对应的作者记录，这类返 回单个值的关系属性被称为标量关系属性。而这种两侧都添加关系属性 获取对方记录的关系我们称之为双向关系（bidirectional relationship）。</li>
 </ol>
@@ -347,7 +335,7 @@
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>(db.Model):</span><br><span class="line">    <span class="built_in">id</span> = db.Column(db.Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = db.Column(db.String(<span class="number">70</span>), unique=<span class="literal">True</span>)</span><br><span class="line">    grade = db.Column(db.String(<span class="number">20</span>))</span><br><span class="line">    teachers = db.relationship(<span class="string">&#x27;Teacher&#x27;</span>,</span><br><span class="line">                               secondary=association_table,</span><br><span class="line">                               back_populates=<span class="string">&#x27;students&#x27;</span>)  <span class="comment"># collection</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Teacher</span>(db.Model):</span><br><span class="line">    <span class="built_in">id</span> = db.Column(db.Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = db.Column(db.String(<span class="number">70</span>), unique=<span class="literal">True</span>)</span><br><span class="line">    office = db.Column(db.String(<span class="number">20</span>))</span><br><span class="line">    students = db.relationship(<span class="string">&#x27;Student&#x27;</span>,</span><br><span class="line">                               secondary=association_table,</span><br><span class="line">                               back_populates=<span class="string">&#x27;teachers&#x27;</span>)  <span class="comment"># collection</span></span><br></pre></td></tr></table></figure>
 
 <p>关联表使用db.Table类定义，传入的第一个参数是关联表的名称。我们在关联表中定义了两个外键字段：teacher_id字段存储Teacher类的主键，student_id存储Student类的主键。借助关联表这个中间人存储的外键对，我们可以把多对多关系分化成两个一对多关系，如图所示。</p>
-<p><img src="/memoirs/images/flask/w13.png" alt="关联表示意图"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/memoirs/images/flask/w13.png" alt="关联表示意图"></p>
 <h3 id="更新数据库表"><a href="#更新数据库表" class="headerlink" title="更新数据库表"></a>更新数据库表</h3><p>模型类（表）不是一成不变的，当你添加了新的模型类，或是在模 型类中添加了新的字段，甚至是修改了字段的名称或类型，都需要更新 表。在前面我们把数据库表类比成盛放货物的货架，这些货架是固定生 成的。当我们在操控程序（DBMS&#x2F;ORM）上变更了货架的结构时，仓 库的货架也要根据变化相应进行调整。而且，当货架的结构产生变动 时，我们还需要考虑如何处理货架上的货物（数据）。</p>
 <h4 id="重新生成表"><a href="#重新生成表" class="headerlink" title="重新生成表"></a>重新生成表</h4><p>重新调用create_all()方法并不会起到更新表或重新创建表的作 用。如果你并不在意表中的数据，最简单的方法是使用drop_all()方法删除表以及其中的数据，然后再使用create_all()方法重新创建</p>
 <h4 id="使用Flask-Migrate迁移数据库"><a href="#使用Flask-Migrate迁移数据库" class="headerlink" title="使用Flask-Migrate迁移数据库"></a>使用Flask-Migrate迁移数据库</h4><p>在开发时，以删除表再重建的方式更新数据库简单直接，但明显的缺陷是会丢掉数据库中的所有数据。在生产环境下，你绝对不会想让数 据库里的数据都被删除掉，这时你需要使用数据库迁移工具来完成这个工作。<br>SQLAlchemy的开发者Michael Bayer写了一个数据库迁移工具 ——Alembic来帮助我们实现数据库的迁移，数据库迁移工具可以在不破坏数据的情况下更新数据库表的结构。蒸馏器（Alembic）是炼金术士最重要的工具，要学习SQL炼金术（SQLAlchemy），我们当然要掌 握蒸馏器的使用。</p>
@@ -379,157 +367,494 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本来还有一章讲邮件的，但是邮件这部分太简单就不放在这里了。<br>基础篇（二）主要是讲数据库的知识，简单了解在<code>Flask</code>应用中使用数据库的方法，但数据库的内容还有很多，这里只是一个简单的介绍。<br>如果你想了解更多具体细节，<a target="_blank" rel="noopener" href="http://docs.sqlalchemy.org/en/latest/orm/tutorial.html">SQLAlchemy提供的入门教程</a>是个起步的好地方。<br>另外，如果还不熟悉<code>SQL</code>，那么有必要去学习一下，掌握<code>SQL</code>可以让你更高效地使用<code>ORM</code>。</p>
 <p>这里也没有介绍在<code>Flask</code>中使用文档型<code>NoSQL</code>数据库的过程。<br>以流行的<a target="_blank" rel="noopener" href="https://www.mongodb.com/">MongoDB</a>为例，通过使用ODM（Object Document Mapper，对象文档映射），比如<a target="_blank" rel="noopener" href="http://mongoengine.org/">MongoEngine</a>，或是对应的扩展<a target="_blank" rel="noopener" href="https://github.com/MongoEngine/flask-mongoengine">Flask- MongoEngine</a>，其操作数据库的方式和使用本章要介绍的<code>SQLAlchemy</code>基本相同。</p>
 
-      
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
     </div>
-    <footer class="article-footer">
-      <a data-url="https://aichiko0225.github.com/memoirs/2020/03/21/Python-100-Flask-2/" data-id="cm4i68duw000db6ev0oc14scc" data-title="Python-Flask基础篇(二)" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/memoirs/tags/Flask/" rel="tag">Flask</a></li></ul>
-
-    </footer>
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/memoirs/2020/09/11/other/macbook-%E9%94%AE%E7%9B%98%E8%BF%9E%E5%87%BB%E9%97%AE%E9%A2%98/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">前一篇</strong>
-      <div class="article-nav-title">
-        
-          macbook-键盘连击问题
-        
-      </div>
-    </a>
-  
-  
-    <a href="/memoirs/2020/03/16/Python-100-Flask-1/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">后一篇</strong>
-      <div class="article-nav-title">Python-Flask基础篇(一)</div>
-    </a>
-  
-</nav>
-
-  
 </article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/memoirs/2020/09/11/other/macbook-%E9%94%AE%E7%9B%98%E8%BF%9E%E5%87%BB%E9%97%AE%E9%A2%98/">macbook-键盘连击问题</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/memoirs/2020/03/16/Python-100-Flask-1/">Python-Flask基础篇(一)</a></div></section></div>
 
 
-</section>
-        
-          <aside id="sidebar">
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">ash</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC4%E7%AB%A0-%E8%A1%A8%E5%8D%95"><span class="toc-text">第4章 表单</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Flask-WTF%E5%A4%84%E7%90%86%E8%A1%A8%E5%8D%95"><span class="toc-text">使用Flask-WTF处理表单</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89WTForms%E8%A1%A8%E5%8D%95%E7%B1%BB"><span class="toc-text">定义WTForms表单类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%93%E5%87%BAHTML%E4%BB%A3%E7%A0%81"><span class="toc-text">输出HTML代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E6%A8%A1%E6%9D%BF%E4%B8%AD%E6%B8%B2%E6%9F%93%E8%A1%A8%E5%8D%95"><span class="toc-text">在模板中渲染表单</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE"><span class="toc-text">处理表单数据</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E8%A1%A8%E5%8D%95"><span class="toc-text">提交表单</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE"><span class="toc-text">验证表单数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E6%A8%A1%E6%9D%BF%E4%B8%AD%E6%B8%B2%E6%9F%93%E9%94%99%E8%AF%AF%E6%B6%88%E6%81%AF"><span class="toc-text">在模板中渲染错误消息</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC5%E7%AB%A0-%E6%95%B0%E6%8D%AE%E5%BA%93-%E9%87%8D%E7%82%B9"><span class="toc-text">第5章 数据库(重点)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-text">数据库的分类</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SQL"><span class="toc-text">SQL</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NoSQL"><span class="toc-text">NoSQL</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ORM%E9%AD%94%E6%B3%95"><span class="toc-text">ORM魔法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Flask-SQLAlchemy%E7%AE%A1%E7%90%86%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-text">使用Flask-SQLAlchemy管理数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">连接数据库服务器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A8%A1%E5%9E%8B"><span class="toc-text">定义数据库模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E8%A1%A8"><span class="toc-text">创建数据库和表</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9C"><span class="toc-text">数据库操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#CRUD"><span class="toc-text">CRUD</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E8%A7%86%E5%9B%BE%E5%87%BD%E6%95%B0%E9%87%8C%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-text">在视图函数里操作数据库</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E5%85%B3%E7%B3%BB"><span class="toc-text">定义关系</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEPython-Shell%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-text">配置Python Shell上下文</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E5%AF%B9%E5%A4%9A"><span class="toc-text">一对多</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E5%AF%B9%E4%B8%80"><span class="toc-text">多对一</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E5%AF%B9%E4%B8%80"><span class="toc-text">一对一</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%9A%E5%AF%B9%E5%A4%9A"><span class="toc-text">多对多</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8"><span class="toc-text">更新数据库表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%8D%E6%96%B0%E7%94%9F%E6%88%90%E8%A1%A8"><span class="toc-text">重新生成表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Flask-Migrate%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-text">使用Flask-Migrate迁移数据库</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%8F%91%E6%97%B6%E6%98%AF%E5%90%A6%E9%9C%80%E8%A6%81%E8%BF%81%E7%A7%BB"><span class="toc-text">开发时是否需要迁移</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>回到顶部</span></a></div></widget>
+</div></aside><div class='float-panel blur'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/memoirs/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js`,
+    marked: `https://cdn.jsdelivr.net/npm/marked@13.0.1/lib/marked.umd.min.js`
+  }
   
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">分类</h3>
-    <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/JavaScript/">JavaScript</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/Python/">Python</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/iOS/">iOS</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E5%85%B3%E4%BA%8E%E4%B8%96%E7%95%8C%E7%9A%84%E4%B8%80%E5%88%87/">关于世界的一切</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E5%B7%A5%E4%BD%9C%E6%97%A5%E5%B8%B8/">工作日常</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E6%AD%A6%E6%B1%89/">武汉</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E9%80%86%E5%90%91/">逆向</a></li><li class="category-list-item"><a class="category-list-link" href="/memoirs/categories/%E9%9A%8F%E4%BE%BF%E5%86%99%E5%86%99/">随便写写</a></li></ul>
-    </div>
-  </div>
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
 
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/Flask/" rel="tag">Flask</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/React/" rel="tag">React</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/Runtime/" rel="tag">Runtime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li><li class="tag-list-item"><a class="tag-list-link" href="/memoirs/tags/%E9%80%86%E5%90%91/" rel="tag">逆向</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签云</h3>
-    <div class="widget tagcloud">
-      <a href="/memoirs/tags/Flask/" style="font-size: 13.33px;">Flask</a> <a href="/memoirs/tags/React/" style="font-size: 10px;">React</a> <a href="/memoirs/tags/Runtime/" style="font-size: 10px;">Runtime</a> <a href="/memoirs/tags/Web/" style="font-size: 13.33px;">Web</a> <a href="/memoirs/tags/iOS/" style="font-size: 16.67px;">iOS</a> <a href="/memoirs/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 20px;">基础知识</a> <a href="/memoirs/tags/%E6%9D%82%E8%B0%88/" style="font-size: 16.67px;">杂谈</a> <a href="/memoirs/tags/%E9%80%86%E5%90%91/" style="font-size: 13.33px;">逆向</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/09/">九月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/08/">八月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/07/">七月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2021/06/">六月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/11/">十一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/10/">十月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/03/">三月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/02/">二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2020/01/">一月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2017/07/">七月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/memoirs/archives/2016/11/">十一月 2016</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
-    <div class="widget">
-      <ul>
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
         
-          <li>
-            <a href="/memoirs/2021/09/15/%E4%B9%A1%E5%9C%9F%E4%B8%AD%E5%9B%BD/">乡土中国</a>
-          </li>
-        
-          <li>
-            <a href="/memoirs/2021/08/20/%E5%A5%97%E8%B7%AF%E7%9C%9F%E5%A4%9A/">套路真多</a>
-          </li>
-        
-          <li>
-            <a href="/memoirs/2021/07/29/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/">乌合之众</a>
-          </li>
-        
-          <li>
-            <a href="/memoirs/2021/06/19/ReactStack-1/">React 技术栈（一）</a>
-          </li>
-        
-          <li>
-            <a href="/memoirs/2020/11/02/JavaScript-study-record-2/">JavaScript 温习记录（二）</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2024 ash<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/memoirs/" class="mobile-nav-link">Home</a>
-  
-    <a href="/memoirs/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
 
 
-<script src="/memoirs/js/jquery-3.6.4.min.js"></script>
+<!-- required -->
+<script src="/js/main.js?v=1.29.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
 
 
 
-  
-<script src="/memoirs/fancybox/jquery.fancybox.min.js"></script>
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
 
 
+<!-- inject -->
 
-
-<script src="/memoirs/js/script.js"></script>
-
-
-
-
-
-  </div>
-</body>
-</html>
+</div></body></html>
