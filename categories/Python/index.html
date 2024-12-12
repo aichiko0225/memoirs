@@ -37,7 +37,8 @@
   <!-- feed -->
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.29.1">
+  <link rel="stylesheet" href="/memoirs/css/main.css?v=1.29.1">
+
 
   
     <link rel="shortcut icon" href="/memoirs/favicon.png">
@@ -73,7 +74,7 @@
 
 
 
-<div class="navbar top"><nav class="post"><a href="/memoirs/">近期发布</a><a class="active" href="/memoirs/categories">分类：Python</a><a href="/memoirs/tags">标签</a><a href="/memoirs/archives">归档</a></nav></div>
+<div class="navbar top"><nav class="post"><a href="/memoirs/">近期发布</a><a class="active" href="/memoirs/categories/">分类：Python</a><a href="/memoirs/tags/">标签</a><a href="/memoirs/archives/">归档</a></nav></div>
 <div class="post-list post"><a class="post-card post" href="/memoirs/2020/03/21/Python-100-Flask-2/">
 <article class="md-text"><div class="post-cover"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://source.unsplash.com/1280x640/?Flask"/></div><h2 class="post-title">Python-Flask基础篇(二)</h2><div class="excerpt"><p>前言前面介绍了Flask和HTTP的基础知识，下面会介绍Flask的基础用法
 第4章 表单在Web程序中，表单是和用户交互最常见的方式之一。用户注册、登录、撰写文章、编辑设置，无一不用到表单。不过，表单的处理却并不简单。你不仅要创建表单，验证用户输入的内容，向用户显示错误提示，还要获取并保存数据。幸运的是，强大的WTForms可以帮我们解决这些问题。WTForms是一个使用Python编写的表单库，它使得表单的定 义、验证（服务器端）和处理变得非常轻松。这一章我们会介绍在Web 程序中处理表单的方法和技巧。
@@ -152,7 +153,7 @@ Flask-WTF默认为每个表单启用CSRF保护，它会为我们自动生成和 
     ctx.search = {};
     ctx.search.service = `local_search`;
     if (ctx.search.service == 'local_search') {
-      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"skip_search":null,"sort":"-date"}`);
       ctx.search[ctx.search.service] = service_obj;
     }
   }
@@ -382,7 +383,7 @@ Flask-WTF默认为每个表单启用CSRF保护，它会为我们自动生成和 
 
 
 <!-- required -->
-<script src="/js/main.js?v=1.29.1" defer></script>
+<script src="/memoirs/js/main.js?v=1.29.1" defer></script>
 
 <script type="text/javascript">
   const applyTheme = (theme) => {
@@ -454,7 +455,7 @@ Flask-WTF默认为每个表单启用CSRF保护，它会为我们自动生成和 
 
 <script defer>
   window.addEventListener('DOMContentLoaded', (event) => {
-    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"},"twikoo":{"js":"/js/services/twikoo_latest_comment.js"},"waline":{"js":"/js/services/waline_latest_comment.js"},"artalk":{"js":"/js/services/artalk_latest_comment.js"},"giscus":{"js":"/js/services/giscus_latest_comment.js"}}`));
     for (let id of Object.keys(ctx.services)) {
       const js = ctx.services[id].js;
       if (id == 'siteinfo') {

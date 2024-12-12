@@ -37,7 +37,8 @@
   <!-- feed -->
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.29.1">
+  <link rel="stylesheet" href="/memoirs/css/main.css?v=1.29.1">
+
 
   
     <link rel="shortcut icon" href="/memoirs/favicon.png">
@@ -73,7 +74,7 @@
 
 
 
-<div class="navbar top"><nav class="post"><a href="/memoirs/">近期发布</a><a class="active" href="/memoirs/categories">分类：关于世界的一切</a><a href="/memoirs/tags">标签</a><a href="/memoirs/archives">归档</a></nav></div>
+<div class="navbar top"><nav class="post"><a href="/memoirs/">近期发布</a><a class="active" href="/memoirs/categories/">分类：关于世界的一切</a><a href="/memoirs/tags/">标签</a><a href="/memoirs/archives/">归档</a></nav></div>
 <div class="post-list post"><a class="post-card post" href="/memoirs/2021/09/15/%E4%B9%A1%E5%9C%9F%E4%B8%AD%E5%9B%BD/">
 <article class="md-text"><div class="post-cover"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://source.unsplash.com/1280x640/?"/></div><h2 class="post-title">乡土中国</h2><div class="excerpt"><p>《乡土中国》是社会学的经典书，可以说是经典中的经典，也是所有研究中国的人必读的一本书。
 这本书讲的是中国人的社会操作系统，是研究中国人复杂思维非常重要的一块基石，
@@ -121,7 +122,7 @@
     ctx.search = {};
     ctx.search.service = `local_search`;
     if (ctx.search.service == 'local_search') {
-      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"skip_search":null,"sort":"-date"}`);
       ctx.search[ctx.search.service] = service_obj;
     }
   }
@@ -351,7 +352,7 @@
 
 
 <!-- required -->
-<script src="/js/main.js?v=1.29.1" defer></script>
+<script src="/memoirs/js/main.js?v=1.29.1" defer></script>
 
 <script type="text/javascript">
   const applyTheme = (theme) => {
@@ -423,7 +424,7 @@
 
 <script defer>
   window.addEventListener('DOMContentLoaded', (event) => {
-    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"},"twikoo":{"js":"/js/services/twikoo_latest_comment.js"},"waline":{"js":"/js/services/waline_latest_comment.js"},"artalk":{"js":"/js/services/artalk_latest_comment.js"},"giscus":{"js":"/js/services/giscus_latest_comment.js"}}`));
     for (let id of Object.keys(ctx.services)) {
       const js = ctx.services[id].js;
       if (id == 'siteinfo') {
