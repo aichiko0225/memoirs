@@ -1,0 +1,699 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
+  
+  <meta name="generator" content="Hexo 7.3.0">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>ObjectMapper实践（一） - ash</title>
+
+  
+    <meta name="description" content="前言在OC阶段使用模型转换的框架有很多，代表有：JSONModel、 YYModel、MJExtension。OC的原理主要是通过runtime 获取类的属性，在运行时获取Model的字段名集合，遍历该集合，拿Key去JSON中取值并完成赋值。而且Swift 的属性默认并不是动态属性，我们能在运行时获取一个Model实例的所有字段、字段值，但却无法给它赋值。事实上，我们拿到的value是原值的一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ObjectMapper实践（一）">
+<meta property="og:url" content="https://aichiko0225.github.com/memoirs/20180803/iOS/objectMapper-1/index.html">
+<meta property="og:site_name" content="ash">
+<meta property="og:description" content="前言在OC阶段使用模型转换的框架有很多，代表有：JSONModel、 YYModel、MJExtension。OC的原理主要是通过runtime 获取类的属性，在运行时获取Model的字段名集合，遍历该集合，拿Key去JSON中取值并完成赋值。而且Swift 的属性默认并不是动态属性，我们能在运行时获取一个Model实例的所有字段、字段值，但却无法给它赋值。事实上，我们拿到的value是原值的一个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/225849-e6f158ed05650e48.gif">
+<meta property="article:published_time" content="2018-08-03T14:09:00.000Z">
+<meta property="article:modified_time" content="2020-02-03T12:46:46.155Z">
+<meta property="article:author" content="ash66">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/225849-e6f158ed05650e48.gif">
+  
+  
+  
+  
+
+  <!-- feed -->
+  
+
+  <link rel="stylesheet" href="/memoirs/css/main.css?v=1.29.1">
+
+
+  
+    <link rel="shortcut icon" href="/memoirs/favicon.png">
+  
+
+  
+
+  
+</head>
+<body>
+
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/memoirs/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/memoirs/images/image1.jpeg" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/memoirs/"><div class="main" ff="title">ash</div><div class="sub cap">我只是一个影子，虽然我发着光。。。</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+<nav class="menu dis-select"></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/memoirs/20200305/Python-100-1/"><span class="title">Python-100天(一)</span></a><a class="item title" href="/memoirs/20210915/%E4%B9%A1%E5%9C%9F%E4%B8%AD%E5%9B%BD/"><span class="title">乡土中国</span></a><a class="item title" href="/memoirs/20210619/ReactStack-1/"><span class="title">React 技术栈（一）</span></a><a class="item title" href="/memoirs/20210820/%E5%A5%97%E8%B7%AF%E7%9C%9F%E5%A4%9A/"><span class="title">套路真多</span></a><a class="item title" href="/memoirs/20210729/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/"><span class="title">乌合之众</span></a><a class="item title" href="/memoirs/20201102/JavaScript-study-record-2/"><span class="title">JavaScript 温习记录（二）</span></a><a class="item title" href="/memoirs/20201030/JavaScript-study-record/"><span class="title">JavaScript 温习记录（一）</span></a><a class="item title" href="/memoirs/20200911/other/macbook-%E9%94%AE%E7%9B%98%E8%BF%9E%E5%87%BB%E9%97%AE%E9%A2%98/"><span class="title">macbook-键盘连击问题</span></a><a class="item title" href="/memoirs/20200321/Python-100-Flask-2/"><span class="title">Python-Flask基础篇(二)</span></a><a class="item title" href="/memoirs/20200316/Python-100-Flask-1/"><span class="title">Python-Flask基础篇(一)</span></a></div></widget>
+</div>
+<footer class="footer dis-select"><div class="social-wrap"><a class="social" href="https://github.com/aichiko0225" target="_blank" rel="external nofollow noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/08a41b181ce68.svg"/></a></div></footer>
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/memoirs/memoirs/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/memoirs/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/memoirs/categories/iOS/">iOS</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2018-08-03T14:09:00.000Z">2018-08-03</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2020-02-03T12:46:46.155Z">2020-02-03</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>ObjectMapper实践（一）</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在OC阶段使用模型转换的框架有很多，代表有：<a target="_blank" rel="noopener" href="https://github.com/JSONModel/JSONModel">JSONModel</a>、 <a target="_blank" rel="noopener" href="https://github.com/ibireme/YYModel">YYModel</a>、<a target="_blank" rel="noopener" href="https://github.com/CoderMJLee/MJExtension">MJExtension</a>。<br>OC的原理主要是通过runtime 获取类的属性，在运行时获取Model的字段名集合，遍历该集合，拿Key去JSON中取值并完成赋值。而且Swift 的属性默认并不是动态属性，<strong>我们能在运行时获取一个Model实例的所有字段、字段值，但却无法给它赋值。</strong>事实上，我们拿到的value是原值的一个只读拷贝，即使获取到这个拷贝的地址写入新值，也是无效的。<br>OC的转换方式虽然在OC中完全适用，但是缺点也很严重，一方面只能只能继承 <code>NSObject</code> ，并不支持Struct；还有一个更严重的问题，optional 的属性不能正确解析，反正坑还是挺多的。</p>
+<span id="more"></span>
+<h6 id="所以如果是项目中有Swift的Model，就需要找到一个更好的转换方式。"><a href="#所以如果是项目中有Swift的Model，就需要找到一个更好的转换方式。" class="headerlink" title="所以如果是项目中有Swift的Model，就需要找到一个更好的转换方式。"></a>所以如果是项目中有Swift的Model，就需要找到一个更好的转换方式。</h6><p>为了解决这些问题，很多处理JSON的开源库应运而生。在Swift中，这些开源库主要朝着两个方向努力：</p>
+<ol>
+<li>保持JSON语义，直接解析JSON，但通过封装使调用方式更优雅、更安全；</li>
+<li>预定义Model类，将JSON反序列化为类实例，再使用这些实例。</li>
+</ol>
+<p>先讨论第一种方式，其实我在16年前用Swift的时候主要是用第一种方式，最初是原始的解析方式，茫茫多的<code>guard</code>，很傻的方法。 然后我就开始用大名鼎鼎的<a target="_blank" rel="noopener" href="https://github.com/SwiftyJSON/SwiftyJSON">SwiftyJSON</a>，它本质上仍然是根据JSON结构去取值，使用起来顺手、清晰。但是他有一个根本性的问题，如果key拼写错误，或者其他的拼写错误就会很崩溃。</p>
+<p>第二种方式应该是最优化的，最合理的方式。每一个Model都会通过一个<code>Mappable</code>协议来表明<code>JSON</code>字典映射关系，然后实现JSON和对象的转换。当然还有一个黑魔法 <a target="_blank" rel="noopener" href="https://github.com/alibaba/handyjson">HandyJSON</a> ，通过分析Swift数据结构在内存中的布局，自动分析出映射关系，进一步降低开发者使用的成本。<br>下面来介绍ObjectMapper 的用法，实现思路，以及源码分析。</p>
+<p>#ObjectMapper 介绍<br><a target="_blank" rel="noopener" href="https://github.com/Hearst-DD/ObjectMapper">ObjectMapper</a> 是一个使用 Swift 编写的用于 model 对象（类和结构体）和 JSON 之间转换的框架。</p>
+<h6 id="ObjectMapper特性"><a href="#ObjectMapper特性" class="headerlink" title="ObjectMapper特性"></a>ObjectMapper特性</h6><ul>
+<li>将JSON映射到对象</li>
+<li>将对象映射到JSON</li>
+<li>嵌套对象（独立，在数组或字典中）</li>
+<li>映射期间的自定义转换</li>
+<li>结构支持</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Hearst-DD/ObjectMapper#immutablemappable-protocol">不可改变的支持</a></li>
+</ul>
+<h6 id="ObjectMapper可以映射由以下类型组成的类："><a href="#ObjectMapper可以映射由以下类型组成的类：" class="headerlink" title="ObjectMapper可以映射由以下类型组成的类："></a>ObjectMapper可以映射由以下类型组成的类：</h6><ul>
+<li><code>Int</code></li>
+<li><code>Bool</code></li>
+<li><code>Double</code></li>
+<li><code>Float</code></li>
+<li><code>String</code></li>
+<li><code>RawRepresentable (Enums)</code></li>
+<li><code>Array&lt;Any&gt;</code></li>
+<li><code>Dictionary&lt;String, Any&gt;</code></li>
+<li><code>Object&lt;T: Mappable&gt;</code></li>
+<li><code>Array&lt;T: Mappable&gt;</code></li>
+<li><code>Array&lt;Array&lt;T: Mappable&gt;&gt;</code></li>
+<li><code>Set&lt;T: Mappable&gt;</code></li>
+<li><code>Dictionary&lt;String, T: Mappable&gt;</code></li>
+<li><code>Dictionary&lt;String, Array&lt;T: Mappable&gt;&gt;</code></li>
+<li><code>Optionals of all the above</code></li>
+<li><code>Implicitly Unwrapped Optionals of the above</code></li>
+</ul>
+<h6 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h6><p>ObjectMapper中定义了一个协议<a target="_blank" rel="noopener" href="https://github.com/Hearst-DD/ObjectMapper/blob/master/Sources/Mappable.swift">Mappable</a></p>
+<p>Mappable协议中声明了两个方法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mutation <span class="keyword">func</span> <span class="title function_">mapping</span>(<span class="params">map</span>: <span class="type">Map</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">init?</span>(<span class="params">map</span>: <span class="type">Map</span>)</span><br></pre></td></tr></table></figure>
+<p>ObjectMapper使用 <code>&lt;-</code>运算符来定义每个成员变量如何映射到JSON和从JSON映射。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">User</span>: <span class="title class_ inherited__">Mappable</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> username: <span class="type">String</span>?</span><br><span class="line">    <span class="keyword">var</span> age: <span class="type">Int</span>?</span><br><span class="line">    <span class="keyword">var</span> weight: <span class="type">Double</span>!</span><br><span class="line">    <span class="keyword">var</span> array: [<span class="keyword">Any</span>]<span class="operator">?</span></span><br><span class="line">    <span class="keyword">var</span> dictionary: [<span class="type">String</span> : <span class="keyword">Any</span>] <span class="operator">=</span> [:]</span><br><span class="line">    <span class="keyword">var</span> bestFriend: <span class="type">User</span>?                       <span class="comment">// Nested User object</span></span><br><span class="line">    <span class="keyword">var</span> friends: [<span class="type">User</span>]<span class="operator">?</span>                        <span class="comment">// Array of Users</span></span><br><span class="line">    <span class="keyword">var</span> birthday: <span class="type">Date</span>?</span><br><span class="line"></span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init?</span>(<span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Mappable</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">mapping</span>(<span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">        username    <span class="operator">&lt;-</span> map[<span class="string">&quot;username&quot;</span>]</span><br><span class="line">        age         <span class="operator">&lt;-</span> map[<span class="string">&quot;age&quot;</span>]</span><br><span class="line">        weight      <span class="operator">&lt;-</span> map[<span class="string">&quot;weight&quot;</span>]</span><br><span class="line">        array       <span class="operator">&lt;-</span> map[<span class="string">&quot;arr&quot;</span>]</span><br><span class="line">        dictionary  <span class="operator">&lt;-</span> map[<span class="string">&quot;dict&quot;</span>]</span><br><span class="line">        bestFriend  <span class="operator">&lt;-</span> map[<span class="string">&quot;best_friend&quot;</span>]</span><br><span class="line">        friends     <span class="operator">&lt;-</span> map[<span class="string">&quot;friends&quot;</span>]</span><br><span class="line">        birthday    <span class="operator">&lt;-</span> (map[<span class="string">&quot;birthday&quot;</span>], <span class="type">DateTransform</span>())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Temperature</span>: <span class="title class_ inherited__">Mappable</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> celsius: <span class="type">Double</span>?</span><br><span class="line">    <span class="keyword">var</span> fahrenheit: <span class="type">Double</span>?</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init?</span>(<span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">mapping</span>(<span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">        celsius 	<span class="operator">&lt;-</span> map[<span class="string">&quot;celsius&quot;</span>]</span><br><span class="line">        fahrenheit 	<span class="operator">&lt;-</span> map[<span class="string">&quot;fahrenheit&quot;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们的类或结构体如上面的示例一样实现了协议，我们就可以方便的进行JSON和模型之间的转换</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="type">JSONString</span> <span class="operator">=</span> <span class="string">&quot;&#123;<span class="subst">\&quot;</span>weight<span class="subst">\&quot;</span>: 180&#125;&quot;</span></span><br><span class="line"><span class="keyword">let</span> user <span class="operator">=</span> <span class="type">User</span>(JSONString: <span class="type">JSONString</span>)</span><br><span class="line">user<span class="operator">?</span>.age <span class="operator">=</span> <span class="number">10</span></span><br><span class="line">user<span class="operator">?</span>.username <span class="operator">=</span> <span class="string">&quot;ash&quot;</span></span><br><span class="line">user<span class="operator">?</span>.birthday <span class="operator">=</span> <span class="type">Date</span>()</span><br><span class="line">user<span class="operator">?</span>.weight <span class="operator">=</span> <span class="number">180</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> jsonStr <span class="operator">=</span> user<span class="operator">?</span>.toJSONString(prettyPrint: <span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="built_in">debugPrint</span>(jsonStr)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然也可以通过<a target="_blank" rel="noopener" href="https://github.com/Hearst-DD/ObjectMapper/blob/master/Sources/Mapper.swift">Mapper</a>类来进行转换</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> user <span class="operator">=</span> <span class="type">Mapper</span>&lt;<span class="type">User</span>&gt;().map(JSONString: <span class="type">JSONString</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="type">JSONString</span> <span class="operator">=</span> <span class="type">Mapper</span>().toJSONString(user, prettyPrint: <span class="literal">true</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="嵌套对象的映射"><a href="#嵌套对象的映射" class="headerlink" title="嵌套对象的映射"></a>嵌套对象的映射</h6><p>正如前面所列，ObjectMapper支持嵌套对象的映射</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;distance&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;text&quot;</span> : <span class="string">&quot;102&quot;</span>,</span><br><span class="line">        <span class="string">&quot;value&quot;</span> : <span class="number">31</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们想要直接取出distance对象中的value值，可以设置如下mapping</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">mapping</span>(<span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">    distance <span class="operator">&lt;-</span> map[<span class="string">&quot;distance.value&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="自定义转换规则"><a href="#自定义转换规则" class="headerlink" title="自定义转换规则"></a>自定义转换规则</h6><p>ObjectMapper允许开发者在数据映射过程中指定转换规则</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">People</span>: <span class="title class_ inherited__">Mappable</span> &#123;</span><br><span class="line">   <span class="keyword">var</span> birthday: <span class="type">NSDate</span>?</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">required</span> <span class="keyword">init?</span>(<span class="keyword">_</span> <span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">       </span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">func</span> <span class="title function_">mapping</span>(<span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">       birthday <span class="operator">&lt;-</span> (map[<span class="string">&quot;birthday&quot;</span>], <span class="type">DateTransform</span>())</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">let</span> <span class="type">JSON</span> <span class="operator">=</span> <span class="string">&quot;<span class="subst">\&quot;</span>birthday<span class="subst">\&quot;</span>:1458117795332&quot;</span></span><br><span class="line">   <span class="keyword">let</span> result <span class="operator">=</span> <span class="type">Mapper</span>&lt;<span class="type">People</span>&gt;().map(<span class="type">JSON</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于我们指定了<code>birthday</code>的转换规则，所以上述代码在解析JSON数据的时候会将long类型转换成Date类型</p>
+<p>除了使用ObjectMapper给我们提供的转换规则外，我们还可以通过实现<a target="_blank" rel="noopener" href="https://github.com/Hearst-DD/ObjectMapper/blob/master/Sources/TransformType.swift">TransformType</a>协议来自定义我们的转换规则<br>ObjectMapper为我们提供了一个<a target="_blank" rel="noopener" href="https://github.com/Hearst-DD/ObjectMapper/blob/master/Sources/TransformOf.swift">TransformOf</a>类来实现转换结果，<a target="_blank" rel="noopener" href="https://github.com/Hearst-DD/ObjectMapper/blob/master/Sources/TransformOf.swift">TransformOf</a>实际就是实现了<a target="_blank" rel="noopener" href="https://github.com/Hearst-DD/ObjectMapper/blob/master/Sources/TransformOf.swift">TransformType</a>协议的，<a target="_blank" rel="noopener" href="https://github.com/Hearst-DD/ObjectMapper/blob/master/Sources/TransformOf.swift">TransformOf</a>有两个类型的参数和两个闭包参数，类型表示参与转换的数据的类型，闭包表示转换的规则</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">protocol</span> <span class="title class_">TransformType</span> &#123;</span><br><span class="line">    <span class="keyword">typealias</span> <span class="type">Object</span></span><br><span class="line">    <span class="keyword">typealias</span> <span class="type">JSON</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">transformFromJSON</span>(<span class="params">value</span>: <span class="type">AnyObject</span>?) -&gt; <span class="type">Object</span>?</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">transformToJSON</span>(<span class="params">value</span>: <span class="type">Object</span>?) -&gt; <span class="type">JSON</span>?</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> transform <span class="operator">=</span> <span class="type">TransformOf</span>&lt;<span class="type">Int</span>, <span class="type">String</span>&gt;(fromJSON: &#123; (value: <span class="type">String</span>?) -&gt; <span class="type">Int</span>? <span class="keyword">in</span> </span><br><span class="line">&#125;, toJSON: &#123; (value: <span class="type">Int</span>?) -&gt; <span class="type">String</span>? <span class="keyword">in</span> </span><br><span class="line">  <span class="comment">// transform value from Int? to String?</span></span><br><span class="line">  <span class="keyword">if</span> <span class="keyword">let</span> value <span class="operator">=</span> value &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="type">String</span>(value)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">func</span> <span class="title function_">mapping</span>(<span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">  id <span class="operator">&lt;-</span> (map[<span class="string">&quot;id&quot;</span>], transform)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="泛型对象"><a href="#泛型对象" class="headerlink" title="泛型对象"></a>泛型对象</h6><p>ObjectMapper同样可以处理泛型类型的参数，不过这个泛型类型需要在实现了Mappable协议的基础上才可以正常使用</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">User</span>: <span class="title class_ inherited__">Mappable</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> name: <span class="type">String</span>?</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init?</span>(<span class="keyword">_</span> <span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">mapping</span>(<span class="keyword">_</span> <span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">        name <span class="operator">&lt;-</span> map[<span class="string">&quot;name&quot;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Result</span>&lt;<span class="type">T</span>: <span class="type">Mappable</span>&gt;: <span class="title class_ inherited__">Mappable</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> result: <span class="type">T</span>?</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init?</span>(<span class="keyword">_</span> <span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">mapping</span>(<span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">        result <span class="operator">&lt;-</span> map[<span class="string">&quot;result&quot;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="type">JSON</span> <span class="operator">=</span> <span class="string">&quot;&#123;<span class="subst">\&quot;</span>result<span class="subst">\&quot;</span>: &#123;<span class="subst">\&quot;</span>name<span class="subst">\&quot;</span>: <span class="subst">\&quot;</span>anenn<span class="subst">\&quot;</span>&#125;&#125;&quot;</span></span><br><span class="line"><span class="keyword">let</span> result <span class="operator">=</span> <span class="type">Mapper</span>&lt;<span class="type">Result</span>&lt;<span class="type">User</span>&gt;&gt;().map(<span class="type">JSON</span>)</span><br></pre></td></tr></table></figure>
+
+<p>基本上的大部分常用用法都介绍完了，满足日常的开发需求应该是没问题的，下面我们要研究一下源码部分</p>
+<h1 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h1><h6 id="功能分类"><a href="#功能分类" class="headerlink" title="功能分类"></a>功能分类</h6><p>根据实现的思路来分类应该可以分成三类：</p>
+<ol>
+<li><strong>Core 部分</strong></li>
+<li><strong>Operators 部分</strong></li>
+<li><strong>Transforms 部分</strong></li>
+</ol>
+<p>其实 <strong>core</strong> 和 <strong>Operators</strong> 也可以归为一类，但是拆开来看更加容易理解，还是拆开来吧。<br>因为源代码比较多，这篇文章先介绍 <strong>Core</strong> 部分，了解这部分基本上的实现思路就已经很明确了，然后在最后会介绍一下 <a target="_blank" rel="noopener" href="https://github.com/krzysztofzablocki/Sourcery"><strong>Sourcery</strong></a> 的自动代码生成，不然 <code>mapping</code> 方法中的代码写的让人很绝望。</p>
+<h6 id="Mappable"><a href="#Mappable" class="headerlink" title="Mappable"></a>Mappable</h6><p>跟<code>Mappable</code>相关的协议有<code>StaticMappable</code>、<code>ImmutableMappable</code>，我们先将 <code>StaticMappable</code> 和 <code>ImmutableMappable</code> 这两种协议的处理逻辑放一放，直接关注最重要的 <code>Mappable</code> 协议的实现，了解了 <code>Mappable</code> 另外两个很好理解。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// BaseMappable should not be implemented directly. Mappable or StaticMappable should be used instead</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">protocol</span> <span class="title class_">BaseMappable</span> &#123;</span><br><span class="line">	<span class="comment">/// This function is where all variable mappings should occur. It is executed by Mapper during the mapping (serialization and deserialization) process.</span></span><br><span class="line">	<span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">mapping</span>(<span class="params">map</span>: <span class="type">Map</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">protocol</span> <span class="title class_">Mappable</span>: <span class="title class_ inherited__">BaseMappable</span> &#123;</span><br><span class="line">    <span class="comment">/// This function can be used to validate JSON prior to mapping. Return nil to cancel mapping at this point</span></span><br><span class="line">    <span class="keyword">init?</span>(<span class="params">map</span>: <span class="type">Map</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">extension</span> <span class="title class_">BaseMappable</span> &#123;</span><br><span class="line">	<span class="comment">/// Initializes object from a JSON String</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">init?</span>(<span class="params">JSONString</span>: <span class="type">String</span>, <span class="params">context</span>: <span class="type">MapContext</span>? <span class="operator">=</span> <span class="literal">nil</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">let</span> obj: <span class="keyword">Self</span> <span class="operator">=</span> <span class="type">Mapper</span>(context: context).map(JSONString: <span class="type">JSONString</span>) &#123;</span><br><span class="line">			<span class="keyword">self</span> <span class="operator">=</span> obj</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/// Initializes object from a JSON Dictionary</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">init?</span>(<span class="params">JSON</span>: [<span class="params">String</span>: <span class="keyword">Any</span>], <span class="params">context</span>: <span class="type">MapContext</span>? <span class="operator">=</span> <span class="literal">nil</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">let</span> obj: <span class="keyword">Self</span> <span class="operator">=</span> <span class="type">Mapper</span>(context: context).map(JSON: <span class="type">JSON</span>) &#123;</span><br><span class="line">			<span class="keyword">self</span> <span class="operator">=</span> obj</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/// Returns the JSON Dictionary for the object</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">func</span> <span class="title function_">toJSON</span>() -&gt; [<span class="type">String</span>: <span class="keyword">Any</span>] &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="type">Mapper</span>().toJSON(<span class="keyword">self</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/// Returns the JSON String for the object</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">func</span> <span class="title function_">toJSONString</span>(<span class="params">prettyPrint</span>: <span class="type">Bool</span> <span class="operator">=</span> <span class="literal">false</span>) -&gt; <span class="type">String</span>? &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="type">Mapper</span>().toJSONString(<span class="keyword">self</span>, prettyPrint: prettyPrint)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>BaseMappable</code>为实现 <code>Mappable</code> 的 <strong>Model</strong> 提供了四种实例方法，有两个是初始化方法，当然你也可以自己新建一个 <code>Mapper</code> 来初始化；还有两个是 <strong>Model</strong> 转 <strong>JSON</strong> 的方法。</p>
+<h6 id="Mapper"><a href="#Mapper" class="headerlink" title="Mapper"></a>Mapper</h6><p>继续看 <code>Mapper</code> 的代码，Mapper中核心代码为下面的方法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">/// Maps a JSON dictionary to an object that conforms to Mappable</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">func</span> <span class="title function_">map</span>(<span class="params">JSON</span>: [<span class="params">String</span>: <span class="keyword">Any</span>]) -&gt; <span class="type">N</span>? &#123;</span><br><span class="line">	<span class="keyword">let</span> map <span class="operator">=</span> <span class="type">Map</span>(mappingType: .fromJSON, JSON: <span class="type">JSON</span>, context: context, shouldIncludeNilValues: shouldIncludeNilValues)</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> <span class="keyword">let</span> klass <span class="operator">=</span> <span class="type">N</span>.<span class="keyword">self</span> <span class="keyword">as?</span> <span class="type">StaticMappable</span>.<span class="keyword">Type</span> &#123; <span class="comment">// Check if object is StaticMappable</span></span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">var</span> object <span class="operator">=</span> klass.objectForMapping(map: map) <span class="keyword">as?</span> <span class="type">N</span> &#123;</span><br><span class="line">			object.mapping(map: map)</span><br><span class="line">			<span class="keyword">return</span> object</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">let</span> klass <span class="operator">=</span> <span class="type">N</span>.<span class="keyword">self</span> <span class="keyword">as?</span> <span class="type">Mappable</span>.<span class="keyword">Type</span> &#123; <span class="comment">// Check if object is Mappable</span></span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">var</span> object <span class="operator">=</span> klass.<span class="keyword">init</span>(map: map) <span class="keyword">as?</span> <span class="type">N</span> &#123;</span><br><span class="line">			object.mapping(map: map)</span><br><span class="line">			<span class="keyword">return</span> object</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">let</span> klass <span class="operator">=</span> <span class="type">N</span>.<span class="keyword">self</span> <span class="keyword">as?</span> <span class="type">ImmutableMappable</span>.<span class="keyword">Type</span> &#123; <span class="comment">// Check if object is ImmutableMappable</span></span><br><span class="line">		<span class="keyword">do</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">try</span> klass.<span class="keyword">init</span>(map: map) <span class="keyword">as?</span> <span class="type">N</span></span><br><span class="line">		&#125; <span class="keyword">catch</span> <span class="keyword">let</span> error &#123;</span><br><span class="line">			<span class="keyword">#if</span> <span class="type">DEBUG</span></span><br><span class="line">			<span class="keyword">let</span> exception: <span class="type">NSException</span></span><br><span class="line">			<span class="keyword">if</span> <span class="keyword">let</span> mapError <span class="operator">=</span> error <span class="keyword">as?</span> <span class="type">MapError</span> &#123;</span><br><span class="line">				exception <span class="operator">=</span> <span class="type">NSException</span>(name: .<span class="keyword">init</span>(rawValue: <span class="string">&quot;MapError&quot;</span>), reason: mapError.description, userInfo: <span class="literal">nil</span>)</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				exception <span class="operator">=</span> <span class="type">NSException</span>(name: .<span class="keyword">init</span>(rawValue: <span class="string">&quot;ImmutableMappableError&quot;</span>), reason: error.localizedDescription, userInfo: <span class="literal">nil</span>)</span><br><span class="line">			&#125;</span><br><span class="line">			exception.raise()</span><br><span class="line">			<span class="keyword">#endif</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// Ensure BaseMappable is not implemented directly</span></span><br><span class="line">		<span class="built_in">assert</span>(<span class="literal">false</span>, <span class="string">&quot;BaseMappable should not be implemented directly. Please implement Mappable, StaticMappable or ImmutableMappable&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根据N的协议类型走不同的协议方法，最终得到 <code>object</code>。<br>让我们用 <code>Mappable</code> 来举例，先回到之前协议中的方法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mutation <span class="keyword">func</span> <span class="title function_">mapping</span>(<span class="params">map</span>: <span class="type">Map</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">init?</span>(<span class="params">map</span>: <span class="type">Map</span>)</span><br></pre></td></tr></table></figure>
+<p>这样对着看就很好理解了，<code>init?(map: Map)</code> 没有 <code>return nil</code> 的时候，就会调用 <code>func mapping(map: Map)</code> 方法来指定映射关系，那这个映射关系有什么作用呢，后面会慢慢介绍。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extension</span> <span class="title class_">Mapper</span> &#123;</span><br><span class="line">	<span class="comment">// MARK: Functions that create JSON from objects	</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">///Maps an object that conforms to Mappable to a JSON dictionary &lt;String, Any&gt;</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">func</span> <span class="title function_">toJSON</span>(<span class="keyword">_</span> <span class="params">object</span>: <span class="type">N</span>) -&gt; [<span class="type">String</span>: <span class="keyword">Any</span>] &#123;</span><br><span class="line">		<span class="keyword">var</span> mutableObject <span class="operator">=</span> object</span><br><span class="line">		<span class="keyword">let</span> map <span class="operator">=</span> <span class="type">Map</span>(mappingType: .toJSON, JSON: [:], context: context, shouldIncludeNilValues: shouldIncludeNilValues)</span><br><span class="line">		mutableObject.mapping(map: map)</span><br><span class="line">		<span class="keyword">return</span> map.<span class="type">JSON</span></span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">///Maps an array of Objects to an array of JSON dictionaries [[String: Any]]</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">func</span> <span class="title function_">toJSONArray</span>(<span class="keyword">_</span> <span class="params">array</span>: [<span class="type">N</span>]) -&gt; [[<span class="type">String</span>: <span class="keyword">Any</span>]] &#123;</span><br><span class="line">		<span class="keyword">return</span> array.map &#123;</span><br><span class="line">			<span class="comment">// convert every element in array to JSON dictionary equivalent</span></span><br><span class="line">			<span class="keyword">self</span>.toJSON(<span class="variable">$0</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">///Maps a dictionary of Objects that conform to Mappable to a JSON dictionary of dictionaries.</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">func</span> <span class="title function_">toJSONDictionary</span>(<span class="keyword">_</span> <span class="params">dictionary</span>: [<span class="params">String</span>: <span class="type">N</span>]) -&gt; [<span class="type">String</span>: [<span class="type">String</span>: <span class="keyword">Any</span>]] &#123;</span><br><span class="line">		<span class="keyword">return</span> dictionary.map &#123; (arg: (key: <span class="type">String</span>, value: <span class="type">N</span>)) <span class="keyword">in</span></span><br><span class="line">			<span class="comment">// convert every value in dictionary to its JSON dictionary equivalent</span></span><br><span class="line">			<span class="keyword">return</span> (arg.key, <span class="keyword">self</span>.toJSON(arg.value))</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">///Maps a dictionary of Objects that conform to Mappable to a JSON dictionary of dictionaries.</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">func</span> <span class="title function_">toJSONDictionaryOfArrays</span>(<span class="keyword">_</span> <span class="params">dictionary</span>: [<span class="params">String</span>: [<span class="type">N</span>]]) -&gt; [<span class="type">String</span>: [[<span class="type">String</span>: <span class="keyword">Any</span>]]] &#123;</span><br><span class="line">		<span class="keyword">return</span> dictionary.map &#123; (arg: (key: <span class="type">String</span>, value: [<span class="type">N</span>])) <span class="keyword">in</span></span><br><span class="line">			<span class="comment">// convert every value (array) in dictionary to its JSON dictionary equivalent</span></span><br><span class="line">			<span class="keyword">return</span> (arg.key, <span class="keyword">self</span>.toJSONArray(arg.value))</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/// Maps an Object to a JSON string with option of pretty formatting</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">func</span> <span class="title function_">toJSONString</span>(<span class="keyword">_</span> <span class="params">object</span>: <span class="type">N</span>, <span class="params">prettyPrint</span>: <span class="type">Bool</span> <span class="operator">=</span> <span class="literal">false</span>) -&gt; <span class="type">String</span>? &#123;</span><br><span class="line">		<span class="keyword">let</span> <span class="type">JSONDict</span> <span class="operator">=</span> toJSON(object)</span><br><span class="line">		</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Mapper</span>.toJSONString(<span class="type">JSONDict</span> <span class="keyword">as</span> <span class="keyword">Any</span>, prettyPrint: prettyPrint)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Maps an array of Objects to a JSON string with option of pretty formatting	</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">func</span> <span class="title function_">toJSONString</span>(<span class="keyword">_</span> <span class="params">array</span>: [<span class="type">N</span>], <span class="params">prettyPrint</span>: <span class="type">Bool</span> <span class="operator">=</span> <span class="literal">false</span>) -&gt; <span class="type">String</span>? &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="type">JSONDict</span> <span class="operator">=</span> toJSONArray(array)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="type">Mapper</span>.toJSONString(<span class="type">JSONDict</span> <span class="keyword">as</span> <span class="keyword">Any</span>, prettyPrint: prettyPrint)</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/// Converts an Object to a JSON string with option of pretty formatting</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">func</span> <span class="title function_">toJSONString</span>(<span class="keyword">_</span> <span class="params">JSONObject</span>: <span class="keyword">Any</span>, <span class="params">prettyPrint</span>: <span class="type">Bool</span>) -&gt; <span class="type">String</span>? &#123;</span><br><span class="line">		<span class="keyword">let</span> options: <span class="type">JSONSerialization</span>.<span class="type">WritingOptions</span> <span class="operator">=</span> prettyPrint <span class="operator">?</span> .prettyPrinted : []</span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">let</span> <span class="type">JSON</span> <span class="operator">=</span> <span class="type">Mapper</span>.toJSONData(<span class="type">JSONObject</span>, options: options) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="type">String</span>(data: <span class="type">JSON</span>, encoding: <span class="type">String</span>.<span class="type">Encoding</span>.utf8)</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/// Converts an Object to JSON data with options</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">func</span> <span class="title function_">toJSONData</span>(<span class="keyword">_</span> <span class="params">JSONObject</span>: <span class="keyword">Any</span>, <span class="params">options</span>: <span class="type">JSONSerialization</span>.<span class="type">WritingOptions</span>) -&gt; <span class="type">Data</span>? &#123;</span><br><span class="line">		<span class="keyword">if</span> <span class="type">JSONSerialization</span>.isValidJSONObject(<span class="type">JSONObject</span>) &#123;</span><br><span class="line">			<span class="keyword">let</span> <span class="type">JSONData</span>: <span class="type">Data</span>?</span><br><span class="line">			<span class="keyword">do</span> &#123;</span><br><span class="line">				<span class="type">JSONData</span> <span class="operator">=</span> <span class="keyword">try</span> <span class="type">JSONSerialization</span>.data(withJSONObject: <span class="type">JSONObject</span>, options: options)</span><br><span class="line">			&#125; <span class="keyword">catch</span> <span class="keyword">let</span> error &#123;</span><br><span class="line">				<span class="built_in">print</span>(error)</span><br><span class="line">				<span class="type">JSONData</span> <span class="operator">=</span> <span class="literal">nil</span></span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">return</span> <span class="type">JSONData</span></span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Mapper</code> 还有一些 <code>toJSON</code> 的方法，这边的方法也很好理解，具体的实现都是在 <code>Map</code> 的一些方法，要知道这些方法具体实现就需要继续往下看。</p>
+<h6 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h6><p>Map 中有两个核心的方法，先看自定义下标的方法，分析一下最重要的那个自定义下标的方法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Sets the current mapper value and key.</span></span><br><span class="line"><span class="comment">/// The Key paramater can be a period separated string (ex. &quot;distance.value&quot;) to access sub objects.</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">subscript</span>(<span class="params">key</span>: <span class="type">String</span>) -&gt; <span class="type">Map</span> &#123;</span><br><span class="line">	<span class="comment">// save key and value associated to it</span></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">self</span>.subscript(key: key)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">subscript</span>(<span class="params">key</span>: <span class="type">String</span>, <span class="params">delimiter</span> <span class="params">delimiter</span>: <span class="type">String</span>) -&gt; <span class="type">Map</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">self</span>.subscript(key: key, delimiter: delimiter)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">subscript</span>(<span class="params">key</span>: <span class="type">String</span>, <span class="params">nested</span> <span class="params">nested</span>: <span class="type">Bool</span>) -&gt; <span class="type">Map</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">self</span>.subscript(key: key, nested: nested)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">subscript</span>(<span class="params">key</span>: <span class="type">String</span>, <span class="params">nested</span> <span class="params">nested</span>: <span class="type">Bool</span>, <span class="params">delimiter</span> <span class="params">delimiter</span>: <span class="type">String</span>) -&gt; <span class="type">Map</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">self</span>.subscript(key: key, nested: nested, delimiter: delimiter)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">subscript</span>(<span class="params">key</span>: <span class="type">String</span>, <span class="params">ignoreNil</span> <span class="params">ignoreNil</span>: <span class="type">Bool</span>) -&gt; <span class="type">Map</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">self</span>.subscript(key: key, ignoreNil: ignoreNil)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">subscript</span>(<span class="params">key</span>: <span class="type">String</span>, <span class="params">delimiter</span> <span class="params">delimiter</span>: <span class="type">String</span>, <span class="params">ignoreNil</span> <span class="params">ignoreNil</span>: <span class="type">Bool</span>) -&gt; <span class="type">Map</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">self</span>.subscript(key: key, delimiter: delimiter, ignoreNil: ignoreNil)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">subscript</span>(<span class="params">key</span>: <span class="type">String</span>, <span class="params">nested</span> <span class="params">nested</span>: <span class="type">Bool</span>, <span class="params">ignoreNil</span> <span class="params">ignoreNil</span>: <span class="type">Bool</span>) -&gt; <span class="type">Map</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">self</span>.subscript(key: key, nested: nested, ignoreNil: ignoreNil)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">subscript</span>(<span class="params">key</span>: <span class="type">String</span>, <span class="params">nested</span> <span class="params">nested</span>: <span class="type">Bool</span>?, <span class="params">delimiter</span> <span class="params">delimiter</span>: <span class="type">String</span>, <span class="params">ignoreNil</span> <span class="params">ignoreNil</span>: <span class="type">Bool</span>) -&gt; <span class="type">Map</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">self</span>.subscript(key: key, nested: nested, delimiter: delimiter, ignoreNil: ignoreNil)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">`subscript`</span>(<span class="params">key</span>: <span class="type">String</span>, <span class="params">nested</span>: <span class="type">Bool</span>? <span class="operator">=</span> <span class="literal">nil</span>, <span class="params">delimiter</span>: <span class="type">String</span> <span class="operator">=</span> <span class="string">&quot;.&quot;</span>, <span class="params">ignoreNil</span>: <span class="type">Bool</span> <span class="operator">=</span> <span class="literal">false</span>) -&gt; <span class="type">Map</span> &#123;</span><br><span class="line">	<span class="comment">// save key and value associated to it</span></span><br><span class="line">	currentKey <span class="operator">=</span> key</span><br><span class="line">	keyIsNested <span class="operator">=</span> nested <span class="operator">??</span> key.contains(delimiter)</span><br><span class="line">	nestedKeyDelimiter <span class="operator">=</span> delimiter</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> mappingType <span class="operator">==</span> .fromJSON &#123;</span><br><span class="line">		<span class="comment">// check if a value exists for the current key</span></span><br><span class="line">		<span class="comment">// do this pre-check for performance reasons</span></span><br><span class="line">		<span class="keyword">if</span> keyIsNested &#123;</span><br><span class="line">			<span class="comment">// break down the components of the key that are separated by delimiter</span></span><br><span class="line">			(isKeyPresent, currentValue) <span class="operator">=</span> valueFor(<span class="type">ArraySlice</span>(key.components(separatedBy: delimiter)), dictionary: <span class="type">JSON</span>)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">let</span> object <span class="operator">=</span> <span class="type">JSON</span>[key]</span><br><span class="line">			<span class="keyword">let</span> isNSNull <span class="operator">=</span> object <span class="keyword">is</span> <span class="type">NSNull</span></span><br><span class="line">			isKeyPresent <span class="operator">=</span> isNSNull <span class="operator">?</span> <span class="literal">true</span> : object <span class="operator">!=</span> <span class="literal">nil</span></span><br><span class="line">			currentValue <span class="operator">=</span> isNSNull <span class="operator">?</span> <span class="literal">nil</span> : object</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// update isKeyPresent if ignoreNil is true</span></span><br><span class="line">		<span class="keyword">if</span> ignoreNil <span class="operator">&amp;&amp;</span> currentValue <span class="operator">==</span> <span class="literal">nil</span> &#123;</span><br><span class="line">			isKeyPresent <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">self</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>另一个核心的方法就是通过自定义下标的值，从JSON字典中根据key获取了value。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Fetch value from JSON dictionary, loop through keyPathComponents until we reach the desired object</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">valueFor</span>(<span class="keyword">_</span> <span class="params">keyPathComponents</span>: <span class="type">ArraySlice</span>&lt;<span class="type">String</span>&gt;, <span class="params">dictionary</span>: [<span class="params">String</span>: <span class="keyword">Any</span>]) -&gt; (<span class="type">Bool</span>, <span class="keyword">Any</span><span class="operator">?</span>) &#123;</span><br><span class="line">	<span class="comment">// Implement it as a tail recursive function.</span></span><br><span class="line">	<span class="keyword">if</span> keyPathComponents.isEmpty &#123;</span><br><span class="line">		<span class="keyword">return</span> (<span class="literal">false</span>, <span class="literal">nil</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> <span class="keyword">let</span> keyPath <span class="operator">=</span> keyPathComponents.first &#123;</span><br><span class="line">		<span class="keyword">let</span> isTail <span class="operator">=</span> keyPathComponents.count <span class="operator">==</span> <span class="number">1</span></span><br><span class="line">		<span class="keyword">let</span> object <span class="operator">=</span> dictionary[keyPath]</span><br><span class="line">		<span class="keyword">if</span> object <span class="keyword">is</span> <span class="type">NSNull</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> (isTail, <span class="literal">nil</span>)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> keyPathComponents.count <span class="operator">&gt;</span> <span class="number">1</span>, <span class="keyword">let</span> dict <span class="operator">=</span> object <span class="keyword">as?</span> [<span class="type">String</span>: <span class="keyword">Any</span>] &#123;</span><br><span class="line">			<span class="keyword">let</span> tail <span class="operator">=</span> keyPathComponents.dropFirst()</span><br><span class="line">			<span class="keyword">return</span> valueFor(tail, dictionary: dict)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> keyPathComponents.count <span class="operator">&gt;</span> <span class="number">1</span>, <span class="keyword">let</span> array <span class="operator">=</span> object <span class="keyword">as?</span> [<span class="keyword">Any</span>] &#123;</span><br><span class="line">			<span class="keyword">let</span> tail <span class="operator">=</span> keyPathComponents.dropFirst()</span><br><span class="line">			<span class="keyword">return</span> valueFor(tail, array: array)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> (isTail <span class="operator">&amp;&amp;</span> object <span class="operator">!=</span> <span class="literal">nil</span>, object)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> (<span class="literal">false</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// Fetch value from JSON Array, loop through keyPathComponents them until we reach the desired object</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">valueFor</span>(<span class="keyword">_</span> <span class="params">keyPathComponents</span>: <span class="type">ArraySlice</span>&lt;<span class="type">String</span>&gt;, <span class="params">array</span>: [<span class="keyword">Any</span>]) -&gt; (<span class="type">Bool</span>, <span class="keyword">Any</span><span class="operator">?</span>) &#123;</span><br><span class="line">	<span class="comment">// Implement it as a tail recursive function.</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> keyPathComponents.isEmpty &#123;</span><br><span class="line">		<span class="keyword">return</span> (<span class="literal">false</span>, <span class="literal">nil</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//Try to convert keypath to Int as index</span></span><br><span class="line">	<span class="keyword">if</span> <span class="keyword">let</span> keyPath <span class="operator">=</span> keyPathComponents.first,</span><br><span class="line">		<span class="keyword">let</span> index <span class="operator">=</span> <span class="type">Int</span>(keyPath) , index <span class="operator">&gt;=</span> <span class="number">0</span> <span class="operator">&amp;&amp;</span> index <span class="operator">&lt;</span> array.count &#123;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">let</span> isTail <span class="operator">=</span> keyPathComponents.count <span class="operator">==</span> <span class="number">1</span></span><br><span class="line">		<span class="keyword">let</span> object <span class="operator">=</span> array[index]</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">if</span> object <span class="keyword">is</span> <span class="type">NSNull</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> (isTail, <span class="literal">nil</span>)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> keyPathComponents.count <span class="operator">&gt;</span> <span class="number">1</span>, <span class="keyword">let</span> array <span class="operator">=</span> object <span class="keyword">as?</span> [<span class="keyword">Any</span>]  &#123;</span><br><span class="line">			<span class="keyword">let</span> tail <span class="operator">=</span> keyPathComponents.dropFirst()</span><br><span class="line">			<span class="keyword">return</span> valueFor(tail, array: array)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span>  keyPathComponents.count <span class="operator">&gt;</span> <span class="number">1</span>, <span class="keyword">let</span> dict <span class="operator">=</span> object <span class="keyword">as?</span> [<span class="type">String</span>: <span class="keyword">Any</span>] &#123;</span><br><span class="line">			<span class="keyword">let</span> tail <span class="operator">=</span> keyPathComponents.dropFirst()</span><br><span class="line">			<span class="keyword">return</span> valueFor(tail, dictionary: dict)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> (isTail, object)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> (<span class="literal">false</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看到这里其实 <strong>Core</strong> 部分的代码基本上就看完了，还有一些toJSON的方法，其他的类同的方法，那些对于理解 <a target="_blank" rel="noopener" href="https://github.com/Hearst-DD/ObjectMapper"><strong>ObjectMapper</strong></a> 没有影响。</p>
+<h1 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h1><h6 id="Sourcery"><a href="#Sourcery" class="headerlink" title="Sourcery"></a>Sourcery</h6><p>简单介绍一些 <a target="_blank" rel="noopener" href="https://github.com/krzysztofzablocki/Sourcery"><strong>Sourcery</strong></a> 这个自动生成代码的工具。<br><a target="_blank" rel="noopener" href="https://github.com/krzysztofzablocki/Sourcery">Sourcery</a> 是一个 Swift 代码生成的开源命令行工具，它 (通过 <a target="_blank" rel="noopener" href="https://github.com/jpsim/SourceKitten">SourceKitten</a> 使用 Apple 的 SourceKit 框架，来分析你的源码中的各种声明和标注，然后套用你预先定义的 <a target="_blank" rel="noopener" href="https://github.com/kylef/Stencil">Stencil</a> 模板 (一种语法和 <a target="_blank" rel="noopener" href="https://mustache.github.io/#demo">Mustache</a> 很相似的 Swift 模板语言) 进行代码生成。我们下面会先看一个使用  <a target="_blank" rel="noopener" href="https://github.com/jpsim/SourceKitten">SourceKitten</a>  最简单的例子，来说明如何使用这个工具。然后再针对我们的字典转换问题进行实现。</p>
+<p>安装  <a target="_blank" rel="noopener" href="https://github.com/jpsim/SourceKitten">SourceKitten</a>  非常简单，<code>brew install sourcery</code> 即可。不过，如果你想要在实际项目中使用这个工具的话，我建议直接<a target="_blank" rel="noopener" href="https://github.com/krzysztofzablocki/Sourcery/releases">从发布页面</a>下载二进制文件，放到 Xcode 项目目录中，然后添加 Run Script 的 Build Phase 来在每次编译的时候自动生成。</p>
+<p>之前说过了 <code>mapping</code> 函数实现起来过于臃肿耗时，你可以用插件来生成 <code>mapping</code> 函数<br><a target="_blank" rel="noopener" href="https://github.com/liyanhuadev/ObjectMapper-Plugin">用于生成<code>Mappable</code>和<code>ImmutableMappable</code>代码的Xcode插件</a><br>但是Xcode 8之后不让用插件了，除非用野路子重签名的方式安装插件，而且安装了还不一定能用，反正那个很坑，还要复制一个Xcode用来打包上传，本弱鸡电脑根本没那么多空间。<br>两个方法我都试过了， 个人觉得 <a target="_blank" rel="noopener" href="https://github.com/jpsim/SourceKitten">SourceKitten</a> 更加适合，那个插件的确实不好用，还有一种方式，可以在网站上自动生成，然后复制进来。<br>接下来就可以尝试以下书写模板代码了。可以参照 <a target="_blank" rel="noopener" href="https://cdn.rawgit.com/krzysztofzablocki/Sourcery/master/docs/index.html">Sourcery 文档</a> 关于单个 <a target="_blank" rel="noopener" href="https://cdn.rawgit.com/krzysztofzablocki/Sourcery/master/docs/Classes/Type.html">Type</a> 和 <a target="_blank" rel="noopener" href="https://cdn.rawgit.com/krzysztofzablocki/Sourcery/master/docs/Classes/Variable.html">Variable</a> 的部分的内容来实现。另外，可以考虑使用 <code>--watch</code> 模式来在文件改变时自动生成代码，来实时观察结果。</p>
+<p>如果声明一个struct</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protocol</span> <span class="title class_">AutoMappable</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> firstName: <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> lastName: <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> birthDate: <span class="type">Date</span></span><br><span class="line">    <span class="keyword">var</span> friend: [<span class="type">String</span>]</span><br><span class="line">    <span class="keyword">var</span> lalala: <span class="type">Dictionary</span>&lt;<span class="type">String</span>, <span class="keyword">Any</span>&gt;</span><br><span class="line">    <span class="keyword">var</span> age: <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Calendar</span>.current.dateComponents([.year],</span><br><span class="line">                                               from: birthDate,</span><br><span class="line">                                               to: <span class="type">Date</span>()).year <span class="operator">??</span> <span class="operator">-</span><span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">Person</span>: <span class="title class_ inherited__">AutoMappable</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>下面是我的模版代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">import ObjectMapper</span><br><span class="line"></span><br><span class="line">&#123;% for type in types.implementing.AutoMappable|struct %&#125;</span><br><span class="line">// MARK: &#123;&#123; type.name &#125;&#125; Mappable</span><br><span class="line">extension &#123;&#123;type.name&#125;&#125;: Mappable &#123;</span><br><span class="line"></span><br><span class="line">    init?(map: Map) &#123;</span><br><span class="line">        return nil</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    mutating func mapping(map: Map) &#123;</span><br><span class="line">    &#123;% for variable in type.storedVariables %&#125; </span><br><span class="line">        &#123;% if variable.isArray %&#125;</span><br><span class="line">            &#123;&#123;variable.name&#125;&#125; &lt;- map[&quot;&#123;&#123;variable.name&#125;&#125;.0.value&quot;]</span><br><span class="line">        &#123;% elif variable.isDictionary %&#125;</span><br><span class="line">            &#123;&#123;variable.name&#125;&#125; &lt;- map[&quot;&#123;&#123;variable.name&#125;&#125;.value&quot;]</span><br><span class="line">        &#123;% else %&#125;</span><br><span class="line">            &#123;&#123;variable.name&#125;&#125; &lt;- map[&quot;&#123;&#123;variable.name&#125;&#125;&quot;]</span><br><span class="line">        &#123;% endif %&#125;</span><br><span class="line">    &#123;% endfor %&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure>
+<p>自动生成的代码显示如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ObjectMapper</span><br><span class="line"></span><br><span class="line"><span class="comment">// MARK: Person Mappable</span></span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">Person</span>: <span class="title class_ inherited__">Mappable</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init?</span>(<span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">mapping</span>(<span class="params">map</span>: <span class="type">Map</span>) &#123;</span><br><span class="line">            firstName <span class="operator">&lt;-</span> map[<span class="string">&quot;firstName&quot;</span>]</span><br><span class="line">            lastName  <span class="operator">&lt;-</span> map[<span class="string">&quot;lastName&quot;</span>]</span><br><span class="line">            birthDate <span class="operator">&lt;-</span> map[<span class="string">&quot;birthDate&quot;</span>]</span><br><span class="line">            friend    <span class="operator">&lt;-</span> map[<span class="string">&quot;friend.0.value&quot;</span>]</span><br><span class="line">            lalala    <span class="operator">&lt;-</span> map[<span class="string">&quot;lalala.value&quot;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的这种方式显然是运行时最高效的方式，所以强烈推荐是这个方法来使用ObjectMapper。<br>后面会继续介绍 <strong>ObjectMapper</strong> 其他源码的实现思路。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://upload-images.jianshu.io/upload_images/225849-e6f158ed05650e48.gif"></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://cdn.rawgit.com/krzysztofzablocki/Sourcery/master/docs/index.html">Sourcery Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://onevcat.com/2018/03/swift-meta/">不同角度看问题 - 从 Codable 到 Swift 元编程</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.yuhanle.com/2018/07/05/json-analysis-in-swift/">数据序列化框架在 Swift 日常开发中的应用
+</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5b0bb472518825157914f707#heading-0">JSON的第三方库源码阅读分享(ObjectMapper, SwiftyJSON, 以及Codable)</a></li>
+</ul>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    
+    <section id="share">
+      <div class="header"><span>分享文章</span></div>
+      <div class="body">
+        <div class="link"><input class="copy-area" readonly="true" id="copy-link" value="https://aichiko0225.github.com/memoirs/20180803/iOS/objectMapper-1/" /></div>
+        <div class="social-wrap dis-select"><a class="social share-item wechat" onclick="util.toggle(&quot;qrcode-wechat&quot;)"><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/b32ef3da1162a.svg" /></a><a class="social share-item weibo" target="_blank" rel="external nofollow noopener noreferrer" href="https://service.weibo.com/share/share.php?url=https://aichiko0225.github.com/memoirs/20180803/iOS/objectMapper-1/&title=ObjectMapper实践（一） - ash&summary=前言在OC阶段使用模型转换的框架有很多，代表有：JSONModel、 YYModel、MJExtension。OC的原理主要是通过runtime 获取类的属性，在运行时获取Model的字段名集合，遍历该集合，拿Key去JSON中取值并..."><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/80c07e4dbb303.svg" /></a><a class="social share-item email" href="mailto:?subject=ObjectMapper实践（一） - ash&amp;body=https://aichiko0225.github.com/memoirs/20180803/iOS/objectMapper-1/"><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/a1b00e20f425d.svg" /></a><a class="social share-item link" onclick="util.copy(&quot;copy-link&quot;, &quot;复制成功&quot;)"><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/8411ed322ced6.svg" /></a></div>
+        
+        <div class="qrcode" id="qrcode-wechat" style="opacity:0;height:0">
+          <img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=https://aichiko0225.github.com/memoirs/20180803/iOS/objectMapper-1/"/>
+        </div>
+        
+      </div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/memoirs/20200123/wuhan/wuhan/">2020-01-23 武汉封城第一天</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/memoirs/20170706/linux/">Linux 基础</a></div></section></div>
+
+
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">ash66</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%89%80%E4%BB%A5%E5%A6%82%E6%9E%9C%E6%98%AF%E9%A1%B9%E7%9B%AE%E4%B8%AD%E6%9C%89Swift%E7%9A%84Model%EF%BC%8C%E5%B0%B1%E9%9C%80%E8%A6%81%E6%89%BE%E5%88%B0%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A5%BD%E7%9A%84%E8%BD%AC%E6%8D%A2%E6%96%B9%E5%BC%8F%E3%80%82"><span class="toc-text">所以如果是项目中有Swift的Model，就需要找到一个更好的转换方式。</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#ObjectMapper%E7%89%B9%E6%80%A7"><span class="toc-text">ObjectMapper特性</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#ObjectMapper%E5%8F%AF%E4%BB%A5%E6%98%A0%E5%B0%84%E7%94%B1%E4%BB%A5%E4%B8%8B%E7%B1%BB%E5%9E%8B%E7%BB%84%E6%88%90%E7%9A%84%E7%B1%BB%EF%BC%9A"><span class="toc-text">ObjectMapper可以映射由以下类型组成的类：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-text">基本用法</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%B5%8C%E5%A5%97%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%98%A0%E5%B0%84"><span class="toc-text">嵌套对象的映射</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BD%AC%E6%8D%A2%E8%A7%84%E5%88%99"><span class="toc-text">自定义转换规则</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%B3%9B%E5%9E%8B%E5%AF%B9%E8%B1%A1"><span class="toc-text">泛型对象</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="toc-text">源码解析</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E5%88%86%E7%B1%BB"><span class="toc-text">功能分类</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Mappable"><span class="toc-text">Mappable</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Mapper"><span class="toc-text">Mapper</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Map"><span class="toc-text">Map</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#Sourcery"><span class="toc-text">Sourcery</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>回到顶部</span></a></div></widget>
+</div></aside><div class='float-panel blur'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/memoirs/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"skip_search":null,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js`,
+    marked: `https://cdn.jsdelivr.net/npm/marked@13.0.1/lib/marked.umd.min.js`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
+    
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
+
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+
+<!-- required -->
+<script src="/memoirs/js/main.js?v=1.29.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
+
+
+
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"},"twikoo":{"js":"/js/services/twikoo_latest_comment.js"},"waline":{"js":"/js/services/waline_latest_comment.js"},"artalk":{"js":"/js/services/artalk_latest_comment.js"},"giscus":{"js":"/js/services/giscus_latest_comment.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>
