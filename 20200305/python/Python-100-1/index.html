@@ -1,0 +1,919 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
+  
+  <meta name="generator" content="Hexo 7.3.0">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>Python-100天(一) - ash</title>
+
+  
+    <meta name="description" content="之前Python就已经学过了，Flask也玩的一溜一溜的。但是间隔时间有些长，所以就找个一个项目重新温习一下，顺便记录一下。这个系列文章会根据 Python - 100天 的流程走下去，当然其中有一些重复性的我就不介绍了，Django这个就不介绍了，因为跟Flask重复了，而且Django体量太大，不适合拿来用于学习。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python-100天(一)">
+<meta property="og:url" content="https://aichiko0225.github.com/memoirs/20200305/python/Python-100-1/index.html">
+<meta property="og:site_name" content="ash">
+<meta property="og:description" content="之前Python就已经学过了，Flask也玩的一溜一溜的。但是间隔时间有些长，所以就找个一个项目重新温习一下，顺便记录一下。这个系列文章会根据 Python - 100天 的流程走下去，当然其中有一些重复性的我就不介绍了，Django这个就不介绍了，因为跟Flask重复了，而且Django体量太大，不适合拿来用于学习。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-05T15:54:55.000Z">
+<meta property="article:modified_time" content="2024-12-13T03:02:29.984Z">
+<meta property="article:author" content="ash66">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="Python">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/memoirs/atom.xml" title="ash" type="application/atom+xml">
+  
+
+  <link rel="stylesheet" href="/memoirs/css/main.css?v=1.29.1">
+
+
+  
+    <link rel="shortcut icon" href="/memoirs/favicon.png">
+  
+
+  
+
+  
+</head>
+<body>
+
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/memoirs/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/memoirs/images/image1.jpeg" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/memoirs/"><div class="main" ff="title">ash</div><div class="sub cap">我只是一个影子，虽然我发着光。。。</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/memoirs/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="笔记本" href="/memoirs/notes/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="AboutMe" href="/memoirs/about/me" style="color:#F44336"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m13.629 20.472l-.542.916c-.483.816-1.69.816-2.174 0l-.542-.916c-.42-.71-.63-1.066-.968-1.262c-.338-.197-.763-.204-1.613-.219c-1.256-.021-2.043-.098-2.703-.372a5 5 0 0 1-2.706-2.706C2 14.995 2 13.83 2 11.5v-1c0-3.273 0-4.91.737-6.112a5 5 0 0 1 1.65-1.651C5.59 2 7.228 2 10.5 2h3c3.273 0 4.91 0 6.113.737a5 5 0 0 1 1.65 1.65C22 5.59 22 7.228 22 10.5v1c0 2.33 0 3.495-.38 4.413a5 5 0 0 1-2.707 2.706c-.66.274-1.447.35-2.703.372c-.85.015-1.275.022-1.613.219c-.338.196-.548.551-.968 1.262" opacity=".5"/><path fill="currentColor" d="M10.99 14.308c-1.327-.978-3.49-2.84-3.49-4.593c0-2.677 2.475-3.677 4.5-1.609c2.025-2.068 4.5-1.068 4.5 1.609c0 1.752-2.163 3.615-3.49 4.593c-.454.335-.681.502-1.01.502c-.329 0-.556-.167-1.01-.502"/></svg></a></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/memoirs/20241212/running/guangzhou/"><span class="title">广州马拉松</span></a><a class="item title" href="/memoirs/20200312/python/Python-100-3/"><span class="title">Python-100天(三)-数据库基础和进阶</span></a><a class="item title" href="/memoirs/20200321/python/Python-100-Flask-2/"><span class="title">Python-Flask基础篇(二)</span></a><a class="item title" href="/memoirs/20200316/python/Python-100-Flask-1/"><span class="title">Python-Flask基础篇(一)</span></a><a class="item title" href="/memoirs/20200310/python/Python-100-2/"><span class="title">Python-100天(二)-Python语言进阶</span></a><a class="item title" href="/memoirs/20200305/python/Python-100-1/"><span class="title">Python-100天(一)</span></a><a class="item title" href="/memoirs/20161118/iOS/thread/"><span class="title">关于iOS 多线程的问题</span></a><a class="item title" href="/memoirs/20170211/iOS/ios-gif/"><span class="title">iOS GIF图片的加载和合成</span></a><a class="item title" href="/memoirs/20180803/iOS/objectMapper-1/"><span class="title">ObjectMapper实践（一）</span></a><a class="item title" href="/memoirs/20200208/iOS/rumtime-introduction-1/"><span class="title">Runtime介绍(一)</span></a></div></widget>
+</div>
+<footer class="footer dis-select"><div class="social-wrap"><a class="social" href="https://github.com/aichiko0225" target="_blank" rel="external nofollow noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/08a41b181ce68.svg"/></a></div></footer>
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/memoirs/memoirs/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/memoirs/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/memoirs/categories/IT%E6%8A%80%E6%9C%AF/">IT技术</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2020-03-05T15:54:55.000Z">2020-03-05</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2024-12-13T03:02:29.984Z">2024-12-13</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>Python-100天(一)</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>之前<code>Python</code>就已经学过了，<code>Flask</code>也玩的一溜一溜的。<br>但是间隔时间有些长，所以就找个一个项目重新温习一下，顺便记录一下。<br>这个系列文章会根据 <code>Python - 100天</code> 的流程走下去，当然其中有一些重复性的我就不介绍了，<code>Django</code>这个就不介绍了，因为跟<code>Flask</code>重复了，而且<code>Django</code>体量太大，不适合拿来用于学习。</p>
+<span id="more"></span>
+<h3 id="Python简介"><a href="#Python简介" class="headerlink" title="Python简介"></a>Python简介</h3><h4 id="Python的历史"><a href="#Python的历史" class="headerlink" title="Python的历史"></a>Python的历史</h4><ol>
+<li>1989年圣诞节：Guido von Rossum开始写<code>Python</code>语言的编译器。</li>
+<li>1991年2月：第一个<code>Python</code>编译器（同时也是解释器）诞生，它是用C语言实现的（后面），可以调用C语言的库函数。在最早的版本中，<code>Python</code>已经提供了对“类”，“函数”，“异常处理”等构造块的支持，还有对列表、字典等核心数据类型，同时支持以模块为基础来构造应用程序。</li>
+<li>1994年1月：<code>Python 1.0</code>正式发布。</li>
+<li>2000年10月16日：<code>Python 2.0</code>发布，增加了完整的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6_(%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%B8)">垃圾回收</a>，提供了对<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Unicode">Unicode</a>的支持。与此同时，<code>Python</code>的整个开发过程更加透明，社区对开发进度的影响逐渐扩大，生态圈开始慢慢形成。</li>
+<li>2008年12月3日：<code>Python 3.0</code>发布，它并不完全兼容之前的<code>Python</code>代码，不过因为目前还有不少公司在项目和运维中使用<code>Python 2.x</code>版本，所以<code>Python 3.x</code>的很多新特性后来也被移植到<code>Python 2.6/2.7</code>版本中。</li>
+</ol>
+<p>目前我们使用的<code>Python 3.7.x</code>的版本是在2018年发布的，<code>Python</code>的版本号分为三段，形如A.B.C。其中A表示大版本号，一般当整体重写，或出现不向后兼容的改变时，增加A；B表示功能更新，出现新功能时增加B；C表示小的改动（例如：修复了某个Bug），只要有修改就增加C。如果对<code>Python</code>的历史感兴趣，可以阅读名为<a target="_blank" rel="noopener" href="http://www.cnblogs.com/vamei/archive/2013/02/06/2892628.html">《Python简史》</a>的博文。</p>
+<h4 id="Python的优缺点"><a href="#Python的优缺点" class="headerlink" title="Python的优缺点"></a>Python的优缺点</h4><p><code>Python</code>的优点很多，简单的可以总结为以下几点。</p>
+<ol>
+<li>简单和明确，做一件事只有一种方法。</li>
+<li>学习曲线低，跟其他很多语言相比，<code>Python</code>更容易上手。</li>
+<li>开放源代码，拥有强大的社区和生态圈。</li>
+<li>解释型语言，天生具有平台可移植性。</li>
+<li>对两种主流的编程范式（面向对象编程和函数式编程）都提供了支持。</li>
+<li>可扩展性和可嵌入性，例如在<code>Python</code>中可以调用<code>C/C++</code>代码。</li>
+<li>代码规范程度高，可读性强，适合有代码洁癖和强迫症的人群。</li>
+</ol>
+<p><code>Python</code>的缺点主要集中在以下几点。</p>
+<ol>
+<li>执行效率稍低，因此计算密集型任务可以由<code>C/C++</code>编写。</li>
+<li>代码无法加密，但是现在很多公司都不销售卖软件而是销售服务，这个问题会被弱化。</li>
+<li>在开发时可以选择的框架太多（如Web框架就有100多个），有选择的地方就有错误。</li>
+</ol>
+<h4 id="Python的应用领域"><a href="#Python的应用领域" class="headerlink" title="Python的应用领域"></a>Python的应用领域</h4><p>目前<code>Python</code>在<code>Web</code>应用开发、云基础设施、<code>DevOps</code>、网络数据采集（爬虫）、数据分析挖掘、机器学习等领域都有着广泛的应用，因此也产生了<code>Web</code>后端开发、数据接口开发、自动化运维、自动化测试、科学计算和可视化、数据分析、量化交易、机器人开发、自然语言处理、图像识别等一系列相关的职位。</p>
+<h3 id="100天计划-Day01-15"><a href="#100天计划-Day01-15" class="headerlink" title="100天计划 - Day01~15"></a>100天计划 - Day01~15</h3><p>基础知识就不详细介绍了，这个可以在下面这个网站上学习。<br><a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/1016959663602400">Python教程</a></p>
+<p><strong>Day01~15</strong> - <strong>Python语言基础</strong></p>
+<p>当然也可以查看已经整理好的简要文档</p>
+<h4 id="Day01-初识Python"><a href="#Day01-初识Python" class="headerlink" title="Day01 - 初识Python"></a>Day01 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/01.%E5%88%9D%E8%AF%86Python.md">初识Python</a></h4><ul>
+<li>Python简介 - Python的历史 &#x2F; Python的优缺点 &#x2F; Python的应用领域</li>
+<li>搭建编程环境 - Windows环境 &#x2F; Linux环境 &#x2F; MacOS环境</li>
+<li>从终端运行Python程序 - Hello, world &#x2F; print函数 &#x2F; 运行程序</li>
+<li>使用IDLE - 交互式环境(REPL) &#x2F; 编写多行代码 &#x2F; 运行程序 &#x2F; 退出IDLE</li>
+<li>注释 - 注释的作用 &#x2F; 单行注释 &#x2F; 多行注释</li>
+</ul>
+<h4 id="Day02-语言元素"><a href="#Day02-语言元素" class="headerlink" title="Day02 - 语言元素"></a>Day02 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/02.%E8%AF%AD%E8%A8%80%E5%85%83%E7%B4%A0.md">语言元素</a></h4><ul>
+<li>程序和进制 - 指令和程序 &#x2F; 冯诺依曼机 &#x2F; 二进制和十进制 &#x2F; 八进制和十六进制</li>
+<li>变量和类型 - 变量的命名 &#x2F; 变量的使用 &#x2F; input函数 &#x2F; 检查变量类型 &#x2F; 类型转换</li>
+<li>数字和字符串 - 整数 &#x2F; 浮点数 &#x2F; 复数 &#x2F; 字符串 &#x2F; 字符串基本操作 &#x2F; 字符编码</li>
+<li>运算符 - 数学运算符 &#x2F; 赋值运算符 &#x2F; 比较运算符 &#x2F; 逻辑运算符 &#x2F; 身份运算符 &#x2F; 运算符的优先级</li>
+<li>应用案例 - 华氏温度转换成摄氏温度 &#x2F; 输入圆的半径计算周长和面积 &#x2F; 输入年份判断是否是闰年</li>
+</ul>
+<h4 id="Day03-分支结构"><a href="#Day03-分支结构" class="headerlink" title="Day03 - 分支结构"></a>Day03 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/03.%E5%88%86%E6%94%AF%E7%BB%93%E6%9E%84.md">分支结构</a></h4><ul>
+<li>分支结构的应用场景 - 条件 &#x2F; 缩进 &#x2F; 代码块 &#x2F; 流程图</li>
+<li>if语句 - 简单的if &#x2F; if-else结构 &#x2F; if-elif-else结构 &#x2F; 嵌套的if</li>
+<li>应用案例 - 用户身份验证 &#x2F; 英制单位与公制单位互换 &#x2F; 掷骰子决定做什么 &#x2F; 百分制成绩转等级制 &#x2F; 分段函数求值 &#x2F; 输入三条边的长度如果能构成三角形就计算周长和面积</li>
+</ul>
+<h4 id="Day04-循环结构"><a href="#Day04-循环结构" class="headerlink" title="Day04 - 循环结构"></a>Day04 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/04.%E5%BE%AA%E7%8E%AF%E7%BB%93%E6%9E%84.md">循环结构</a></h4><ul>
+<li>循环结构的应用场景 - 条件 &#x2F; 缩进 &#x2F; 代码块 &#x2F; 流程图</li>
+<li>while循环 - 基本结构 &#x2F; break语句 &#x2F; continue语句</li>
+<li>for循环 - 基本结构 &#x2F; range类型 &#x2F; 循环中的分支结构 &#x2F; 嵌套的循环 &#x2F; 提前结束程序 </li>
+<li>应用案例 - 1~100求和 &#x2F; 判断素数 &#x2F; 猜数字游戏 &#x2F; 打印九九表 &#x2F; 打印三角形图案 &#x2F; 猴子吃桃 &#x2F; 百钱百鸡</li>
+</ul>
+<h4 id="Day05-05-构造程序逻辑"><a href="#Day05-05-构造程序逻辑" class="headerlink" title="Day05 - 05.构造程序逻辑"></a>Day05 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/05.%E6%9E%84%E9%80%A0%E7%A8%8B%E5%BA%8F%E9%80%BB%E8%BE%91.md">05.构造程序逻辑</a></h4><ul>
+<li>经典案例：水仙花数 &#x2F; 百钱百鸡 &#x2F; Craps赌博游戏</li>
+<li>练习题目：斐波那契数列 &#x2F; 完美数 &#x2F; 素数</li>
+</ul>
+<h4 id="Day06-函数和模块的使用"><a href="#Day06-函数和模块的使用" class="headerlink" title="Day06 - 函数和模块的使用"></a>Day06 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/06.%E5%87%BD%E6%95%B0%E5%92%8C%E6%A8%A1%E5%9D%97%E7%9A%84%E4%BD%BF%E7%94%A8.md">函数和模块的使用</a></h4><ul>
+<li>函数的作用 - 代码的坏味道 &#x2F; 用函数封装功能模块</li>
+<li>定义函数 - def语句 &#x2F; 函数名 &#x2F; 参数列表 &#x2F; return语句 &#x2F; 调用自定义函数</li>
+<li>调用函数 - Python内置函数 &#x2F;  导入模块和函数</li>
+<li>函数的参数 - 默认参数 &#x2F; 可变参数 &#x2F; 关键字参数 &#x2F; 命名关键字参数</li>
+<li>函数的返回值 - 没有返回值  &#x2F; 返回单个值 &#x2F; 返回多个值</li>
+<li>作用域问题 - 局部作用域 &#x2F; 嵌套作用域 &#x2F; 全局作用域 &#x2F; 内置作用域 &#x2F; 和作用域相关的关键字</li>
+<li>用模块管理函数 - 模块的概念 &#x2F; 用自定义模块管理函数 &#x2F; 命名冲突的时候会怎样（同一个模块和不同的模块）</li>
+</ul>
+<h4 id="Day07-字符串和常用数据结构"><a href="#Day07-字符串和常用数据结构" class="headerlink" title="Day07 - 字符串和常用数据结构"></a>Day07 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/07.%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.md">字符串和常用数据结构</a></h4><ul>
+<li>字符串的使用 - 计算长度 &#x2F; 下标运算 &#x2F; 切片 &#x2F; 常用方法</li>
+<li>列表基本用法 - 定义列表 &#x2F; 用下表访问元素 &#x2F; 下标越界 &#x2F; 添加元素 &#x2F; 删除元素 &#x2F; 修改元素 &#x2F; 切片 &#x2F; 循环遍历</li>
+<li>列表常用操作 - 连接 &#x2F; 复制(复制元素和复制数组) &#x2F; 长度 &#x2F; 排序 &#x2F; 倒转 &#x2F; 查找</li>
+<li>生成列表 - 使用range创建数字列表 &#x2F; 生成表达式 &#x2F; 生成器</li>
+<li>元组的使用 - 定义元组 &#x2F; 使用元组中的值 &#x2F; 修改元组变量 &#x2F; 元组和列表转换</li>
+<li>集合基本用法 - 集合和列表的区别 &#x2F;  创建集合 &#x2F; 添加元素 &#x2F; 删除元素 &#x2F;  清空</li>
+<li>集合常用操作 - 交集 &#x2F; 并集 &#x2F; 差集 &#x2F; 对称差 &#x2F; 子集 &#x2F; 超集</li>
+<li>字典的基本用法 - 字典的特点 &#x2F; 创建字典 &#x2F; 添加元素 &#x2F; 删除元素 &#x2F; 取值 &#x2F; 清空</li>
+<li>字典常用操作 - keys()方法 &#x2F; values()方法 &#x2F; items()方法 &#x2F; setdefault()方法</li>
+<li>基础练习 - 跑马灯效果 &#x2F; 列表找最大元素 &#x2F; 统计考试成绩的平均分 &#x2F; Fibonacci数列 &#x2F; 杨辉三角</li>
+<li>综合案例 - 双色球选号 &#x2F; 井字棋</li>
+</ul>
+<h4 id="Day08-面向对象编程基础"><a href="#Day08-面向对象编程基础" class="headerlink" title="Day08 - 面向对象编程基础"></a>Day08 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/08.%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80.md">面向对象编程基础</a></h4><ul>
+<li>类和对象 - 什么是类 &#x2F; 什么是对象 &#x2F; 面向对象其他相关概念</li>
+<li>定义类 - 基本结构 &#x2F; 属性和方法 &#x2F; 构造器 &#x2F; 析构器 &#x2F; __str__方法</li>
+<li>使用对象 - 创建对象 &#x2F; 给对象发消息</li>
+<li>面向对象的四大支柱 - 抽象 &#x2F; 封装 &#x2F; 继承 &#x2F; 多态</li>
+<li>基础练习 - 定义学生类 &#x2F; 定义时钟类 &#x2F; 定义图形类 &#x2F; 定义汽车类</li>
+</ul>
+<h4 id="Day09-面向对象进阶"><a href="#Day09-面向对象进阶" class="headerlink" title="Day09 - 面向对象进阶"></a>Day09 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/09.%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BF%9B%E9%98%B6.md">面向对象进阶</a></h4><ul>
+<li>属性 - 类属性 &#x2F; 实例属性 &#x2F; 属性访问器 &#x2F; 属性修改器 &#x2F; 属性删除器 &#x2F; 使用__slots__</li>
+<li>类中的方法 - 实例方法 &#x2F; 类方法 &#x2F; 静态方法</li>
+<li>运算符重载 - __add__ &#x2F; __sub__ &#x2F; __or__ &#x2F;__getitem__ &#x2F; __setitem__ &#x2F; __len__ &#x2F; __repr__ &#x2F; __gt__ &#x2F; __lt__ &#x2F; __le__ &#x2F; __ge__ &#x2F; __eq__ &#x2F; __ne__ &#x2F; __contains__ </li>
+<li>类(的对象)之间的关系 - 关联 &#x2F; 继承 &#x2F; 依赖</li>
+<li>继承和多态 - 什么是继承 &#x2F; 继承的语法 &#x2F; 调用父类方法 &#x2F; 方法重写 &#x2F; 类型判定 &#x2F; 多重继承 &#x2F; 菱形继承(钻石继承)和C3算法</li>
+<li>综合案例 - 工资结算系统 &#x2F; 图书自动折扣系统 &#x2F; 自定义分数类</li>
+</ul>
+<h4 id="Day10-图形用户界面和游戏开发"><a href="#Day10-图形用户界面和游戏开发" class="headerlink" title="Day10 - 图形用户界面和游戏开发"></a>Day10 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/10.%E5%9B%BE%E5%BD%A2%E7%94%A8%E6%88%B7%E7%95%8C%E9%9D%A2%E5%92%8C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91.md">图形用户界面和游戏开发</a></h4><ul>
+<li>使用tkinter开发GUI程序</li>
+<li>使用pygame三方库开发游戏应用</li>
+<li>“大球吃小球”游戏</li>
+</ul>
+<h4 id="Day11-文件和异常"><a href="#Day11-文件和异常" class="headerlink" title="Day11 - 文件和异常"></a>Day11 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/11.%E6%96%87%E4%BB%B6%E5%92%8C%E5%BC%82%E5%B8%B8.md">文件和异常</a></h4><ul>
+<li>读文件 - 读取整个文件 &#x2F; 逐行读取 &#x2F; 文件路径</li>
+<li>写文件 - 覆盖写入 &#x2F; 追加写入 &#x2F; 文本文件 &#x2F; 二进制文件</li>
+<li>异常处理 - 异常机制的重要性 &#x2F; try-except代码块 &#x2F; else代码块 &#x2F; finally代码块 &#x2F; 内置异常类型 &#x2F; 异常栈 &#x2F; raise语句</li>
+<li>数据持久化 - CSV文件概述 &#x2F; csv模块的应用 &#x2F; JSON数据格式 &#x2F; json模块的应用</li>
+</ul>
+<h4 id="Day12-字符串和正则表达式"><a href="#Day12-字符串和正则表达式" class="headerlink" title="Day12 - 字符串和正则表达式"></a>Day12 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/12.%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.md">字符串和正则表达式</a></h4><ul>
+<li>字符串高级操作 - 转义字符 &#x2F; 原始字符串 &#x2F; 多行字符串 &#x2F; in和 not in运算符 &#x2F; is开头的方法 &#x2F; join和split方法 &#x2F; strip相关方法 &#x2F; pyperclip模块 &#x2F; 不变字符串和可变字符串 &#x2F; StringIO的使用</li>
+<li>正则表达式入门 - 正则表达式的作用 &#x2F; 元字符 &#x2F; 转义 &#x2F; 量词 &#x2F; 分组 &#x2F; 零宽断言 &#x2F;贪婪匹配与惰性匹配懒惰 &#x2F; 使用re模块实现正则表达式操作（匹配、搜索、替换、捕获）</li>
+<li>使用正则表达式 - re模块 &#x2F; compile函数 &#x2F; group和groups方法 &#x2F; match方法 &#x2F; search方法 &#x2F; findall和finditer方法 &#x2F; sub和subn方法 &#x2F; split方法</li>
+<li>应用案例 - 使用正则表达式验证输入的字符串</li>
+</ul>
+<h4 id="Day13-进程和线程"><a href="#Day13-进程和线程" class="headerlink" title="Day13 - 进程和线程"></a>Day13 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/13.%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B.md">进程和线程</a></h4><ul>
+<li>进程和线程的概念 - 什么是进程 &#x2F; 什么是线程 &#x2F; 多线程的应用场景</li>
+<li>使用进程 - fork函数 &#x2F; multiprocessing模块 &#x2F; 进程池 &#x2F; 进程间通信</li>
+<li>使用线程 - thread模块 &#x2F; threading模块 &#x2F; Thread类 &#x2F; Lock类 &#x2F; Condition类 &#x2F; 线程池</li>
+</ul>
+<h4 id="Day14-网络编程入门和网络应用开发"><a href="#Day14-网络编程入门和网络应用开发" class="headerlink" title="Day14 - 网络编程入门和网络应用开发"></a>Day14 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/14.%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%92%8C%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91.md">网络编程入门和网络应用开发</a></h4><ul>
+<li>计算机网络基础 - 计算机网络发展史 &#x2F; “TCP-IP”模型 &#x2F; IP地址 &#x2F; 端口 &#x2F; 协议 &#x2F; 其他相关概念</li>
+<li>网络应用模式 - “客户端-服务器”模式 &#x2F; “浏览器-服务器”模式</li>
+<li>基于HTTP协议访问网络资源 - 网络API概述 &#x2F; 访问URL &#x2F; requests模块 &#x2F; 解析JSON格式数据</li>
+<li>Python网络编程 - 套接字的概念 &#x2F; socket模块 &#x2F;  socket函数 &#x2F; 创建TCP服务器 &#x2F; 创建TCP客户端 &#x2F; 创建UDP服务器 &#x2F; 创建UDP客户端 &#x2F; SocketServer模块</li>
+<li>电子邮件 - SMTP协议 &#x2F; POP3协议 &#x2F; IMAP协议 &#x2F; smtplib模块 &#x2F; poplib模块 &#x2F; imaplib模块</li>
+<li>短信服务 - 调用短信服务网关</li>
+</ul>
+<h4 id="Day15-图像和办公文档处理"><a href="#Day15-图像和办公文档处理" class="headerlink" title="Day15 - 图像和办公文档处理"></a>Day15 - <a target="_blank" rel="noopener" href="https://github.com/aichiko0225/Python-100-Days/blob/master/Day01-15/15.%E5%9B%BE%E5%83%8F%E5%92%8C%E5%8A%9E%E5%85%AC%E6%96%87%E6%A1%A3%E5%A4%84%E7%90%86.md">图像和办公文档处理</a></h4><ul>
+<li>用Pillow处理图片 - 图片读写 &#x2F; 图片合成 &#x2F; 几何变换 &#x2F; 色彩转换 &#x2F; 滤镜效果</li>
+<li>读写Word文档 - 文本内容的处理 &#x2F; 段落 &#x2F; 页眉和页脚 &#x2F; 样式的处理</li>
+<li>读写Excel文件 - xlrd模块 &#x2F; xlwt模块</li>
+<li>生成PDF文件 - pypdf2模块 &#x2F; reportlab模块</li>
+</ul>
+<p>第一篇我们就扯一些稀奇古怪的东西</p>
+<h3 id="Python参考书籍"><a href="#Python参考书籍" class="headerlink" title="Python参考书籍"></a>Python参考书籍</h3><p>先列出一些<code>Python</code>学习的参考书籍</p>
+<h4 id="入门读物"><a href="#入门读物" class="headerlink" title="入门读物"></a>入门读物</h4><ol>
+<li>《Python基础教程》（<em>Beginning Python From Novice to Professional</em>）</li>
+<li>《Python学习手册》（<em>Learning Python</em>）</li>
+<li>《Python编程》（<em>Programming Python</em>）</li>
+<li>《Python Cookbook》</li>
+<li>《Python程序设计》（<em>Python Programming: An Introduction to Computer Science</em>）</li>
+<li>《Modern Python Cookbook》</li>
+</ol>
+<h4 id="进阶读物"><a href="#进阶读物" class="headerlink" title="进阶读物"></a>进阶读物</h4><ol>
+<li>《Python核心编程》（<em>Core Python Applications Programming</em>）</li>
+<li>《流畅的Python》（<em>Fluent Python</em>）</li>
+<li>《Effective Python：编写高质量Python代码的59个有效方法》（<em>Effective Python 59 Specific Ways to Write Better Python</em>）</li>
+<li>《Python设计模式》（<em>Learning Python Design Patterns</em>）</li>
+<li>《Python高级编程》（<em>Expert Python Programming</em>）</li>
+<li>《Python性能分析与优化》（<em>Mastering Python High Performance</em>）</li>
+</ol>
+<h4 id="Web框架"><a href="#Web框架" class="headerlink" title="Web框架"></a>Web框架</h4><ol>
+<li>《Django基础教程》（<em>Tango with Django</em>）</li>
+<li>《轻量级Django》（<em>Lightweight Django</em>）</li>
+<li>《Python Web开发：测试驱动方法》（<em>Test-Driven Development with Python</em>）</li>
+<li>《Web Development with Django Cookbook》</li>
+<li>《Test-Driven Development with Django》</li>
+<li>《Django Project Blueprints 》</li>
+<li>《Flask Web开发：基于Python的Web应用开发实战》（<em>Flask Web Development: Developing Web Applications with Python</em>）</li>
+<li>《深入理解Flask》（<em>Mastering Flask</em>）</li>
+</ol>
+<h4 id="爬虫开发"><a href="#爬虫开发" class="headerlink" title="爬虫开发"></a>爬虫开发</h4><ol>
+<li>《用Python写网络爬虫》（<em>Web Scraping with Python</em>）</li>
+<li>《精通Python爬虫框架Scrapy》（<em>Learning Scrapy</em>）</li>
+<li>《Python网络数据采集》（<em>Web Scraping with Python</em>）</li>
+<li>《Python爬虫开发与项目实战》</li>
+<li>《Python 3网络爬虫开发实战》</li>
+</ol>
+<h4 id="数据分析"><a href="#数据分析" class="headerlink" title="数据分析"></a>数据分析</h4><ol>
+<li>《利用Python进行数据分析》（<em>Python for Data Analysis</em>）</li>
+<li>《Python数据科学手册》（<em>Python Data Science Handbook</em>）</li>
+<li>《Python金融大数据分析》（<em>Python for Finance</em>）</li>
+<li>《Python数据可视化编程实战》（<em>Python Data Visualization Cookbook</em>）</li>
+<li>《Python数据处理》（<em>Data Wrangling with Python</em>）</li>
+</ol>
+<h4 id="机器学习"><a href="#机器学习" class="headerlink" title="机器学习"></a>机器学习</h4><ol>
+<li>《Python机器学习基础教程》（<em>Introduction to Machine Learning with Python</em>）</li>
+<li>《Python机器学习实践指南》（<em>Python Machine Learning Blueprints</em>）</li>
+<li>《Python Machine Learning Case Studies》</li>
+<li>《Python机器学习实践：测试驱动的开发方法》（<em>Thoughtful Machine Learning with Python A Test Driven Approach</em>）</li>
+<li>《Python机器学习经典实例》（<em>Python Machine Learning Cookbook</em>）</li>
+<li>《TensorFlow：实战Google深度学习框架》</li>
+</ol>
+<h3 id="Python编程惯例"><a href="#Python编程惯例" class="headerlink" title="Python编程惯例"></a>Python编程惯例</h3><p>“惯例”这个词指的是“习惯的做法，常规的办法，一贯的做法”，与这个词对应的英文单词叫“idiom”。由于<code>Python</code>跟其他很多编程语言在语法和使用上还是有比较显著的差别，因此作为一个<code>Python</code>开发者如果不能掌握这些惯例，就无法写出“Pythonic”的代码。下面我们总结了一些在<code>Python</code>开发中的惯用的代码。</p>
+<ol>
+<li><p>让代码既可以被导入又可以被执行。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用下面的方式判断逻辑“真”或“假”。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> x:</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> x:</span><br></pre></td></tr></table></figure>
+
+<p><strong>好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&#x27;jackfrued&#x27;</span></span><br><span class="line">fruits = [<span class="string">&#x27;apple&#x27;</span>, <span class="string">&#x27;orange&#x27;</span>, <span class="string">&#x27;grape&#x27;</span>]</span><br><span class="line">owners = &#123;<span class="string">&#x27;1001&#x27;</span>: <span class="string">&#x27;骆昊&#x27;</span>, <span class="string">&#x27;1002&#x27;</span>: <span class="string">&#x27;王大锤&#x27;</span>&#125;</span><br><span class="line"><span class="keyword">if</span> name <span class="keyword">and</span> fruits <span class="keyword">and</span> owners:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;I love fruits!&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>不好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&#x27;jackfrued&#x27;</span></span><br><span class="line">fruits = [<span class="string">&#x27;apple&#x27;</span>, <span class="string">&#x27;orange&#x27;</span>, <span class="string">&#x27;grape&#x27;</span>]</span><br><span class="line">owners = &#123;<span class="string">&#x27;1001&#x27;</span>: <span class="string">&#x27;骆昊&#x27;</span>, <span class="string">&#x27;1002&#x27;</span>: <span class="string">&#x27;王大锤&#x27;</span>&#125;</span><br><span class="line"><span class="keyword">if</span> name != <span class="string">&#x27;&#x27;</span> <span class="keyword">and</span> <span class="built_in">len</span>(fruits) &gt; <span class="number">0</span> <span class="keyword">and</span> owners != &#123;&#125;:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;I love fruits!&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>善于使用in运算符。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> x <span class="keyword">in</span> items: <span class="comment"># 包含</span></span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> items: <span class="comment"># 迭代</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&#x27;Hao LUO&#x27;</span></span><br><span class="line"><span class="keyword">if</span> <span class="string">&#x27;L&#x27;</span> <span class="keyword">in</span> name:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;The name has an L in it.&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>不好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&#x27;Hao LUO&#x27;</span></span><br><span class="line"><span class="keyword">if</span> name.find(<span class="string">&#x27;L&#x27;</span>) != -<span class="number">1</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;This name has an L in it!&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>不使用临时变量交换两个值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a, b = b, a</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用序列构建字符串。</p>
+<p><strong>好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chars = [<span class="string">&#x27;j&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;k&#x27;</span>, <span class="string">&#x27;f&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, <span class="string">&#x27;u&#x27;</span>, <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;d&#x27;</span>]</span><br><span class="line">name = <span class="string">&#x27;&#x27;</span>.join(chars)</span><br><span class="line"><span class="built_in">print</span>(name)  <span class="comment"># jackfrued</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>不好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">chars = [<span class="string">&#x27;j&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;k&#x27;</span>, <span class="string">&#x27;f&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, <span class="string">&#x27;u&#x27;</span>, <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;d&#x27;</span>]</span><br><span class="line">name = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> char <span class="keyword">in</span> chars:</span><br><span class="line">    name += char</span><br><span class="line"><span class="built_in">print</span>(name)  <span class="comment"># jackfrued</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>EAFP优于LBYL。</p>
+<p>EAFP - <strong>E</strong>asier to <strong>A</strong>sk <strong>F</strong>orgiveness than <strong>P</strong>ermission.</p>
+<p>LBYL - <strong>L</strong>ook <strong>B</strong>efore <strong>Y</strong>ou <strong>L</strong>eap.</p>
+<p><strong>好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">&#x27;x&#x27;</span>: <span class="string">&#x27;5&#x27;</span>&#125;</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    value = <span class="built_in">int</span>(d[<span class="string">&#x27;x&#x27;</span>])</span><br><span class="line">    <span class="built_in">print</span>(value)</span><br><span class="line"><span class="keyword">except</span> (KeyError, TypeError, ValueError):</span><br><span class="line">    value = <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>不好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">&#x27;x&#x27;</span>: <span class="string">&#x27;5&#x27;</span>&#125;</span><br><span class="line"><span class="keyword">if</span> <span class="string">&#x27;x&#x27;</span> <span class="keyword">in</span> d <span class="keyword">and</span> <span class="built_in">isinstance</span>(d[<span class="string">&#x27;x&#x27;</span>], <span class="built_in">str</span>) \</span><br><span class="line"><span class="keyword">and</span> d[<span class="string">&#x27;x&#x27;</span>].isdigit():</span><br><span class="line">    value = <span class="built_in">int</span>(d[<span class="string">&#x27;x&#x27;</span>])</span><br><span class="line">    <span class="built_in">print</span>(value)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    value = <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用enumerate进行迭代。</p>
+<p><strong>好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fruits = [<span class="string">&#x27;orange&#x27;</span>, <span class="string">&#x27;grape&#x27;</span>, <span class="string">&#x27;pitaya&#x27;</span>, <span class="string">&#x27;blueberry&#x27;</span>]</span><br><span class="line"><span class="keyword">for</span> index, fruit <span class="keyword">in</span> <span class="built_in">enumerate</span>(fruits):</span><br><span class="line"><span class="built_in">print</span>(index, <span class="string">&#x27;:&#x27;</span>, fruit)</span><br></pre></td></tr></table></figure>
+
+<p><strong>不好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fruits = [<span class="string">&#x27;orange&#x27;</span>, <span class="string">&#x27;grape&#x27;</span>, <span class="string">&#x27;pitaya&#x27;</span>, <span class="string">&#x27;blueberry&#x27;</span>]</span><br><span class="line">index = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> fruit <span class="keyword">in</span> fruits:</span><br><span class="line">    <span class="built_in">print</span>(index, <span class="string">&#x27;:&#x27;</span>, fruit)</span><br><span class="line">    index += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用生成式生成列表。</p>
+<p><strong>好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data = [<span class="number">7</span>, <span class="number">20</span>, <span class="number">3</span>, <span class="number">15</span>, <span class="number">11</span>]</span><br><span class="line">result = [num * <span class="number">3</span> <span class="keyword">for</span> num <span class="keyword">in</span> data <span class="keyword">if</span> num &gt; <span class="number">10</span>]</span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># [60, 45, 33]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>不好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">data = [<span class="number">7</span>, <span class="number">20</span>, <span class="number">3</span>, <span class="number">15</span>, <span class="number">11</span>]</span><br><span class="line">result = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> data:</span><br><span class="line">    <span class="keyword">if</span> i &gt; <span class="number">10</span>:</span><br><span class="line">        result.append(i * <span class="number">3</span>)</span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># [60, 45, 33]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用zip组合键和值来创建字典。</p>
+<p><strong>好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">keys = [<span class="string">&#x27;1001&#x27;</span>, <span class="string">&#x27;1002&#x27;</span>, <span class="string">&#x27;1003&#x27;</span>]</span><br><span class="line">values = [<span class="string">&#x27;骆昊&#x27;</span>, <span class="string">&#x27;王大锤&#x27;</span>, <span class="string">&#x27;白元芳&#x27;</span>]</span><br><span class="line">d = <span class="built_in">dict</span>(<span class="built_in">zip</span>(keys, values))</span><br><span class="line"><span class="built_in">print</span>(d)</span><br></pre></td></tr></table></figure>
+
+<p><strong>不好</strong>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">keys = [<span class="string">&#x27;1001&#x27;</span>, <span class="string">&#x27;1002&#x27;</span>, <span class="string">&#x27;1003&#x27;</span>]</span><br><span class="line">values = [<span class="string">&#x27;骆昊&#x27;</span>, <span class="string">&#x27;王大锤&#x27;</span>, <span class="string">&#x27;白元芳&#x27;</span>]</span><br><span class="line">d = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i, key <span class="keyword">in</span> <span class="built_in">enumerate</span>(keys):</span><br><span class="line">    d[key] = values[i]</span><br><span class="line"><span class="built_in">print</span>(d)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<blockquote>
+<p><strong>说明</strong>：这篇文章的内容来自于网络，有兴趣的读者可以阅读<a target="_blank" rel="noopener" href="http://safehammad.com/downloads/python-idioms-2014-01-16.pdf">原文</a>。</p>
+</blockquote>
+<h3 id="PEP8风格指南"><a href="#PEP8风格指南" class="headerlink" title="PEP8风格指南"></a>PEP8风格指南</h3><p><code>PEP</code>是<code>Python Enhancement Proposal</code>的缩写，通常翻译为“Python增强提案”。每个<code>PEP</code>都是一份为<code>Python</code>社区提供的指导<code>Python</code>往更好的方向发展的技术文档，其中的第8号增强提案（<code>PEP 8</code>）是针对<code>Python</code>语言编订的代码风格指南。尽管我们可以在保证语法没有问题的前提下随意书写<code>Python</code>代码，但是在实际开发中，采用一致的风格书写出可读性强的代码是每个专业的程序员应该做到的事情，也是每个公司的编程规范中会提出的要求，这些在多人协作开发一个项目（团队开发）的时候显得尤为重要。我们可以从<code>Python</code>官方网站的PEP 8链接中找到该文档，下面我们对该文档的关键部分做一个简单的总结。</p>
+<h4 id="空格的使用"><a href="#空格的使用" class="headerlink" title="空格的使用"></a>空格的使用</h4><ol>
+<li>使用空格来表示缩进而不要用制表符（<code>Tab</code>）。这一点对习惯了其他编程语言的人来说简直觉得不可理喻，因为绝大多数的程序员都会用Tab来表示缩进，但是要知道<code>Python</code>并没有像<code>C/C++</code>或<code>Java</code>那样的用花括号来构造一个代码块的语法，在Python中分支和循环结构都使用缩进来表示哪些代码属于同一个级别，鉴于此<code>Python</code>代码对缩进以及缩进宽度的依赖比其他很多语言都强得多。在不同的编辑器中，<code>Tab</code>的宽度可能是2、4或8个字符，甚至是其他更离谱的值，用<code>Tab</code>来表示缩进对<code>Python</code>代码来说可能是一场灾难。</li>
+<li>和语法相关的每一层缩进都用4个空格来表示。</li>
+<li>每行的字符数不要超过79个字符，如果表达式因太长而占据了多行，除了首行之外的其余各行都应该在正常的缩进宽度上再加上4个空格。</li>
+<li>函数和类的定义，代码前后都要用两个空行进行分隔。</li>
+<li>同一个类中，各个方法之间应该用一个空行进行分隔。</li>
+<li>二元运算符的左右两侧应该保留一个空格，而且只要一个空格就好。</li>
+</ol>
+<h4 id="标识符命名"><a href="#标识符命名" class="headerlink" title="标识符命名"></a>标识符命名</h4><p><code>PEP 8</code>倡导用不同的命名风格来命名<code>Python</code>中不同的标识符，以便在阅读代码时能够通过标识符的名称来确定该标识符在<code>Python</code>中扮演了怎样的角色（在这一点上，<code>Python</code>自己的内置模块以及某些第三方模块都做得并不是很好）。</p>
+<ol>
+<li>变量、函数和属性应该使用小写字母来拼写，如果有多个单词就使用下划线进行连接。</li>
+<li>类中受保护的实例属性，应该以一个下划线开头。</li>
+<li>类中私有的实例属性，应该以两个下划线开头。</li>
+<li>类和异常的命名，应该每个单词首字母大写。</li>
+<li>模块级别的常量，应该采用全大写字母，如果有多个单词就用下划线进行连接。</li>
+<li>类的实例方法，应该把第一个参数命名为<code>self</code>以表示对象自身。</li>
+<li>类的类方法，应该把第一个参数命名为<code>cls</code>以表示该类自身。</li>
+</ol>
+<h4 id="表达式和语句"><a href="#表达式和语句" class="headerlink" title="表达式和语句"></a>表达式和语句</h4><p>在<code>Python</code>之禅（可以使用<code>import this</code>查看）中有这么一句名言：**”There should be one– and preferably only one –obvious way to do it.”**，翻译成中文是“做一件事应该有而且最好只有一种确切的做法”，这句话传达的思想在<code>PEP 8</code>中也是无处不在的。</p>
+<ol>
+<li>采用内联形式的否定词，而不要把否定词放在整个表达式的前面。例如<code>if a is not b</code>就比<code>if not a is b</code>更容易让人理解。</li>
+<li>不要用检查长度的方式来判断字符串、列表等是否为<code>None</code>或者没有元素，应该用<code>if not x</code>这样的写法来检查它。</li>
+<li>就算<code>if</code>分支、<code>for</code>循环、<code>except</code>异常捕获等中只有一行代码，也不要将代码和<code>if</code>、<code>for</code>、<code>except</code>等写在一起，分开写才会让代码更清晰。</li>
+<li><code>import</code>语句总是放在文件开头的地方。</li>
+<li>引入模块的时候，<code>from math import sqrt</code>比<code>import math</code>更好。</li>
+<li>如果有多个<code>import</code>语句，应该将其分为三部分，从上到下分别是<code>Python</code><strong>标准模块</strong>、<strong>第三方模块</strong>和<strong>自定义模块</strong>，每个部分内部应该按照模块名称的字母表顺序来排列。</li>
+</ol>
+<h3 id="Zen-of-Python（Python之禅）"><a href="#Zen-of-Python（Python之禅）" class="headerlink" title="Zen of Python（Python之禅）"></a>Zen of Python（Python之禅）</h3><blockquote>
+<p>Beautiful is better than ugly. （优美比丑陋好）<br>Explicit is better than implicit.（清晰比晦涩好）<br>Simple is better than complex.（简单比复杂好）<br>Complex is better than complicated.（复杂比错综复杂好）<br>Flat is better than nested.（扁平比嵌套好）<br>Sparse is better than dense.（稀疏比密集好）<br>Readability counts.（可读性很重要）<br>Special cases aren’t special enough to break the rules.（特殊情况也不应该违反这些规则）<br>Although practicality beats purity.（但现实往往并不那么完美）<br>Errors should never pass silently.（异常不应该被静默处理）<br>Unless explicitly silenced.（除非你希望如此）<br>In the face of ambiguity, refuse the temptation to guess.（遇到模棱两可的地方，不要胡乱猜测）<br>There should be one– and preferably only one –obvious way to do it.（肯定有一种通常也是唯一一种最佳的解决方案）<br>Although that way may not be obvious at first unless you’re Dutch.（虽然这种方案并不是显而易见的，因为你不是那个荷兰人^这里指的是Python之父Guido^）<br>Now is better than never.（现在开始做比不做好）<br>Although never is often better than *right* now.（不做比盲目去做好^极限编程中的YAGNI原则^）<br>If the implementation is hard to explain, it’s a bad idea.（如果一个实现方案难于理解，它就不是一个好的方案）<br>If the implementation is easy to explain, it may be a good idea.（如果一个实现方案易于理解，它很有可能是一个好的方案）<br>Namespaces are one honking great idea – let’s do more of those!（命名空间非常有用，我们应当多加利用）  </p>
+</blockquote>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    
+    <section id="share">
+      <div class="header"><span>分享文章</span></div>
+      <div class="body">
+        <div class="link"><input class="copy-area" readonly="true" id="copy-link" value="https://aichiko0225.github.com/memoirs/20200305/python/Python-100-1/" /></div>
+        <div class="social-wrap dis-select"><a class="social share-item wechat" onclick="util.toggle(&quot;qrcode-wechat&quot;)"><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/b32ef3da1162a.svg" /></a><a class="social share-item weibo" target="_blank" rel="external nofollow noopener noreferrer" href="https://service.weibo.com/share/share.php?url=https://aichiko0225.github.com/memoirs/20200305/python/Python-100-1/&title=Python-100天(一) - ash&summary=之前Python就已经学过了，Flask也玩的一溜一溜的。但是间隔时间有些长，所以就找个一个项目重新温习一下，顺便记录一下。这个系列文章会根据 Python - 100天 的流程走下去，当然其中有一些重复性的我就不介绍了，Django..."><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/80c07e4dbb303.svg" /></a><a class="social share-item email" href="mailto:?subject=Python-100天(一) - ash&amp;body=https://aichiko0225.github.com/memoirs/20200305/python/Python-100-1/"><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/a1b00e20f425d.svg" /></a><a class="social share-item link" onclick="util.copy(&quot;copy-link&quot;, &quot;复制成功&quot;)"><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/8411ed322ced6.svg" /></a></div>
+        
+        <div class="qrcode" id="qrcode-wechat" style="opacity:0;height:0">
+          <img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=https://aichiko0225.github.com/memoirs/20200305/python/Python-100-1/"/>
+        </div>
+        
+      </div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/memoirs/20200310/python/Python-100-2/">Python-100天(二)-Python语言进阶</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/memoirs/20200217/reverse-progression/">逆向工程进阶</a></div></section></div>
+
+
+
+
+  <div class="related-wrap md-text" id="comments">
+    <section class='header cmt-title cap theme'>
+      <p>快来参与讨论吧~</p>
+
+    </section>
+    <section class='body cmt-body beaudar'>
+      
+
+<svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg>
+
+<div id="beaudar" repo="aichiko0225/blog-comments" issue-term="pathname" theme="preferred-color-scheme" input-position="top" comment-order="desc" loading="false" branch="main"></div>
+
+    </section>
+  </div>
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">ash66</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Python%E7%AE%80%E4%BB%8B"><span class="toc-text">Python简介</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Python%E7%9A%84%E5%8E%86%E5%8F%B2"><span class="toc-text">Python的历史</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-text">Python的优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python%E7%9A%84%E5%BA%94%E7%94%A8%E9%A2%86%E5%9F%9F"><span class="toc-text">Python的应用领域</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#100%E5%A4%A9%E8%AE%A1%E5%88%92-Day01-15"><span class="toc-text">100天计划 - Day01~15</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Day01-%E5%88%9D%E8%AF%86Python"><span class="toc-text">Day01 - 初识Python</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day02-%E8%AF%AD%E8%A8%80%E5%85%83%E7%B4%A0"><span class="toc-text">Day02 - 语言元素</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day03-%E5%88%86%E6%94%AF%E7%BB%93%E6%9E%84"><span class="toc-text">Day03 - 分支结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day04-%E5%BE%AA%E7%8E%AF%E7%BB%93%E6%9E%84"><span class="toc-text">Day04 - 循环结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day05-05-%E6%9E%84%E9%80%A0%E7%A8%8B%E5%BA%8F%E9%80%BB%E8%BE%91"><span class="toc-text">Day05 - 05.构造程序逻辑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day06-%E5%87%BD%E6%95%B0%E5%92%8C%E6%A8%A1%E5%9D%97%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">Day06 - 函数和模块的使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day07-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-text">Day07 - 字符串和常用数据结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day08-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80"><span class="toc-text">Day08 - 面向对象编程基础</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day09-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BF%9B%E9%98%B6"><span class="toc-text">Day09 - 面向对象进阶</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day10-%E5%9B%BE%E5%BD%A2%E7%94%A8%E6%88%B7%E7%95%8C%E9%9D%A2%E5%92%8C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91"><span class="toc-text">Day10 - 图形用户界面和游戏开发</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day11-%E6%96%87%E4%BB%B6%E5%92%8C%E5%BC%82%E5%B8%B8"><span class="toc-text">Day11 - 文件和异常</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day12-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">Day12 - 字符串和正则表达式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day13-%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B"><span class="toc-text">Day13 - 进程和线程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day14-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%92%8C%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91"><span class="toc-text">Day14 - 网络编程入门和网络应用开发</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Day15-%E5%9B%BE%E5%83%8F%E5%92%8C%E5%8A%9E%E5%85%AC%E6%96%87%E6%A1%A3%E5%A4%84%E7%90%86"><span class="toc-text">Day15 - 图像和办公文档处理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python%E5%8F%82%E8%80%83%E4%B9%A6%E7%B1%8D"><span class="toc-text">Python参考书籍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%A5%E9%97%A8%E8%AF%BB%E7%89%A9"><span class="toc-text">入门读物</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E9%98%B6%E8%AF%BB%E7%89%A9"><span class="toc-text">进阶读物</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Web%E6%A1%86%E6%9E%B6"><span class="toc-text">Web框架</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91"><span class="toc-text">爬虫开发</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90"><span class="toc-text">数据分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0"><span class="toc-text">机器学习</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python%E7%BC%96%E7%A8%8B%E6%83%AF%E4%BE%8B"><span class="toc-text">Python编程惯例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PEP8%E9%A3%8E%E6%A0%BC%E6%8C%87%E5%8D%97"><span class="toc-text">PEP8风格指南</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A9%BA%E6%A0%BC%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">空格的使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%87%E8%AF%86%E7%AC%A6%E5%91%BD%E5%90%8D"><span class="toc-text">标识符命名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E8%AF%AD%E5%8F%A5"><span class="toc-text">表达式和语句</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Zen-of-Python%EF%BC%88Python%E4%B9%8B%E7%A6%85%EF%BC%89"><span class="toc-text">Zen of Python（Python之禅）</span></a></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M10.46 1.25h3.08c1.603 0 2.86 0 3.864.095c1.023.098 1.861.3 2.6.752a5.75 5.75 0 0 1 1.899 1.899c.452.738.654 1.577.752 2.6c.095 1.004.095 2.261.095 3.865v1.067c0 1.141 0 2.036-.05 2.759c-.05.735-.153 1.347-.388 1.913a5.75 5.75 0 0 1-3.112 3.112c-.805.334-1.721.408-2.977.43a10.81 10.81 0 0 0-.929.036c-.198.022-.275.054-.32.08c-.047.028-.112.078-.224.232c-.121.166-.258.396-.476.764l-.542.916c-.773 1.307-2.69 1.307-3.464 0l-.542-.916a10.605 10.605 0 0 0-.476-.764c-.112-.154-.177-.204-.224-.232c-.045-.026-.122-.058-.32-.08c-.212-.023-.49-.03-.93-.037c-1.255-.021-2.171-.095-2.976-.429A5.75 5.75 0 0 1 1.688 16.2c-.235-.566-.338-1.178-.389-1.913c-.049-.723-.049-1.618-.049-2.76v-1.066c0-1.604 0-2.86.095-3.865c.098-1.023.3-1.862.752-2.6a5.75 5.75 0 0 1 1.899-1.899c.738-.452 1.577-.654 2.6-.752C7.6 1.25 8.857 1.25 10.461 1.25M6.739 2.839c-.914.087-1.495.253-1.959.537A4.25 4.25 0 0 0 3.376 4.78c-.284.464-.45 1.045-.537 1.96c-.088.924-.089 2.11-.089 3.761v1c0 1.175 0 2.019.046 2.685c.045.659.131 1.089.278 1.441a4.25 4.25 0 0 0 2.3 2.3c.515.214 1.173.294 2.429.316h.031c.398.007.747.013 1.037.045c.311.035.616.104.909.274c.29.17.5.395.682.645c.169.232.342.525.538.856l.559.944a.52.52 0 0 0 .882 0l.559-.944c.196-.331.37-.624.538-.856c.182-.25.392-.476.682-.645c.293-.17.598-.24.909-.274c.29-.032.639-.038 1.037-.045h.032c1.255-.022 1.913-.102 2.428-.316a4.25 4.25 0 0 0 2.3-2.3c.147-.352.233-.782.278-1.441c.046-.666.046-1.51.046-2.685v-1c0-1.651 0-2.837-.089-3.762c-.087-.914-.253-1.495-.537-1.959a4.25 4.25 0 0 0-1.403-1.403c-.464-.284-1.045-.45-1.96-.537c-.924-.088-2.11-.089-3.761-.089h-3c-1.651 0-2.837 0-3.762.089" clip-rule="evenodd"/><path fill="currentColor" d="M9 11a1 1 0 1 1-2 0a1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0a1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0a1 1 0 0 1 2 0"/></svg><span>参与讨论</span></a></div></widget>
+</div></aside><div class='float-panel blur'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/memoirs/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"skip_search":null,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js`,
+    marked: `https://cdn.jsdelivr.net/npm/marked@13.0.1/lib/marked.umd.min.js`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
+    
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
+
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+
+<!-- required -->
+<script src="/memoirs/js/main.js?v=1.29.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
+
+  <script type="module">
+  const el = document.querySelector('#comments #beaudar');
+  util.viewportLazyload(el, load_beaudar, false);
+
+  function load_beaudar() {
+    if (!el) return;
+    try {
+      el.innerHTML = '';
+    } catch (error) {
+      console.error(error);
+    }
+    const script = document.createElement('script');
+    script.src = 'https://beaudar.lipk.org/client.js';
+    script.async = true;
+    for (const key of Object.keys(el.attributes)) {
+      const attr = el.attributes[key];
+      if (['class', 'id'].includes(attr.name) === false) {
+        script.setAttribute(attr.name, attr.value);
+      }
+    }
+    el.appendChild(script);
+  }
+</script>
+
+
+
+
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"},"twikoo":{"js":"/js/services/twikoo_latest_comment.js"},"waline":{"js":"/js/services/waline_latest_comment.js"},"artalk":{"js":"/js/services/artalk_latest_comment.js"},"giscus":{"js":"/js/services/giscus_latest_comment.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>
