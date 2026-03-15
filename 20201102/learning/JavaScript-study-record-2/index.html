@@ -37,7 +37,7 @@
   
   
   
-  <meta name="keywords" content="JavaScript,基础知识,Web">
+  <meta name="keywords" content="基础知识,JavaScript,Web">
 
   <!-- feed -->
   
@@ -59,7 +59,7 @@
 
   
 
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2020-11-02T00:00:00+08:00","dateModified":"2024-12-13T10:59:51+08:00","datePublished":"2020-11-02T00:00:00+08:00","description":"写在前面的话JavaScript 语言的内容，前面基本上也记录的差不多了。这里就聊一些JavaScript语言更深入的问题，加深对这个语言的理解。C 和 Java 始终是 JavaScript 的基础，很多概念都是直接继承过来的，所以学习 C 是很重要的。我基本上每年都会对 C 有一个回顾，然后把数据结构的书再看一遍。扯远了，这边只是记录 JavaScript 一些知识点，让我以后更好地上手 JavaScript，也是学习React的一个必要的过程。虽然我已经有一个上线的 React 项目，但是React的很多原理我基本上是抓瞎的。作为一个移动端，在现在大前端的趋势下，多一个React的能力也挺好的。好几年前已经用Vue上线过一个项目了，但是那个项目比较简单，所以几年过去，我基本上忘的差不多了。","headline":"JavaScript 温习记录（二）","mainEntityOfPage":{"@type":"WebPage","@id":"https://aichiko0225.github.com/memoirs/20201102/learning/JavaScript-study-record-2/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://aichiko0225.github.com/memoirs/20201102/learning/JavaScript-study-record-2/","keywords":"JavaScript, 基础知识, Web","image":[]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2020-11-02T00:00:00+08:00","dateModified":"2024-12-13T10:59:51+08:00","datePublished":"2020-11-02T00:00:00+08:00","description":"写在前面的话JavaScript 语言的内容，前面基本上也记录的差不多了。这里就聊一些JavaScript语言更深入的问题，加深对这个语言的理解。C 和 Java 始终是 JavaScript 的基础，很多概念都是直接继承过来的，所以学习 C 是很重要的。我基本上每年都会对 C 有一个回顾，然后把数据结构的书再看一遍。扯远了，这边只是记录 JavaScript 一些知识点，让我以后更好地上手 JavaScript，也是学习React的一个必要的过程。虽然我已经有一个上线的 React 项目，但是React的很多原理我基本上是抓瞎的。作为一个移动端，在现在大前端的趋势下，多一个React的能力也挺好的。好几年前已经用Vue上线过一个项目了，但是那个项目比较简单，所以几年过去，我基本上忘的差不多了。","headline":"JavaScript 温习记录（二）","mainEntityOfPage":{"@type":"WebPage","@id":"https://aichiko0225.github.com/memoirs/20201102/learning/JavaScript-study-record-2/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://aichiko0225.github.com/memoirs/20201102/learning/JavaScript-study-record-2/","keywords":"基础知识, JavaScript, Web","image":[]}</script>
   <script>
   (function () {
     if (window.util) return;
@@ -296,12 +296,12 @@
       <p>来都来了，聊两句吧</p>
 
     </section>
-    <section class='body cmt-body utterances'>
+    <section class='body cmt-body beaudar'>
       
 
 <svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg>
 
-<div id="utterances" repo="aichiko0225/blog-comments" issue-term="pathname" theme="preferred-color-scheme" label="comments"></div>
+<div id="beaudar" repo="aichiko0225/blog-comments" issue-term="pathname" theme="preferred-color-scheme" label="comments" input-position="top" comment-order="desc" loading="false" branch="main"></div>
 
     </section>
   </div>
@@ -969,18 +969,18 @@
   (function() {
     const lazyload = false;
     
-    function initUtterances() {
-      const el = document.querySelector("#comments #utterances");
+    function initBeaudar() {
+      const el = document.querySelector('#comments #beaudar');
       if (!el) return;
       
-      function load_utterances() {
+      function load_beaudar() {
         try {
           el.innerHTML = '';
         } catch (error) {
           console.error(error);
         }
         const script = document.createElement('script');
-        script.src = 'https://utteranc.es/client.js';
+        script.src = 'https://beaudar.lipk.org/client.js';
         script.async = true;
         for (const key of Object.keys(el.attributes)) {
           const attr = el.attributes[key];
@@ -991,16 +991,16 @@
         el.appendChild(script);
       }
       
-      util.viewportLazyload(el, load_utterances, lazyload);
+      util.viewportLazyload(el, load_beaudar, lazyload);
     }
     
     // Store in global stellar namespace for PJAX reinitialization
     window.stellar = window.stellar || {};
     window.stellar.initComments = window.stellar.initComments || {};
-    window.stellar.initComments.utterances = initUtterances;
+    window.stellar.initComments.beaudar = initBeaudar;
     
     // Initialize on page load
-    initUtterances();
+    initBeaudar();
   })();
 </script>
 
