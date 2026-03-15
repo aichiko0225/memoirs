@@ -95,7 +95,7 @@
   </div>
   </div><article class="md-text content"><p>赵光飞</p>
 <p> 15172386472</p>
-<p> <a href="mailto:&#x61;&#105;&#99;&#x68;&#105;&#x6b;&#111;&#x36;&#54;&#x40;&#49;&#x36;&#51;&#x2e;&#x63;&#x6f;&#x6d;">aichiko66@163.com</a></p>
+<p> <a href="mailto:&#97;&#105;&#x63;&#x68;&#x69;&#x6b;&#111;&#54;&#54;&#64;&#49;&#x36;&#51;&#x2e;&#99;&#111;&#109;">aichiko66@163.com</a></p>
 <p>10年工作经验 | 求职意向：前端&#x2F;移动开发工程师 | 期望城市：武汉</p>
 <h3 id="个人优势"><a href="#个人优势" class="headerlink" title="个人优势"></a><strong>个人优势</strong></h3><ol>
 <li><p><strong>高级 React 开发能力</strong>  </p>
@@ -842,6 +842,46 @@
 
 
 <!-- optional -->
+
+  <script>
+  (function() {
+    const lazyload = false;
+    
+    function initBeaudar() {
+      const el = document.querySelector('#comments #beaudar');
+      if (!el) return;
+      
+      function load_beaudar() {
+        try {
+          el.innerHTML = '';
+        } catch (error) {
+          console.error(error);
+        }
+        const script = document.createElement('script');
+        script.src = 'https://beaudar.lipk.org/client.js';
+        script.async = true;
+        for (const key of Object.keys(el.attributes)) {
+          const attr = el.attributes[key];
+          if (['class', 'id'].includes(attr.name) === false) {
+            script.setAttribute(attr.name, attr.value);
+          }
+        }
+        el.appendChild(script);
+      }
+      
+      util.viewportLazyload(el, load_beaudar, lazyload);
+    }
+    
+    // Store in global stellar namespace for PJAX reinitialization
+    window.stellar = window.stellar || {};
+    window.stellar.initComments = window.stellar.initComments || {};
+    window.stellar.initComments.beaudar = initBeaudar;
+    
+    // Initialize on page load
+    initBeaudar();
+  })();
+</script>
+
 
 
 

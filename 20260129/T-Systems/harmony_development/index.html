@@ -453,6 +453,21 @@
 
 
 
+  <div class="related-wrap md-text" id="comments">
+    <section class='header cmt-title cap theme'>
+      <p>来都来了，聊两句吧</p>
+
+    </section>
+    <section class='body cmt-body beaudar'>
+      
+
+<svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg>
+
+<div id="beaudar" repo="aichiko0225/blog-comments" issue-term="pathname" theme="preferred-color-scheme" label="comments" input-position="top" comment-order="desc" loading="false" branch="main"></div>
+
+    </section>
+  </div>
+
 
 
 <footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">ash66</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar 1.33.1</a> 主题创建。</p>
@@ -461,7 +476,7 @@
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-0%EF%BC%9A%E5%89%8D%E7%BD%AE%E7%BA%A6%E6%9D%9F%E4%B8%8E%E7%9B%AE%E6%A0%87%E7%A1%AE%E8%AE%A4%EF%BC%88%E5%BF%85%E5%81%9A%EF%BC%89"><span class="toc-text">Step 0：前置约束与目标确认（必做）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-1%EF%BC%9A%E6%8F%92%E4%BB%B6%E4%B8%8E%E5%B9%B3%E5%8F%B0%E8%83%BD%E5%8A%9B%E7%9B%98%E7%82%B9%EF%BC%88P0%EF%BC%89"><span class="toc-text">Step 1：插件与平台能力盘点（P0）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-2%EF%BC%9A%E5%B9%B3%E5%8F%B0%E8%83%BD%E5%8A%9B%E6%8A%BD%E8%B1%A1%EF%BC%88%E6%9E%B6%E6%9E%84%E6%94%B9%E9%80%A0%E6%A0%B8%E5%BF%83%EF%BC%8CP0%EF%BC%89"><span class="toc-text">Step 2：平台能力抽象（架构改造核心，P0）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-2A%EF%BC%9A%E6%A8%A1%E5%9D%97%E5%8C%96%E9%80%82%E9%85%8D%E7%BA%A6%E6%9D%9F%EF%BC%88Harmony-%E4%BC%98%E5%85%88%EF%BC%89"><span class="toc-text">Step 2A：模块化适配约束（Harmony 优先）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-3%EF%BC%9ACLR-%E6%A8%A1%E5%9D%97%E6%94%B9%E9%80%A0%EF%BC%88P0%E2%80%93P1%EF%BC%89"><span class="toc-text">Step 3：CLR 模块改造（P0–P1）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-4%EF%BC%9AHarmonyOS-%E5%AE%BF%E4%B8%BB%E5%B7%A5%E7%A8%8B%E4%B8%8E-Flutter-%E5%BC%95%E6%93%8E%E6%8E%A5%E5%85%A5%EF%BC%88P0%EF%BC%89"><span class="toc-text">Step 4：HarmonyOS 宿主工程与 Flutter 引擎接入（P0）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-5%EF%BC%9AHarmonyOS-%E5%8E%9F%E7%94%9F%E8%83%BD%E5%8A%9B%E5%AE%9E%E7%8E%B0%EF%BC%88P1%EF%BC%89"><span class="toc-text">Step 5：HarmonyOS 原生能力实现（P1）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-6%EF%BC%9A%E6%A8%A1%E5%9D%97%E7%BA%A7%E5%8A%9F%E8%83%BD%E9%80%82%E9%85%8D%E4%B8%8E%E8%A3%81%E5%89%AA%EF%BC%88P1%E2%80%93P2%EF%BC%89"><span class="toc-text">Step 6：模块级功能适配与裁剪（P1–P2）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-7%EF%BC%9A%E5%88%86%E9%98%B6%E6%AE%B5%E8%90%BD%E5%9C%B0%E9%A1%BA%E5%BA%8F%EF%BC%88%E5%BC%BA%E6%89%A7%E8%A1%8C%EF%BC%89"><span class="toc-text">Step 7：分阶段落地顺序（强执行）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-8%EF%BC%9A%E5%A4%9A%E5%AE%BF%E4%B8%BB%E6%9E%84%E5%BB%BA%E4%B8%8E-CI-%E7%BA%A6%E6%9D%9F%EF%BC%88P1%EF%BC%89"><span class="toc-text">Step 8：多宿主构建与 CI 约束（P1）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-9%EF%BC%9A%E6%B5%8B%E8%AF%95%E4%B8%8E%E7%A8%B3%E5%AE%9A%E6%80%A7%E9%AA%8C%E8%AF%81%EF%BC%88P2%EF%BC%89"><span class="toc-text">Step 9：测试与稳定性验证（P2）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-10%EF%BC%9A%E4%B8%8A%E6%9E%B6%E4%B8%8E%E5%90%88%E8%A7%84%E6%A3%80%E6%9F%A5%EF%BC%88P2%EF%BC%89"><span class="toc-text">Step 10：上架与合规检查（P2）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A%E5%8F%AF%E8%A7%86%E5%8C%96%E8%A1%A5%E5%85%85%EF%BC%88%E5%8F%AF%E7%9B%B4%E6%8E%A5%E6%8F%92%E5%85%A5%E8%AF%84%E5%AE%A1%E6%9D%90%E6%96%99%EF%BC%89"><span class="toc-text">附录：可视化补充（可直接插入评审材料）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95-A%EF%BC%9A%E5%A4%9A%E5%AE%BF%E4%B8%BB-Flutter-%E6%9E%B6%E6%9E%84%E7%A4%BA%E6%84%8F"><span class="toc-text">附录 A：多宿主 + Flutter 架构示意</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95-B%EF%BC%9AHarmonyOS-%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-text">附录 B：HarmonyOS 启动流程图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95-C%EF%BC%9AFeature-Flags-%E5%8F%AF%E8%A7%86%E5%8C%96%E8%A1%A8"><span class="toc-text">附录 C：Feature Flags 可视化表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95-D%EF%BC%9A%E5%88%86%E9%98%B6%E6%AE%B5%E8%90%BD%E5%9C%B0%E7%94%98%E7%89%B9-%E6%B5%81%E7%A8%8B%E7%A4%BA%E6%84%8F"><span class="toc-text">附录 D：分阶段落地甘特&#x2F;流程示意</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%EF%BC%88%E5%AE%98%E6%96%B9%EF%BC%89"><span class="toc-text">参考资料（官方）</span></a></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a></div></widget>
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-0%EF%BC%9A%E5%89%8D%E7%BD%AE%E7%BA%A6%E6%9D%9F%E4%B8%8E%E7%9B%AE%E6%A0%87%E7%A1%AE%E8%AE%A4%EF%BC%88%E5%BF%85%E5%81%9A%EF%BC%89"><span class="toc-text">Step 0：前置约束与目标确认（必做）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-1%EF%BC%9A%E6%8F%92%E4%BB%B6%E4%B8%8E%E5%B9%B3%E5%8F%B0%E8%83%BD%E5%8A%9B%E7%9B%98%E7%82%B9%EF%BC%88P0%EF%BC%89"><span class="toc-text">Step 1：插件与平台能力盘点（P0）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-2%EF%BC%9A%E5%B9%B3%E5%8F%B0%E8%83%BD%E5%8A%9B%E6%8A%BD%E8%B1%A1%EF%BC%88%E6%9E%B6%E6%9E%84%E6%94%B9%E9%80%A0%E6%A0%B8%E5%BF%83%EF%BC%8CP0%EF%BC%89"><span class="toc-text">Step 2：平台能力抽象（架构改造核心，P0）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-2A%EF%BC%9A%E6%A8%A1%E5%9D%97%E5%8C%96%E9%80%82%E9%85%8D%E7%BA%A6%E6%9D%9F%EF%BC%88Harmony-%E4%BC%98%E5%85%88%EF%BC%89"><span class="toc-text">Step 2A：模块化适配约束（Harmony 优先）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-3%EF%BC%9ACLR-%E6%A8%A1%E5%9D%97%E6%94%B9%E9%80%A0%EF%BC%88P0%E2%80%93P1%EF%BC%89"><span class="toc-text">Step 3：CLR 模块改造（P0–P1）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-4%EF%BC%9AHarmonyOS-%E5%AE%BF%E4%B8%BB%E5%B7%A5%E7%A8%8B%E4%B8%8E-Flutter-%E5%BC%95%E6%93%8E%E6%8E%A5%E5%85%A5%EF%BC%88P0%EF%BC%89"><span class="toc-text">Step 4：HarmonyOS 宿主工程与 Flutter 引擎接入（P0）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-5%EF%BC%9AHarmonyOS-%E5%8E%9F%E7%94%9F%E8%83%BD%E5%8A%9B%E5%AE%9E%E7%8E%B0%EF%BC%88P1%EF%BC%89"><span class="toc-text">Step 5：HarmonyOS 原生能力实现（P1）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-6%EF%BC%9A%E6%A8%A1%E5%9D%97%E7%BA%A7%E5%8A%9F%E8%83%BD%E9%80%82%E9%85%8D%E4%B8%8E%E8%A3%81%E5%89%AA%EF%BC%88P1%E2%80%93P2%EF%BC%89"><span class="toc-text">Step 6：模块级功能适配与裁剪（P1–P2）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-7%EF%BC%9A%E5%88%86%E9%98%B6%E6%AE%B5%E8%90%BD%E5%9C%B0%E9%A1%BA%E5%BA%8F%EF%BC%88%E5%BC%BA%E6%89%A7%E8%A1%8C%EF%BC%89"><span class="toc-text">Step 7：分阶段落地顺序（强执行）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-8%EF%BC%9A%E5%A4%9A%E5%AE%BF%E4%B8%BB%E6%9E%84%E5%BB%BA%E4%B8%8E-CI-%E7%BA%A6%E6%9D%9F%EF%BC%88P1%EF%BC%89"><span class="toc-text">Step 8：多宿主构建与 CI 约束（P1）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-9%EF%BC%9A%E6%B5%8B%E8%AF%95%E4%B8%8E%E7%A8%B3%E5%AE%9A%E6%80%A7%E9%AA%8C%E8%AF%81%EF%BC%88P2%EF%BC%89"><span class="toc-text">Step 9：测试与稳定性验证（P2）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-10%EF%BC%9A%E4%B8%8A%E6%9E%B6%E4%B8%8E%E5%90%88%E8%A7%84%E6%A3%80%E6%9F%A5%EF%BC%88P2%EF%BC%89"><span class="toc-text">Step 10：上架与合规检查（P2）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A%E5%8F%AF%E8%A7%86%E5%8C%96%E8%A1%A5%E5%85%85%EF%BC%88%E5%8F%AF%E7%9B%B4%E6%8E%A5%E6%8F%92%E5%85%A5%E8%AF%84%E5%AE%A1%E6%9D%90%E6%96%99%EF%BC%89"><span class="toc-text">附录：可视化补充（可直接插入评审材料）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95-A%EF%BC%9A%E5%A4%9A%E5%AE%BF%E4%B8%BB-Flutter-%E6%9E%B6%E6%9E%84%E7%A4%BA%E6%84%8F"><span class="toc-text">附录 A：多宿主 + Flutter 架构示意</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95-B%EF%BC%9AHarmonyOS-%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-text">附录 B：HarmonyOS 启动流程图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95-C%EF%BC%9AFeature-Flags-%E5%8F%AF%E8%A7%86%E5%8C%96%E8%A1%A8"><span class="toc-text">附录 C：Feature Flags 可视化表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95-D%EF%BC%9A%E5%88%86%E9%98%B6%E6%AE%B5%E8%90%BD%E5%9C%B0%E7%94%98%E7%89%B9-%E6%B5%81%E7%A8%8B%E7%A4%BA%E6%84%8F"><span class="toc-text">附录 D：分阶段落地甘特&#x2F;流程示意</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%EF%BC%88%E5%AE%98%E6%96%B9%EF%BC%89"><span class="toc-text">参考资料（官方）</span></a></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
 </div></aside><div class='float-panel'>
   <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
@@ -1111,6 +1126,46 @@
 
 
 <!-- optional -->
+
+  <script>
+  (function() {
+    const lazyload = false;
+    
+    function initBeaudar() {
+      const el = document.querySelector('#comments #beaudar');
+      if (!el) return;
+      
+      function load_beaudar() {
+        try {
+          el.innerHTML = '';
+        } catch (error) {
+          console.error(error);
+        }
+        const script = document.createElement('script');
+        script.src = 'https://beaudar.lipk.org/client.js';
+        script.async = true;
+        for (const key of Object.keys(el.attributes)) {
+          const attr = el.attributes[key];
+          if (['class', 'id'].includes(attr.name) === false) {
+            script.setAttribute(attr.name, attr.value);
+          }
+        }
+        el.appendChild(script);
+      }
+      
+      util.viewportLazyload(el, load_beaudar, lazyload);
+    }
+    
+    // Store in global stellar namespace for PJAX reinitialization
+    window.stellar = window.stellar || {};
+    window.stellar.initComments = window.stellar.initComments || {};
+    window.stellar.initComments.beaudar = initBeaudar;
+    
+    // Initialize on page load
+    initBeaudar();
+  })();
+</script>
+
 
 
 
