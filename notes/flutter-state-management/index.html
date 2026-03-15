@@ -59,7 +59,71 @@
   
 
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Website","@id":"https://aichiko0225.github.com/memoirs/notes/flutter-state-management","author":{"@type":"Person","name":"ash66","sameAs":[]},"name":"Flutter 状态管理入门速记","description":"Flutter 状态管理入门速记目标用最小心智负担理解 setState、Provider、Riverpod 的区别\n\n1. 从 setState 开始12345678910111213141516171819202122class CounterPage extends StatefulWidget &#123;  const CounterPage(&#123;super.key&#12...","url":"https://aichiko0225.github.com/memoirs/notes/flutter-state-management"}</script>
-  
+  <script>
+  (function () {
+    if (window.util) return;
+
+    window.util = {
+      viewportLazyload: function (el, callback, lazyload) {
+        if (!el || typeof callback !== 'function') return;
+        if (!lazyload) {
+          callback();
+          return;
+        }
+        if (!('IntersectionObserver' in window)) {
+          callback();
+          return;
+        }
+        var loaded = false;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!loaded && entry.isIntersecting) {
+              loaded = true;
+              observer.disconnect();
+              callback();
+            }
+          });
+        }, { rootMargin: '100px 0px' });
+        observer.observe(el);
+      },
+      toggle: function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var hidden = el.style.height === '0px' || el.style.opacity === '0';
+        if (hidden) {
+          el.style.opacity = '1';
+          el.style.height = 'auto';
+        } else {
+          el.style.opacity = '0';
+          el.style.height = '0';
+        }
+      },
+      copy: function (id, message) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var text = el.value || el.textContent || '';
+        var done = function () {
+          if (message) console.log(message);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {});
+          return;
+        }
+        var area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(area);
+        done();
+      },
+      scrollTop: function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+  })();
+</script>
+
 </head>
 <body><div id="l_cover"></div><div class="l_body content" id="start" layout="page" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
 

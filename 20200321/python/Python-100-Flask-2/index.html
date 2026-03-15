@@ -73,7 +73,71 @@
   
 
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2020-03-21T19:12:10+08:00","dateModified":"2024-12-13T11:03:29+08:00","datePublished":"2020-03-21T19:12:10+08:00","description":"前言前面介绍了Flask和HTTP的基础知识，下面会介绍Flask的基础用法\n第4章 表单在Web程序中，表单是和用户交互最常见的方式之一。用户注册、登录、撰写文章、编辑设置，无一不用到表单。不过，表单的处理却并不简单。你不仅要创建表单，验证用户输入的内容，向用户显示错误提示，还要获取并保存数据。幸运的是，强大的WTForms可以帮我们解决这些问题。WTForms是一个使用Python编写的表单库，它使得表单的定 义、验证（服务器端）和处理变得非常轻松。这一章我们会介绍在Web 程序中处理表单的方法和技巧。\n使用Flask-WTF处理表单扩展Flask-WTF集成了WTForms，使用它可以在Flask中更方便地使用WTForms。Flask-WTF将表单数据解析、CSRF保护、文件上传等功能与Flask集成，另外还附加了reCAPTCHA支持。\nFlask-WTF默认为每个表单启用CSRF保护，它会为我们自动生成和 验证CSRF令牌。默认情况下，Flask-WTF使用程序密钥来对CSRF令牌 进行签名，所以我们需要为程序设置密钥：\n1app.secret_key = &#x27;secret string&#x27;\n\n定义WTForms表单类当使用WTForms创建表单时，表单由Python类表示，这个类继承从 WTForms导入的Form基类。一个表单由若干个输入字段组成，这些字 段分别用表单类的类属性来表示（字段即Field，你可以简单理解为表单 内的输入框、按钮等部件）。下面定义了一个LoginForm类，最终会生 成我们在前面定义的HTML表单：\n12345678910from wtforms import Form, StringField, PasswordField, BooleanField, SubmitFieldfrom wtforms.validators import DataRequired, Length# 4.2.1 basic form exampleclass LoginForm(FlaskForm):    username = StringField(&#x27;Username&#x27;, validators=[DataRequired()])    password = PasswordField(&#x27;Password&#x27;, validators=[DataRequired(), Length(8, 128)])    remember = BooleanField(&#x27;Remember me&#x27;)    submit = SubmitField(&#x27;Log in&#x27;)\n\n每个字段属性通过实例化WTForms提供的字段类表示。字段属性的名称将作为对应HTML&lt;input&gt;元素的name属性及id属性值。\n\n\n\n当使用Flask-WTF定义表单时，我们仍然使用WTForms提供的字段类和验证器，创建的方式也完全相同，只不过表单类要继承Flask-WTF提供的FlaskForm类。FlaskForm类继承自Form类，进行了一些设置，并附加了一些辅助方法，以便与Flask集成。","headline":"Python-Flask基础篇(二)","mainEntityOfPage":{"@type":"WebPage","@id":"https://aichiko0225.github.com/memoirs/20200321/python/Python-100-Flask-2/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://aichiko0225.github.com/memoirs/20200321/python/Python-100-Flask-2/","keywords":"Python, Flask","image":[]}</script>
-  
+  <script>
+  (function () {
+    if (window.util) return;
+
+    window.util = {
+      viewportLazyload: function (el, callback, lazyload) {
+        if (!el || typeof callback !== 'function') return;
+        if (!lazyload) {
+          callback();
+          return;
+        }
+        if (!('IntersectionObserver' in window)) {
+          callback();
+          return;
+        }
+        var loaded = false;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!loaded && entry.isIntersecting) {
+              loaded = true;
+              observer.disconnect();
+              callback();
+            }
+          });
+        }, { rootMargin: '100px 0px' });
+        observer.observe(el);
+      },
+      toggle: function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var hidden = el.style.height === '0px' || el.style.opacity === '0';
+        if (hidden) {
+          el.style.opacity = '1';
+          el.style.height = 'auto';
+        } else {
+          el.style.opacity = '0';
+          el.style.height = '0';
+        }
+      },
+      copy: function (id, message) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var text = el.value || el.textContent || '';
+        var done = function () {
+          if (message) console.log(message);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {});
+          return;
+        }
+        var area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(area);
+        done();
+      },
+      scrollTop: function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+  })();
+</script>
+
 </head>
 <body><div id="l_cover"></div><div class="l_body content" id="start" layout="post" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
 

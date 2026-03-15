@@ -67,7 +67,71 @@
   
 
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2020-03-10T21:51:59+08:00","dateModified":"2024-12-13T11:02:36+08:00","datePublished":"2020-03-10T21:51:59+08:00","description":"数据结构和算法\n算法：解决问题的方法和步骤\n评价算法的好坏：渐近时间复杂度和渐近空间复杂度。\n渐近时间复杂度的大O标记：\n - 常量时间复杂度 - 布隆过滤器 &#x2F; 哈希存储\n\n - 对数时间复杂度 - 折半查找（二分查找）\n\n - 线性时间复杂度 - 顺序查找 &#x2F; 桶排序\n\n - 对数线性时间复杂度 - 高级排序算法（归并排序、快速排序）\n\n - 平方时间复杂度 - 简单排序算法（选择排序、插入排序、冒泡排序）\n\n - 立方时间复杂度 - Floyd算法 &#x2F; 矩阵乘法运算\n\n - 几何级数时间复杂度 - 汉诺塔\n\n - 阶乘时间复杂度 - 旅行经销商问题 - NP\n\n\n\n","headline":"Python-100天(二)-Python语言进阶","mainEntityOfPage":{"@type":"WebPage","@id":"https://aichiko0225.github.com/memoirs/20200310/python/Python-100-2/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://aichiko0225.github.com/memoirs/20200310/python/Python-100-2/","keywords":"Python","image":[]}</script>
-  
+  <script>
+  (function () {
+    if (window.util) return;
+
+    window.util = {
+      viewportLazyload: function (el, callback, lazyload) {
+        if (!el || typeof callback !== 'function') return;
+        if (!lazyload) {
+          callback();
+          return;
+        }
+        if (!('IntersectionObserver' in window)) {
+          callback();
+          return;
+        }
+        var loaded = false;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!loaded && entry.isIntersecting) {
+              loaded = true;
+              observer.disconnect();
+              callback();
+            }
+          });
+        }, { rootMargin: '100px 0px' });
+        observer.observe(el);
+      },
+      toggle: function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var hidden = el.style.height === '0px' || el.style.opacity === '0';
+        if (hidden) {
+          el.style.opacity = '1';
+          el.style.height = 'auto';
+        } else {
+          el.style.opacity = '0';
+          el.style.height = '0';
+        }
+      },
+      copy: function (id, message) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var text = el.value || el.textContent || '';
+        var done = function () {
+          if (message) console.log(message);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {});
+          return;
+        }
+        var area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(area);
+        done();
+      },
+      scrollTop: function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+  })();
+</script>
+
 </head>
 <body><div id="l_cover"></div><div class="l_body content" id="start" layout="post" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
 

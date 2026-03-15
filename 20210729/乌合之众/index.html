@@ -57,7 +57,71 @@
   
 
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2021-07-29T00:00:00+08:00","dateModified":"2021-07-29T00:00:00+08:00","datePublished":"2021-07-29T00:00:00+08:00","description":"1.人一到群体中，智商就严重降低，为了获得认同，个体愿意抛弃是非，用智商去换取那份让人备感安全的归属感。","headline":"乌合之众","mainEntityOfPage":{"@type":"WebPage","@id":"https://aichiko0225.github.com/memoirs/20210729/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://aichiko0225.github.com/memoirs/20210729/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/","image":[]}</script>
-  
+  <script>
+  (function () {
+    if (window.util) return;
+
+    window.util = {
+      viewportLazyload: function (el, callback, lazyload) {
+        if (!el || typeof callback !== 'function') return;
+        if (!lazyload) {
+          callback();
+          return;
+        }
+        if (!('IntersectionObserver' in window)) {
+          callback();
+          return;
+        }
+        var loaded = false;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!loaded && entry.isIntersecting) {
+              loaded = true;
+              observer.disconnect();
+              callback();
+            }
+          });
+        }, { rootMargin: '100px 0px' });
+        observer.observe(el);
+      },
+      toggle: function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var hidden = el.style.height === '0px' || el.style.opacity === '0';
+        if (hidden) {
+          el.style.opacity = '1';
+          el.style.height = 'auto';
+        } else {
+          el.style.opacity = '0';
+          el.style.height = '0';
+        }
+      },
+      copy: function (id, message) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var text = el.value || el.textContent || '';
+        var done = function () {
+          if (message) console.log(message);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {});
+          return;
+        }
+        var area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(area);
+        done();
+      },
+      scrollTop: function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+  })();
+</script>
+
 </head>
 <body><div id="l_cover"></div><div class="l_body content" id="start" layout="post" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
 

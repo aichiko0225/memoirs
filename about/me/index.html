@@ -57,7 +57,71 @@
   
 
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Website","@id":"https://aichiko0225.github.com/memoirs/about/me","author":{"@type":"Person","name":"ash66","sameAs":[]},"name":"我的简历","description":"赵光飞\n 15172386472\n aichiko66@163.com\n10年工作经验 | 求职意向：前端&#x2F;移动开发工程师 | 期望城市：武汉\n个人优势\n高级 React 开发能力  \n\n精通 React.js 及其生态（如 Redux、React Router、React Hooks、Context API 等），能够高效开发复杂的前端管理系统、智能网联平台、小程序项目等。  \n...","url":"https://aichiko0225.github.com/memoirs/about/me"}</script>
-  
+  <script>
+  (function () {
+    if (window.util) return;
+
+    window.util = {
+      viewportLazyload: function (el, callback, lazyload) {
+        if (!el || typeof callback !== 'function') return;
+        if (!lazyload) {
+          callback();
+          return;
+        }
+        if (!('IntersectionObserver' in window)) {
+          callback();
+          return;
+        }
+        var loaded = false;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!loaded && entry.isIntersecting) {
+              loaded = true;
+              observer.disconnect();
+              callback();
+            }
+          });
+        }, { rootMargin: '100px 0px' });
+        observer.observe(el);
+      },
+      toggle: function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var hidden = el.style.height === '0px' || el.style.opacity === '0';
+        if (hidden) {
+          el.style.opacity = '1';
+          el.style.height = 'auto';
+        } else {
+          el.style.opacity = '0';
+          el.style.height = '0';
+        }
+      },
+      copy: function (id, message) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var text = el.value || el.textContent || '';
+        var done = function () {
+          if (message) console.log(message);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {});
+          return;
+        }
+        var area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(area);
+        done();
+      },
+      scrollTop: function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+  })();
+</script>
+
 </head>
 <body><div id="l_cover"></div><div class="l_body content" id="start" layout="page" type="story" text-indent><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
 
@@ -95,7 +159,7 @@
   </div>
   </div><article class="md-text content"><p>赵光飞</p>
 <p> 15172386472</p>
-<p> <a href="mailto:&#97;&#105;&#x63;&#x68;&#x69;&#x6b;&#111;&#54;&#54;&#64;&#49;&#x36;&#51;&#x2e;&#99;&#111;&#109;">aichiko66@163.com</a></p>
+<p> <a href="mailto:&#97;&#x69;&#x63;&#104;&#105;&#x6b;&#111;&#x36;&#54;&#x40;&#49;&#54;&#x33;&#x2e;&#x63;&#x6f;&#109;">aichiko66@163.com</a></p>
 <p>10年工作经验 | 求职意向：前端&#x2F;移动开发工程师 | 期望城市：武汉</p>
 <h3 id="个人优势"><a href="#个人优势" class="headerlink" title="个人优势"></a><strong>个人优势</strong></h3><ol>
 <li><p><strong>高级 React 开发能力</strong>  </p>

@@ -60,7 +60,71 @@
   
 
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2020-11-02T00:00:00+08:00","dateModified":"2024-12-13T10:59:51+08:00","datePublished":"2020-11-02T00:00:00+08:00","description":"写在前面的话JavaScript 语言的内容，前面基本上也记录的差不多了。这里就聊一些JavaScript语言更深入的问题，加深对这个语言的理解。C 和 Java 始终是 JavaScript 的基础，很多概念都是直接继承过来的，所以学习 C 是很重要的。我基本上每年都会对 C 有一个回顾，然后把数据结构的书再看一遍。扯远了，这边只是记录 JavaScript 一些知识点，让我以后更好地上手 JavaScript，也是学习React的一个必要的过程。虽然我已经有一个上线的 React 项目，但是React的很多原理我基本上是抓瞎的。作为一个移动端，在现在大前端的趋势下，多一个React的能力也挺好的。好几年前已经用Vue上线过一个项目了，但是那个项目比较简单，所以几年过去，我基本上忘的差不多了。","headline":"JavaScript 温习记录（二）","mainEntityOfPage":{"@type":"WebPage","@id":"https://aichiko0225.github.com/memoirs/20201102/learning/JavaScript-study-record-2/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://aichiko0225.github.com/memoirs/20201102/learning/JavaScript-study-record-2/","keywords":"JavaScript, 基础知识, Web","image":[]}</script>
-  
+  <script>
+  (function () {
+    if (window.util) return;
+
+    window.util = {
+      viewportLazyload: function (el, callback, lazyload) {
+        if (!el || typeof callback !== 'function') return;
+        if (!lazyload) {
+          callback();
+          return;
+        }
+        if (!('IntersectionObserver' in window)) {
+          callback();
+          return;
+        }
+        var loaded = false;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!loaded && entry.isIntersecting) {
+              loaded = true;
+              observer.disconnect();
+              callback();
+            }
+          });
+        }, { rootMargin: '100px 0px' });
+        observer.observe(el);
+      },
+      toggle: function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var hidden = el.style.height === '0px' || el.style.opacity === '0';
+        if (hidden) {
+          el.style.opacity = '1';
+          el.style.height = 'auto';
+        } else {
+          el.style.opacity = '0';
+          el.style.height = '0';
+        }
+      },
+      copy: function (id, message) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var text = el.value || el.textContent || '';
+        var done = function () {
+          if (message) console.log(message);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {});
+          return;
+        }
+        var area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(area);
+        done();
+      },
+      scrollTop: function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+  })();
+</script>
+
 </head>
 <body><div id="l_cover"></div><div class="l_body content" id="start" layout="post" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
 
