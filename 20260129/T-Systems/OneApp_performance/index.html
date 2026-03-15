@@ -1,0 +1,922 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
+  
+  <meta name="generator" content="Hexo 8.1.1">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>OneApp 性能与架构优化方案（内存与模块化） - ash</title>
+
+  
+    <meta name="description" content="本方案包含三部分：性能与内存优化理论、架构改造（模块化完善）与内存优化实战，并补充性能监控方案、成本与风险评估。 理论基础：内存模型、排查方法与治理策略1) 内存构成（跨端共识） Flutter&#x2F;Dart：Dart Heap、Native Heap、GPU 纹理、ImageCache、Skia 资源 Android：Java Heap、NativeHeap、Graphics&#x2F;G">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OneApp 性能与架构优化方案（内存与模块化）">
+<meta property="og:url" content="https://aichiko0225.github.com/memoirs/20260129/T-Systems/OneApp_performance/index.html">
+<meta property="og:site_name" content="ash">
+<meta property="og:description" content="本方案包含三部分：性能与内存优化理论、架构改造（模块化完善）与内存优化实战，并补充性能监控方案、成本与风险评估。 理论基础：内存模型、排查方法与治理策略1) 内存构成（跨端共识） Flutter&#x2F;Dart：Dart Heap、Native Heap、GPU 纹理、ImageCache、Skia 资源 Android：Java Heap、NativeHeap、Graphics&#x2F;G">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-15T12:14:15.909Z">
+<meta property="article:author" content="ash66">
+<meta property="article:tag" content="IT">
+<meta property="article:tag" content="T-Systems">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="T-Systems,IT">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/memoirs/atom.xml" title="ash" type="application/atom+xml">
+  
+
+  <link rel="stylesheet" href="/memoirs/css/main.css?v=1.29.1">
+
+
+  
+    <link rel="shortcut icon" href="/memoirs/favicon.png">
+  
+
+  
+
+  
+</head>
+<body>
+
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/memoirs/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/memoirs/images/image1.jpeg" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/memoirs/"><div class="main" ff="title">ash</div><div class="sub cap">我只是一个影子，虽然我发着光。。。</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/memoirs/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="笔记本" href="/memoirs/notes/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="AboutMe" href="/memoirs/about/me" style="color:#F44336"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m13.629 20.472l-.542.916c-.483.816-1.69.816-2.174 0l-.542-.916c-.42-.71-.63-1.066-.968-1.262c-.338-.197-.763-.204-1.613-.219c-1.256-.021-2.043-.098-2.703-.372a5 5 0 0 1-2.706-2.706C2 14.995 2 13.83 2 11.5v-1c0-3.273 0-4.91.737-6.112a5 5 0 0 1 1.65-1.651C5.59 2 7.228 2 10.5 2h3c3.273 0 4.91 0 6.113.737a5 5 0 0 1 1.65 1.65C22 5.59 22 7.228 22 10.5v1c0 2.33 0 3.495-.38 4.413a5 5 0 0 1-2.707 2.706c-.66.274-1.447.35-2.703.372c-.85.015-1.275.022-1.613.219c-.338.196-.548.551-.968 1.262" opacity=".5"/><path fill="currentColor" d="M10.99 14.308c-1.327-.978-3.49-2.84-3.49-4.593c0-2.677 2.475-3.677 4.5-1.609c2.025-2.068 4.5-1.068 4.5 1.609c0 1.752-2.163 3.615-3.49 4.593c-.454.335-.681.502-1.01.502c-.329 0-.556-.167-1.01-.502"/></svg></a></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/memoirs/20260129/T-Systems/OneApp_performance/"><span class="title">OneApp 性能与架构优化方案（内存与模块化）</span></a><a class="item title" href="/memoirs/20260129/T-Systems/harmony_development/"><span class="title">OneApp 鸿蒙（HarmonyOS）工作步骤文档</span></a><a class="item title" href="/memoirs/20260315/learning/opencode-in-action-2026/"><span class="title">OpenCode 实战指南（2026）：从能用到好用</span></a><a class="item title" href="/memoirs/20241224/learning/react-references/"><span class="title">React 学习参考</span></a><a class="item title" href="/memoirs/20241212/running/guangzhou/"><span class="title">广州马拉松</span></a><a class="item title" href="/memoirs/20200312/python/Python-100-3/"><span class="title">Python-100天(三)-数据库基础和进阶</span></a><a class="item title" href="/memoirs/20200321/python/Python-100-Flask-2/"><span class="title">Python-Flask基础篇(二)</span></a><a class="item title" href="/memoirs/20200316/python/Python-100-Flask-1/"><span class="title">Python-Flask基础篇(一)</span></a><a class="item title" href="/memoirs/20200310/python/Python-100-2/"><span class="title">Python-100天(二)-Python语言进阶</span></a><a class="item title" href="/memoirs/20200305/python/Python-100-1/"><span class="title">Python-100天(一)</span></a></div></widget>
+</div>
+<footer class="footer dis-select"><div class="social-wrap"><a class="social" href="https://github.com/aichiko0225" target="_blank" rel="external nofollow noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/08a41b181ce68.svg"/></a></div></footer>
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/memoirs/memoirs/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/memoirs/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/memoirs/categories/IT%E6%8A%80%E6%9C%AF/">IT技术</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2026-01-28T16:00:00.000Z">2026-01-29</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2026-03-15T12:14:15.909Z">2026-03-15</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>OneApp 性能与架构优化方案（内存与模块化）</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>本方案包含三部分：性能与内存优化理论、架构改造（模块化完善）与内存优化实战，并补充性能监控方案、成本与风险评估。</p>
+<h2 id="理论基础：内存模型、排查方法与治理策略"><a href="#理论基础：内存模型、排查方法与治理策略" class="headerlink" title="理论基础：内存模型、排查方法与治理策略"></a>理论基础：内存模型、排查方法与治理策略</h2><h3 id="1-内存构成（跨端共识）"><a href="#1-内存构成（跨端共识）" class="headerlink" title="1) 内存构成（跨端共识）"></a>1) 内存构成（跨端共识）</h3><ul>
+<li>Flutter&#x2F;Dart：Dart Heap、Native Heap、GPU 纹理、ImageCache、Skia 资源</li>
+<li>Android：Java Heap、Native<br>Heap、Graphics&#x2F;GL、Ashmem&#x2F;匿名共享、文件映射</li>
+<li>iOS：Heap、VM、Metal&#x2F;纹理、ImageIO 解码缓存</li>
+</ul>
+<h3 id="2-常见内存问题类型"><a href="#2-常见内存问题类型" class="headerlink" title="2) 常见内存问题类型"></a>2) 常见内存问题类型</h3><ul>
+<li>泄漏：对象生命周期失控，无法被 GC&#x2F;ARC 回收</li>
+<li>峰值过高：大图、视频、批量解析造成瞬时激增</li>
+<li>缓存失控：图片&#x2F;列表&#x2F;业务缓存无上限或无 TTL</li>
+<li>碎片与抖动：高频创建大对象导致频繁 GC&#x2F;ARC</li>
+</ul>
+<h3 id="3-使用-DevTools-排查内存问题（流程化）"><a href="#3-使用-DevTools-排查内存问题（流程化）" class="headerlink" title="3) 使用 DevTools 排查内存问题（流程化）"></a>3) 使用 DevTools 排查内存问题（流程化）</h3><ul>
+<li>基线建立：进入核心场景（首页、车控、地图&#x2F;媒体、个人中心）分别记录内存曲线与峰值</li>
+<li>事件复现：复现场景触发后，观察内存是否回落到基线附近</li>
+<li>快照对比：多次快照对比，锁定增长中的对象类型与数量</li>
+<li>引用链分析：定位“谁在持有对象”，找出未释放的根因</li>
+<li>GC 验证：触发 GC 后仍不回落，优先排查泄漏与缓存失控</li>
+<li>输出结论：标注对象类型、持有链路、场景、复现步骤与修复建议</li>
+</ul>
+<h3 id="3-1-内存自动化回归（AirtestIDE）"><a href="#3-1-内存自动化回归（AirtestIDE）" class="headerlink" title="3.1) 内存自动化回归（AirtestIDE）"></a>3.1) 内存自动化回归（AirtestIDE）</h3><ul>
+<li>目标<ul>
+<li>替代人工点击，稳定复现核心场景并采集内存曲线</li>
+<li>形成可重复的回归路径与对比基线</li>
+</ul>
+</li>
+<li>脚本覆盖<ul>
+<li>首页 → 车控 → 地图&#x2F;媒体 → 个人中心 → 返回首页</li>
+<li>前后台切换、列表滚动、资源密集操作路径</li>
+</ul>
+</li>
+<li>采集策略<ul>
+<li>启动前清理缓存，保证基线一致</li>
+<li>场景进入与退出分别记录峰值与回落</li>
+<li>与内存告警联动，定位异常场景</li>
+</ul>
+</li>
+<li>产出物<ul>
+<li>Airtest 脚本与用例集</li>
+<li>自动化内存基线报告与回归对比报告</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-僵尸对象与内存不释放的判断方法"><a href="#4-僵尸对象与内存不释放的判断方法" class="headerlink" title="4) 僵尸对象与内存不释放的判断方法"></a>4) 僵尸对象与内存不释放的判断方法</h3><ul>
+<li>僵尸对象特征：页面退出后对象仍在内存中、数量持续上升、被全局单例或静态集合持有</li>
+<li>常见来源：未取消订阅、缓存未清理、生命周期未对齐、异步任务回调未释放</li>
+<li>判断方式：同场景多次进入退出，观察对象数量是否线性增长</li>
+<li>处理策略：明确生命周期边界、集中释放入口、限制缓存上限、引入弱引用或定时清理</li>
+</ul>
+<h3 id="5-解决思路的优先级"><a href="#5-解决思路的优先级" class="headerlink" title="5) 解决思路的优先级"></a>5) 解决思路的优先级</h3><ul>
+<li>限制缓存上限与生命周期（优先）</li>
+<li>下采样与降规格加载（优先）</li>
+<li>资源释放与生命周期治理（优先）</li>
+<li>计算迁移与异步分批处理（中）</li>
+<li>架构层优化与模块拆分（长期）</li>
+</ul>
+<h3 id="6-性能监控方案（内存与卡顿）"><a href="#6-性能监控方案（内存与卡顿）" class="headerlink" title="6) 性能监控方案（内存与卡顿）"></a>6) 性能监控方案（内存与卡顿）</h3><ul>
+<li>指标体系<ul>
+<li>内存：PSS、Dart Heap、Native Heap、峰值与稳定值、低内存告警次数</li>
+<li>卡顿：FPS、Jank 帧占比、平均&#x2F;90 分位帧耗时、UI&#x2F;渲染线程耗时、GC 频次</li>
+<li>体验：页面首帧时间、路由切换耗时、列表滑动掉帧率</li>
+<li>稳定性：OOM、Crash、页面白屏&#x2F;卡死</li>
+</ul>
+</li>
+<li>采集策略<ul>
+<li>核心场景高频采样，非核心场景抽样采集</li>
+<li>前后台切换、页面进出、资源密集操作、帧耗时异常触发关键事件</li>
+</ul>
+</li>
+<li>上报链路<ul>
+<li>本地缓存 + 批量上报 + 失败重试</li>
+<li>与现有内存告警联动，形成“告警—定位—修复—验证”闭环</li>
+</ul>
+</li>
+<li>产出物<ul>
+<li>基线报告、卡顿场景榜单、专项优化清单、回归对比报告</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-代码层面的漏洞与泄漏高发点（排查清单）"><a href="#7-代码层面的漏洞与泄漏高发点（排查清单）" class="headerlink" title="7) 代码层面的漏洞与泄漏高发点（排查清单）"></a>7) 代码层面的漏洞与泄漏高发点（排查清单）</h3><ul>
+<li>生命周期与订阅<ul>
+<li>StreamSubscription&#x2F;RxDart&#x2F;EventBus 未取消订阅</li>
+<li>Timer&#x2F;Isolate&#x2F;Compute 任务未停止或回收</li>
+<li>MethodChannel&#x2F;EventChannel 监听未释放</li>
+</ul>
+</li>
+<li>控制器与资源<ul>
+<li>AnimationController&#x2F;ScrollController&#x2F;TextEditingController&#x2F;FocusNode<br>未 dispose</li>
+<li>视频&#x2F;地图&#x2F;纹理资源未 stop&#x2F;destroy</li>
+</ul>
+</li>
+<li>缓存与引用<ul>
+<li>单例&#x2F;静态集合持有 BuildContext&#x2F;Widget&#x2F;State</li>
+<li>图片&#x2F;业务缓存无上限或无 TTL，列表 keepAlive 过度使用</li>
+</ul>
+</li>
+<li>主线程阻塞<ul>
+<li>大 JSON 解析&#x2F;排序&#x2F;解码在主线程执行</li>
+<li>同步磁盘 IO 或大量 setState&#x2F;重建导致帧耗时激增</li>
+</ul>
+</li>
+</ul>
+<p>排查要点</p>
+<ul>
+<li>同场景多次进入退出，对象数量应稳定或回落</li>
+<li>退出页面后仍增长的对象，优先回溯持有链与订阅源</li>
+<li>发生卡顿时定位长帧对应的函数与调用链，先移出主线程</li>
+</ul>
+<h3 id="8-常见内存问题与解决方案（摘要）"><a href="#8-常见内存问题与解决方案（摘要）" class="headerlink" title="8) 常见内存问题与解决方案（摘要）"></a>8) 常见内存问题与解决方案（摘要）</h3><ul>
+<li>图片与纹理占用过大 → 统一下采样、限制缓存上限、资源按需加载</li>
+<li>列表长期驻留 → 分页与复用、减少 keepAlive、页面退出清理</li>
+<li>业务缓存失控 → TTL 与容量上限、冷热分层、统一清理入口</li>
+<li>异步任务未释放 → 统一取消订阅与回调清理</li>
+<li>资源引擎未释放 → 提供 destroy&#x2F;stop 入口并强制调用</li>
+</ul>
+<h3 id="9-验收标准（以基线报告为准）"><a href="#9-验收标准（以基线报告为准）" class="headerlink" title="9) 验收标准（以基线报告为准）"></a>9) 验收标准（以基线报告为准）</h3><ul>
+<li>内存指标<ul>
+<li>核心场景峰值下降、退场后回落至基线区间</li>
+<li>低内存告警次数显著下降</li>
+</ul>
+</li>
+<li>卡顿指标<ul>
+<li>核心场景 Jank 帧占比下降、长帧数量显著降低</li>
+<li>滑动与路由切换场景的帧耗时回落至基线区间</li>
+</ul>
+</li>
+<li>稳定性指标<ul>
+<li>OOM 与相关 Crash 明显下降</li>
+</ul>
+</li>
+<li>过程指标<ul>
+<li>形成可复用的排查流程与问题归因闭环</li>
+<li>代码层泄漏清单闭环，关键模块释放入口覆盖率提升</li>
+</ul>
+</li>
+</ul>
+<h2 id="架构改造：模块化完善（高内聚低耦合）"><a href="#架构改造：模块化完善（高内聚低耦合）" class="headerlink" title="架构改造：模块化完善（高内聚低耦合）"></a>架构改造：模块化完善（高内聚低耦合）</h2><h3 id="1-模块分层与依赖方向"><a href="#1-模块分层与依赖方向" class="headerlink" title="1) 模块分层与依赖方向"></a>1) 模块分层与依赖方向</h3><ul>
+<li>basic_*：基础设施层，只依赖基础能力，不依赖业务</li>
+<li>kit_*：通用工具与能力，允许被 app_*&#x2F;clr_* 依赖</li>
+<li>ui_*：UI 组件层，不依赖 app_*，仅依赖 basic_*&#x2F;kit_*</li>
+<li>clr_*：服务 SDK 层，对外暴露 Facade，内部可依赖 basic_*&#x2F;kit_*</li>
+<li>app_*：业务模块层，只依赖<br>basic_*&#x2F;kit_*&#x2F;ui_*&#x2F;clr_*，禁止互相强依赖</li>
+</ul>
+<p>现有模块依赖关系图（基于 pubspec.yaml 扫描）</p>
+<p>应用入口与本地模块归属</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    subgraph 应用入口层</span><br><span class="line">        MAIN[oneapp_main]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph 业务模块</span><br><span class="line">        ACC[app_account]</span><br><span class="line">        SET[app_setting]</span><br><span class="line">        COM[oneapp_community]</span><br><span class="line">        MEM[oneapp_membership]</span><br><span class="line">        AFTER[oneapp_after_sales]</span><br><span class="line">        CAR_SALES[oneapp_car_sales]</span><br><span class="line">        TP[oneapp_touch_point]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph 服务组件</span><br><span class="line">        CONF[app_configuration]</span><br><span class="line">        COMP[oneapp_companion]</span><br><span class="line">        POPUP[oneapp_popup]</span><br><span class="line">        SHARE[share_to_friends]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph 车辆相关</span><br><span class="line">        CAR[app_car]</span><br><span class="line">        CHARGE[app_charging]</span><br><span class="line">        WALLBOX[app_wallbox]</span><br><span class="line">        WATCH[app_carwatcher]</span><br><span class="line">        AVATAR[app_avatar]</span><br><span class="line">        ORDER[app_order]</span><br><span class="line">        TOUCHGO[app_touchgo]</span><br><span class="line">        VUR[app_vur]</span><br><span class="line">        MAINT[app_maintenance]</span><br><span class="line">        RPA[app_rpa]</span><br><span class="line">        COMPOSER[app_composer]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    MAIN --&gt; ACC</span><br><span class="line">    MAIN --&gt; SET</span><br><span class="line">    MAIN --&gt; COM</span><br><span class="line">    MAIN --&gt; MEM</span><br><span class="line">    MAIN --&gt; AFTER</span><br><span class="line">    MAIN --&gt; CAR_SALES</span><br><span class="line">    MAIN --&gt; TP</span><br><span class="line">    MAIN --&gt; CONF</span><br><span class="line">    MAIN --&gt; COMP</span><br><span class="line">    MAIN --&gt; POPUP</span><br><span class="line">    MAIN --&gt; SHARE</span><br><span class="line">    MAIN --&gt; CAR</span><br><span class="line">    MAIN --&gt; CHARGE</span><br><span class="line">    MAIN --&gt; WALLBOX</span><br><span class="line">    MAIN --&gt; WATCH</span><br><span class="line">    MAIN --&gt; AVATAR</span><br><span class="line">    MAIN --&gt; ORDER</span><br><span class="line">    MAIN --&gt; TOUCHGO</span><br><span class="line">    MAIN --&gt; VUR</span><br><span class="line">    MAIN --&gt; MAINT</span><br><span class="line">    MAIN --&gt; RPA</span><br><span class="line">    MAIN --&gt; COMPOSER</span><br></pre></td></tr></table></figure>
+
+<p>业务模块内部依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    COM[oneapp_community] --&gt; MEM[oneapp_membership]</span><br><span class="line">    COM --&gt; CAR_SALES[oneapp_car_sales]</span><br><span class="line">    COM --&gt; TP[oneapp_touch_point]</span><br><span class="line">    COM --&gt; AFTER[oneapp_after_sales]</span><br><span class="line">    COM --&gt; SHARE[share_to_friends]</span><br><span class="line"></span><br><span class="line">    MEM --&gt; COM</span><br><span class="line">    MEM --&gt; AFTER</span><br><span class="line">    MEM --&gt; ACC[app_account]</span><br><span class="line"></span><br><span class="line">    CAR_SALES --&gt; CONF[app_configuration]</span><br><span class="line">    CAR_SALES --&gt; AFTER</span><br><span class="line">    CAR_SALES --&gt; TP</span><br><span class="line"></span><br><span class="line">    CONF --&gt; CAR_SALES</span><br><span class="line"></span><br><span class="line">    SET[app_setting] --&gt; MEM</span><br></pre></td></tr></table></figure>
+
+<p>业务模块与 CLR 依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    subgraph 业务模块</span><br><span class="line">        ACC[app_account]</span><br><span class="line">        SET[app_setting]</span><br><span class="line">        AFTER[oneapp_after_sales]</span><br><span class="line">        CONF[app_configuration]</span><br><span class="line">        COMP[oneapp_companion]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph CLR</span><br><span class="line">        MNO_C[clr_mno]</span><br><span class="line">        SET_C[clr_setting]</span><br><span class="line">        MEDIA_C[clr_media]</span><br><span class="line">        GEO_C[clr_geo]</span><br><span class="line">        CONF_C[clr_configuration]</span><br><span class="line">        COMP_C[clr_companion]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    ACC --&gt; MNO_C</span><br><span class="line">    SET --&gt; SET_C</span><br><span class="line">    SET --&gt; MEDIA_C</span><br><span class="line">    AFTER --&gt; GEO_C</span><br><span class="line">    CONF --&gt; CONF_C</span><br><span class="line">    COMP --&gt; COMP_C</span><br></pre></td></tr></table></figure>
+
+<p>车辆模块与 CLR 依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    subgraph 车辆模块</span><br><span class="line">        CAR[app_car]</span><br><span class="line">        CHARGE[app_charging]</span><br><span class="line">        MAINT[app_maintenance]</span><br><span class="line">        WATCH[app_carwatcher]</span><br><span class="line">        AVATAR[app_avatar]</span><br><span class="line">        ORDER[app_order]</span><br><span class="line">        TOUCHGO[app_touchgo]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph CLR</span><br><span class="line">        GEO_C[clr_geo]</span><br><span class="line">        CHARGE_C[clr_charging]</span><br><span class="line">        MAINT_C[clr_maintenance]</span><br><span class="line">        WATCH_C[clr_carwatcher]</span><br><span class="line">        TOUCHGO_C[clr_touchgo]</span><br><span class="line">        ORDER_C[clr_order]</span><br><span class="line">        PAY_C[clr_payment]</span><br><span class="line">        ACC_C[clr_account]</span><br><span class="line">        MNO_C[clr_mno]</span><br><span class="line">        VOICE_C[clr_voiceclone]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    CAR --&gt; GEO_C</span><br><span class="line">    CAR --&gt; CHARGE_C</span><br><span class="line">    CAR --&gt; MNO_C</span><br><span class="line"></span><br><span class="line">    CHARGE --&gt; CHARGE_C</span><br><span class="line">    CHARGE --&gt; GEO_C</span><br><span class="line">    CHARGE --&gt; PAY_C</span><br><span class="line"></span><br><span class="line">    MAINT --&gt; MAINT_C</span><br><span class="line">    MAINT --&gt; GEO_C</span><br><span class="line"></span><br><span class="line">    WATCH --&gt; WATCH_C</span><br><span class="line">    WATCH --&gt; GEO_C</span><br><span class="line"></span><br><span class="line">    AVATAR --&gt; ORDER_C</span><br><span class="line">    AVATAR --&gt; PAY_C</span><br><span class="line">    AVATAR --&gt; VOICE_C</span><br><span class="line"></span><br><span class="line">    ORDER --&gt; ORDER_C</span><br><span class="line">    ORDER --&gt; PAY_C</span><br><span class="line">    ORDER --&gt; ACC_C</span><br><span class="line"></span><br><span class="line">    TOUCHGO --&gt; GEO_C</span><br><span class="line">    TOUCHGO --&gt; TOUCHGO_C</span><br></pre></td></tr></table></figure>
+
+<p>UI 模块与 CLR 依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    subgraph UI</span><br><span class="line">        UI_BASIC[ui_basic]</span><br><span class="line">        UI_BUSINESS[ui_business]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph CLR</span><br><span class="line">        GEO_C[clr_geo]</span><br><span class="line">        MSG_C[clr_message]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    UI_BUSINESS --&gt; GEO_C</span><br><span class="line">    UI_BUSINESS --&gt; MSG_C</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-当前存在的问题"><a href="#2-当前存在的问题" class="headerlink" title="2) 当前存在的问题"></a>2) 当前存在的问题</h3><ul>
+<li>版本治理<ul>
+<li>大量使用 dependency_overrides，反映依赖版本冲突与治理缺失</li>
+<li>本地路径依赖多，模块版本同步与冲突解决成本高</li>
+</ul>
+</li>
+<li>构建效率<ul>
+<li>模块数量多且粒度偏小，构建时间长，增量构建收益不足</li>
+</ul>
+</li>
+<li>依赖关系<ul>
+<li>部分模块间存在潜在循环依赖风险</li>
+<li>业务模块彼此直接引用内部实现，边界不清晰</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-改善目标"><a href="#3-改善目标" class="headerlink" title="3) 改善目标"></a>3) 改善目标</h3><ul>
+<li>版本治理统一化：逐步消灭 dependency_overrides，统一基础依赖版本</li>
+<li>边界与解耦强化：业务模块只经由 Facade&#x2F;Service<br>接口交互，禁止跨层直接依赖</li>
+<li>模块粒度优化：合并过小、强相关模块，提升构建与维护效率</li>
+<li>构建效率提升：缩短全量构建时间，引入更明确的增量构建策略</li>
+<li>依赖安全：杜绝循环依赖，建立依赖白名单&#x2F;黑名单与审计机制</li>
+</ul>
+<h3 id="4-模块边界与接口约束"><a href="#4-模块边界与接口约束" class="headerlink" title="4) 模块边界与接口约束"></a>4) 模块边界与接口约束</h3><ul>
+<li>每个模块必须提供唯一对外入口（如 <code>lib/&lt;module&gt;.dart</code>）</li>
+<li>模块内部代码禁止被外部直接 import（通过导出文件统一暴露）</li>
+<li>业务模块之间通过接口或事件解耦，禁止直接访问彼此内部实现</li>
+</ul>
+<h3 id="5-模块自闭环能力要求"><a href="#5-模块自闭环能力要求" class="headerlink" title="5) 模块自闭环能力要求"></a>5) 模块自闭环能力要求</h3><ul>
+<li>模块内部完成“接口 + 实现 + 测试”闭环</li>
+<li>公共能力上收至 basic_*&#x2F;kit_*，避免横向复制</li>
+<li>业务模块内禁止重复定义通用模型与工具类</li>
+</ul>
+<h3 id="6-依赖治理与版本策略"><a href="#6-依赖治理与版本策略" class="headerlink" title="6) 依赖治理与版本策略"></a>6) 依赖治理与版本策略</h3><ul>
+<li>统一基础依赖版本，逐步减少 <code>dependency_overrides</code></li>
+<li>建立模块依赖白名单与黑名单规则</li>
+<li>每个模块提供版本变更说明与兼容策略</li>
+</ul>
+<h3 id="7-模块化完善具体方案（落地步骤）"><a href="#7-模块化完善具体方案（落地步骤）" class="headerlink" title="7) 模块化完善具体方案（落地步骤）"></a>7) 模块化完善具体方案（落地步骤）</h3><ol>
+<li>依赖梳理：输出模块依赖关系图与循环依赖清单</li>
+<li>依赖拆解：识别横向耦合点，抽取到 basic_*&#x2F;kit_*</li>
+<li>接口对齐：模块外只通过 Facade&#x2F;Service 访问</li>
+<li>路由收敛：模块内自注册路由，外部只调用入口</li>
+<li>回归验证：每次迁移只影响单模块，确保低风险落地</li>
+</ol>
+<h3 id="8-模块化完善的验收清单"><a href="#8-模块化完善的验收清单" class="headerlink" title="8) 模块化完善的验收清单"></a>8) 模块化完善的验收清单</h3><ul>
+<li>app_* 之间无直接依赖</li>
+<li>ui_* 不依赖任何业务模块</li>
+<li>clr_* 仅暴露 Facade API</li>
+<li>basic_*&#x2F;kit_* 不依赖业务模块</li>
+<li>模块版本与依赖版本统一可追溯</li>
+<li>构建指标达标：全量构建时间下降、增量构建命中率提升</li>
+<li>依赖指标达标：dependency_overrides 清零或极少量、循环依赖为零</li>
+</ul>
+<h2 id="1-内存优化（基于现有代码）"><a href="#1-内存优化（基于现有代码）" class="headerlink" title="1. 内存优化（基于现有代码）"></a>1. 内存优化（基于现有代码）</h2><ul>
+<li>入口内存告警联动（应用主入口使用 MemoryWatcher）<ul>
+<li>代码位置：[app_widget.dart:L312-L337]</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Widget _createApp() =&gt; MemoryWatcher(</span><br><span class="line">  memoryWarningLine: minWarningFreeMemory,</span><br><span class="line">  onMemoryWarning: () &#123;</span><br><span class="line">    pushFacade.postEvent(topic: memoryPressureTopic);</span><br><span class="line">    OneAppConfigHandler.instance.clearMemory();</span><br><span class="line">  &#125;,</span><br><span class="line">  child: MaterialApp.router(</span><br><span class="line">    builder: FlutterSmartDialog.init(),</span><br><span class="line">    key: ContextProvider.globalKey,</span><br><span class="line">    onGenerateTitle: (context) =&gt; AppIntlDelegate.of(context).appTitle,</span><br><span class="line">    title: <span class="string">&#x27;ID. UX&#x27;</span>,</span><br><span class="line">    theme: themeFacade.theme.ofStandard().themeData,</span><br><span class="line">    routeInformationParser: Modular.routeInformationParser,</span><br><span class="line">    routerDelegate: Modular.routerDelegate,</span><br><span class="line">    scrollBehavior: _NoGlowingBehavior(),</span><br><span class="line">  ).routerIntlConfig(</span><br><span class="line">    _supportLocale,</span><br><span class="line">    _localizationsDelegates,</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>系统内存压力回调与全局缓存清理<ul>
+<li>代码位置：[app_config_handler.dart:L57-L78]</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line"><span class="keyword">void</span> didHaveMemoryPressure() &#123;</span><br><span class="line">  Logger.w(<span class="string">&quot;app_config: didHaveMemoryPressure&quot;</span>, LogTag_App);</span><br><span class="line">  <span class="keyword">if</span> (currentAppState != AppLifecycleState.resumed) &#123;</span><br><span class="line">    Logger.d(<span class="string">&quot;app_config: in background, not clear&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (!OneDeviceInfoUtil.isLowMemoryIOSDevice()) &#123;</span><br><span class="line">    Logger.d(<span class="string">&quot;app_config: not need clear&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  clearMemory();</span><br><span class="line">  <span class="keyword">super</span>.didHaveMemoryPressure();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> clearMemory() &#123;</span><br><span class="line">  PaintingBinding.instance.imageCache.clear();</span><br><span class="line">  DefaultCacheManager manager = DefaultCacheManager();</span><br><span class="line">  manager.store.emptyMemoryCache(); <span class="comment">//clears all data in cache.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置模块缓存清理<ul>
+<li>代码位置：[clear_cache_util.dart]</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> Future&lt;<span class="built_in">bool</span>&gt; clear() <span class="keyword">async</span> &#123;</span><br><span class="line">  <span class="keyword">final</span> Directory tempDir = <span class="keyword">await</span> getTemporaryDirectory();</span><br><span class="line">  <span class="keyword">await</span> _delete(tempDir);</span><br><span class="line">  <span class="built_in">String</span> locale = Intl.getCurrentLocale();</span><br><span class="line">  <span class="built_in">String</span> environment = AppEnvironmentConfig.getCurEnvironment().toString().split(<span class="string">&#x27;.&#x27;</span>).last;</span><br><span class="line">  <span class="built_in">String</span> componetJsonCacheKey1 = <span class="string">&#x27;Component_<span class="subst">$&#123;ComponentPageCode.DISCOVER&#125;</span>_<span class="subst">$&#123;locale&#125;</span>_<span class="subst">$&#123;environment&#125;</span>&#x27;</span>;</span><br><span class="line">  <span class="built_in">String</span> componetJsonCacheKey2 = <span class="string">&#x27;Component_<span class="subst">$&#123;ComponentPageCode.COMMUNITY&#125;</span>_<span class="subst">$&#123;locale&#125;</span>_<span class="subst">$&#123;environment&#125;</span>&#x27;</span>;</span><br><span class="line">  <span class="keyword">await</span> clearSpCahceByKeys([componetJsonCacheKey1, componetJsonCacheKey2]);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>账号模块内存缓存清理<ul>
+<li>代码位置：[garage_facade_impl.dart:L395-L401]</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line">Future&lt;<span class="keyword">void</span>&gt; clearCache() <span class="keyword">async</span> &#123;</span><br><span class="line">  Logger.i(<span class="string">&#x27;<span class="subst">$_tagPrefix</span>#clearCache: calling&#x27;</span>, clrAccountTag);</span><br><span class="line">  <span class="keyword">await</span> encryptedModuleBox.delete(vehicleCacheKey);</span><br><span class="line">  _memoryCache.clear();</span><br><span class="line">  _defaultVehicle = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>原生资源释放（AvatarX 模块）<ul>
+<li>代码位置：[AvatarxManager.swift:L685-L696]</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">destroy</span>() &#123;</span><br><span class="line">    <span class="type">FUAvatarHelper</span>.destroy()</span><br><span class="line">    <span class="type">FURenderKit</span>.destroy()</span><br><span class="line">    <span class="type">FUAIKit</span>.destroy()</span><br><span class="line">    <span class="type">FUAIKit</span>.unloadAllAIMode()</span><br><span class="line">    removeDisplayView()</span><br><span class="line">    initResource <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    isLoadDefaultBundle <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-1-现状缺口（基于仓库检索）"><a href="#1-1-现状缺口（基于仓库检索）" class="headerlink" title="1.1 现状缺口（基于仓库检索）"></a>1.1 现状缺口（基于仓库检索）</h3><ul>
+<li>未找到全局 ImageCache 上限的真实配置代码</li>
+<li>未找到统一的图片下采样封装入口</li>
+<li>未找到 Isolate 大计算通用封装入口</li>
+<li>Android&#x2F;iOS 侧缺少统一的缓存限额策略代码</li>
+</ul>
+<h3 id="1-2-直接可做的补齐任务（基于现有框架）"><a href="#1-2-直接可做的补齐任务（基于现有框架）" class="headerlink" title="1.2 直接可做的补齐任务（基于现有框架）"></a>1.2 直接可做的补齐任务（基于现有框架）</h3><ol>
+<li>在应用入口补齐 ImageCache 上限配置，挂载在已有 MemoryWatcher<br>初始化流程中</li>
+<li>基于现有 DefaultCacheManager 清理逻辑，补齐业务级缓存 TTL<br>与最大内存占用</li>
+<li>增加图片加载统一封装（业务模块只用封装入口，不直接 Image.network）</li>
+<li>对耗时解析&#x2F;批量处理提供统一异步处理入口</li>
+</ol>
+<h2 id="2-Android-内存优化（现状与补齐）"><a href="#2-Android-内存优化（现状与补齐）" class="headerlink" title="2. Android 内存优化（现状与补齐）"></a>2. Android 内存优化（现状与补齐）</h2><h3 id="2-1-现状"><a href="#2-1-现状" class="headerlink" title="2.1 现状"></a>2.1 现状</h3><p>当前仓库中未检索到 Android 侧的 onTrimMemory&#x2F;onLowMemory、Bitmap<br>下采样、LruCache 等内存治理实现代码。现阶段内存清理主要集中在 Flutter<br>层与业务缓存逻辑。</p>
+<h3 id="2-2-补齐方向（基于现有架构可落地）"><a href="#2-2-补齐方向（基于现有架构可落地）" class="headerlink" title="2.2 补齐方向（基于现有架构可落地）"></a>2.2 补齐方向（基于现有架构可落地）</h3><ul>
+<li>在 Android Application 级别接入内存回调并驱动缓存清理</li>
+<li>为高频图片&#x2F;视频模块补齐下采样与缓存限额策略</li>
+<li>统一原生缓存上限与回收入口，供 Flutter 侧触发</li>
+</ul>
+<h2 id="3-iOS-内存优化（现状与补齐）"><a href="#3-iOS-内存优化（现状与补齐）" class="headerlink" title="3. iOS 内存优化（现状与补齐）"></a>3. iOS 内存优化（现状与补齐）</h2><h3 id="3-1-现状"><a href="#3-1-现状" class="headerlink" title="3.1 现状"></a>3.1 现状</h3><ul>
+<li>iOS 低内存设备识别已在基础能力中实现，用于清理策略判断<ul>
+<li>代码位置：[one_device_info_util.dart:L27-L49]</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="built_in">bool</span> isLowMemoryIOSDevice() &#123;</span><br><span class="line">  <span class="keyword">switch</span> (oneDeviceType) &#123;</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_7:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_7_Plus:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_8:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_8_Plus:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_X:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_XS:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_XS_MAX:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_XR:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_11:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_11_Pro:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_11_Pro_Max:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_SE_2:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_12_mini:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_12:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_13_mini:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_13:</span><br><span class="line">    <span class="keyword">case</span> OneDeviceType.iPhone_SE_3:</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-补齐方向"><a href="#3-2-补齐方向" class="headerlink" title="3.2 补齐方向"></a>3.2 补齐方向</h3><ul>
+<li>统一 iOS 侧图片&#x2F;模型资源下采样入口</li>
+<li>统一 NSCache&#x2F;LRU 上限并与 Flutter 清理逻辑联动</li>
+</ul>
+<h2 id="4-统一缓存治理（跨端，基于现状的改造点）"><a href="#4-统一缓存治理（跨端，基于现状的改造点）" class="headerlink" title="4. 统一缓存治理（跨端，基于现状的改造点）"></a>4. 统一缓存治理（跨端，基于现状的改造点）</h2><ul>
+<li>现状清理入口：OneAppConfigHandler.clearMemory() 已在内存告警触发时执行<ul>
+<li>代码位置：[app_config_handler.dart:L73-L77]</li>
+</ul>
+</li>
+<li>业务缓存清理入口：设置模块提供清理临时目录与组件缓存逻辑<ul>
+<li>代码位置：[clear_cache_util.dart]</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-落地改造优先级（基于现有代码的下一步）"><a href="#5-落地改造优先级（基于现有代码的下一步）" class="headerlink" title="5. 落地改造优先级（基于现有代码的下一步）"></a>5. 落地改造优先级（基于现有代码的下一步）</h2><ol>
+<li>在应用入口补齐 ImageCache 上限配置，接入现有 MemoryWatcher</li>
+<li>业务缓存统一 TTL 与内存上限，复用 DefaultCacheManager 清理入口</li>
+<li>引入统一图片加载封装，替换业务模块直接 Image.network 使用</li>
+<li>对批量解析&#x2F;重计算提供统一异步处理入口</li>
+<li>Android&#x2F;iOS 侧补齐统一的内存回调与缓存上限策略</li>
+</ol>
+<h2 id="6-成本与风险评估（结合当前项目）"><a href="#6-成本与风险评估（结合当前项目）" class="headerlink" title="6. 成本与风险评估（结合当前项目）"></a>6. 成本与风险评估（结合当前项目）</h2><ul>
+<li>低成本&#x2F;低风险<ul>
+<li>缓存清理入口统一、内存告警联动优化、生命周期释放规范化</li>
+</ul>
+</li>
+<li>中成本&#x2F;中风险<ul>
+<li>图片加载统一封装、缓存策略统一、模块依赖治理</li>
+</ul>
+</li>
+<li>高成本&#x2F;高风险<ul>
+<li>核心业务模块重构、原生侧深度改造、三端基础库大版本升级</li>
+</ul>
+</li>
+</ul>
+<h2 id="7-结合当前项目的建议行动"><a href="#7-结合当前项目的建议行动" class="headerlink" title="7. 结合当前项目的建议行动"></a>7. 结合当前项目的建议行动</h2><ul>
+<li>先做基线：以核心场景建立内存基线与峰值对照表</li>
+<li>先修高收益：围绕内存告警链路与缓存清理入口做闭环</li>
+<li>再做结构性优化：模块边界治理、依赖统一、缓存策略统一</li>
+</ul>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    
+    <section id="share">
+      <div class="header"><span>分享文章</span></div>
+      <div class="body">
+        <div class="link"><input class="copy-area" readonly="true" id="copy-link" value="https://aichiko0225.github.com/memoirs/20260129/T-Systems/OneApp_performance/" /></div>
+        <div class="social-wrap dis-select"><a class="social share-item wechat" onclick="util.toggle(&quot;qrcode-wechat&quot;)"><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/b32ef3da1162a.svg" /></a><a class="social share-item weibo" target="_blank" rel="external nofollow noopener noreferrer" href="https://service.weibo.com/share/share.php?url=https://aichiko0225.github.com/memoirs/20260129/T-Systems/OneApp_performance/&title=OneApp 性能与架构优化方案（内存与模块化） - ash&summary=本方案包含三部分：性能与内存优化理论、架构改造（模块化完善）与内存优化实战，并补充性能监控方案、成本与风险评估。
+理论基础：内存模型、排查方法与治理策略1) 内存构成（跨端共识）
+Flutter&#x2F;Dart：Dart Heap..."><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/80c07e4dbb303.svg" /></a><a class="social share-item email" href="mailto:?subject=OneApp 性能与架构优化方案（内存与模块化） - ash&amp;body=https://aichiko0225.github.com/memoirs/20260129/T-Systems/OneApp_performance/"><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/a1b00e20f425d.svg" /></a><a class="social share-item link" onclick="util.copy(&quot;copy-link&quot;, &quot;复制成功&quot;)"><img class="lazy"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/8411ed322ced6.svg" /></a></div>
+        
+        <div class="qrcode" id="qrcode-wechat" style="opacity:0;height:0">
+          <img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=https://aichiko0225.github.com/memoirs/20260129/T-Systems/OneApp_performance/"/>
+        </div>
+        
+      </div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/memoirs/20260315/learning/opencode-in-action-2026/">OpenCode 实战指南（2026）：从能用到好用</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/memoirs/20260129/T-Systems/harmony_development/">OneApp 鸿蒙（HarmonyOS）工作步骤文档</a></div></section></div>
+
+
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">ash66</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80%EF%BC%9A%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E3%80%81%E6%8E%92%E6%9F%A5%E6%96%B9%E6%B3%95%E4%B8%8E%E6%B2%BB%E7%90%86%E7%AD%96%E7%95%A5"><span class="toc-text">理论基础：内存模型、排查方法与治理策略</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%86%85%E5%AD%98%E6%9E%84%E6%88%90%EF%BC%88%E8%B7%A8%E7%AB%AF%E5%85%B1%E8%AF%86%EF%BC%89"><span class="toc-text">1) 内存构成（跨端共识）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%B8%B8%E8%A7%81%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98%E7%B1%BB%E5%9E%8B"><span class="toc-text">2) 常见内存问题类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BD%BF%E7%94%A8-DevTools-%E6%8E%92%E6%9F%A5%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98%EF%BC%88%E6%B5%81%E7%A8%8B%E5%8C%96%EF%BC%89"><span class="toc-text">3) 使用 DevTools 排查内存问题（流程化）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%86%85%E5%AD%98%E8%87%AA%E5%8A%A8%E5%8C%96%E5%9B%9E%E5%BD%92%EF%BC%88AirtestIDE%EF%BC%89"><span class="toc-text">3.1) 内存自动化回归（AirtestIDE）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%83%B5%E5%B0%B8%E5%AF%B9%E8%B1%A1%E4%B8%8E%E5%86%85%E5%AD%98%E4%B8%8D%E9%87%8A%E6%94%BE%E7%9A%84%E5%88%A4%E6%96%AD%E6%96%B9%E6%B3%95"><span class="toc-text">4) 僵尸对象与内存不释放的判断方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%A7%A3%E5%86%B3%E6%80%9D%E8%B7%AF%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7"><span class="toc-text">5) 解决思路的优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E6%96%B9%E6%A1%88%EF%BC%88%E5%86%85%E5%AD%98%E4%B8%8E%E5%8D%A1%E9%A1%BF%EF%BC%89"><span class="toc-text">6) 性能监控方案（内存与卡顿）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E4%BB%A3%E7%A0%81%E5%B1%82%E9%9D%A2%E7%9A%84%E6%BC%8F%E6%B4%9E%E4%B8%8E%E6%B3%84%E6%BC%8F%E9%AB%98%E5%8F%91%E7%82%B9%EF%BC%88%E6%8E%92%E6%9F%A5%E6%B8%85%E5%8D%95%EF%BC%89"><span class="toc-text">7) 代码层面的漏洞与泄漏高发点（排查清单）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E5%B8%B8%E8%A7%81%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%88%E6%91%98%E8%A6%81%EF%BC%89"><span class="toc-text">8) 常见内存问题与解决方案（摘要）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E9%AA%8C%E6%94%B6%E6%A0%87%E5%87%86%EF%BC%88%E4%BB%A5%E5%9F%BA%E7%BA%BF%E6%8A%A5%E5%91%8A%E4%B8%BA%E5%87%86%EF%BC%89"><span class="toc-text">9) 验收标准（以基线报告为准）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E6%94%B9%E9%80%A0%EF%BC%9A%E6%A8%A1%E5%9D%97%E5%8C%96%E5%AE%8C%E5%96%84%EF%BC%88%E9%AB%98%E5%86%85%E8%81%9A%E4%BD%8E%E8%80%A6%E5%90%88%EF%BC%89"><span class="toc-text">架构改造：模块化完善（高内聚低耦合）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A8%A1%E5%9D%97%E5%88%86%E5%B1%82%E4%B8%8E%E4%BE%9D%E8%B5%96%E6%96%B9%E5%90%91"><span class="toc-text">1) 模块分层与依赖方向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%BD%93%E5%89%8D%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">2) 当前存在的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%94%B9%E5%96%84%E7%9B%AE%E6%A0%87"><span class="toc-text">3) 改善目标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%A8%A1%E5%9D%97%E8%BE%B9%E7%95%8C%E4%B8%8E%E6%8E%A5%E5%8F%A3%E7%BA%A6%E6%9D%9F"><span class="toc-text">4) 模块边界与接口约束</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%A8%A1%E5%9D%97%E8%87%AA%E9%97%AD%E7%8E%AF%E8%83%BD%E5%8A%9B%E8%A6%81%E6%B1%82"><span class="toc-text">5) 模块自闭环能力要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E4%BE%9D%E8%B5%96%E6%B2%BB%E7%90%86%E4%B8%8E%E7%89%88%E6%9C%AC%E7%AD%96%E7%95%A5"><span class="toc-text">6) 依赖治理与版本策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%A8%A1%E5%9D%97%E5%8C%96%E5%AE%8C%E5%96%84%E5%85%B7%E4%BD%93%E6%96%B9%E6%A1%88%EF%BC%88%E8%90%BD%E5%9C%B0%E6%AD%A5%E9%AA%A4%EF%BC%89"><span class="toc-text">7) 模块化完善具体方案（落地步骤）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E6%A8%A1%E5%9D%97%E5%8C%96%E5%AE%8C%E5%96%84%E7%9A%84%E9%AA%8C%E6%94%B6%E6%B8%85%E5%8D%95"><span class="toc-text">8) 模块化完善的验收清单</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96%EF%BC%88%E5%9F%BA%E4%BA%8E%E7%8E%B0%E6%9C%89%E4%BB%A3%E7%A0%81%EF%BC%89"><span class="toc-text">1. 内存优化（基于现有代码）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E7%8E%B0%E7%8A%B6%E7%BC%BA%E5%8F%A3%EF%BC%88%E5%9F%BA%E4%BA%8E%E4%BB%93%E5%BA%93%E6%A3%80%E7%B4%A2%EF%BC%89"><span class="toc-text">1.1 现状缺口（基于仓库检索）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E7%9B%B4%E6%8E%A5%E5%8F%AF%E5%81%9A%E7%9A%84%E8%A1%A5%E9%BD%90%E4%BB%BB%E5%8A%A1%EF%BC%88%E5%9F%BA%E4%BA%8E%E7%8E%B0%E6%9C%89%E6%A1%86%E6%9E%B6%EF%BC%89"><span class="toc-text">1.2 直接可做的补齐任务（基于现有框架）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Android-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96%EF%BC%88%E7%8E%B0%E7%8A%B6%E4%B8%8E%E8%A1%A5%E9%BD%90%EF%BC%89"><span class="toc-text">2. Android 内存优化（现状与补齐）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E7%8E%B0%E7%8A%B6"><span class="toc-text">2.1 现状</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E8%A1%A5%E9%BD%90%E6%96%B9%E5%90%91%EF%BC%88%E5%9F%BA%E4%BA%8E%E7%8E%B0%E6%9C%89%E6%9E%B6%E6%9E%84%E5%8F%AF%E8%90%BD%E5%9C%B0%EF%BC%89"><span class="toc-text">2.2 补齐方向（基于现有架构可落地）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-iOS-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96%EF%BC%88%E7%8E%B0%E7%8A%B6%E4%B8%8E%E8%A1%A5%E9%BD%90%EF%BC%89"><span class="toc-text">3. iOS 内存优化（现状与补齐）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E7%8E%B0%E7%8A%B6"><span class="toc-text">3.1 现状</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E8%A1%A5%E9%BD%90%E6%96%B9%E5%90%91"><span class="toc-text">3.2 补齐方向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%BB%9F%E4%B8%80%E7%BC%93%E5%AD%98%E6%B2%BB%E7%90%86%EF%BC%88%E8%B7%A8%E7%AB%AF%EF%BC%8C%E5%9F%BA%E4%BA%8E%E7%8E%B0%E7%8A%B6%E7%9A%84%E6%94%B9%E9%80%A0%E7%82%B9%EF%BC%89"><span class="toc-text">4. 统一缓存治理（跨端，基于现状的改造点）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%90%BD%E5%9C%B0%E6%94%B9%E9%80%A0%E4%BC%98%E5%85%88%E7%BA%A7%EF%BC%88%E5%9F%BA%E4%BA%8E%E7%8E%B0%E6%9C%89%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%8B%E4%B8%80%E6%AD%A5%EF%BC%89"><span class="toc-text">5. 落地改造优先级（基于现有代码的下一步）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%88%90%E6%9C%AC%E4%B8%8E%E9%A3%8E%E9%99%A9%E8%AF%84%E4%BC%B0%EF%BC%88%E7%BB%93%E5%90%88%E5%BD%93%E5%89%8D%E9%A1%B9%E7%9B%AE%EF%BC%89"><span class="toc-text">6. 成本与风险评估（结合当前项目）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E7%BB%93%E5%90%88%E5%BD%93%E5%89%8D%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%BB%BA%E8%AE%AE%E8%A1%8C%E5%8A%A8"><span class="toc-text">7. 结合当前项目的建议行动</span></a></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>回到顶部</span></a></div></widget>
+</div></aside><div class='float-panel blur'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/memoirs/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"skip_search":null,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js`,
+    marked: `https://cdn.jsdelivr.net/npm/marked@13.0.1/lib/marked.umd.min.js`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
+    
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
+
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+
+<!-- required -->
+<script src="/memoirs/js/main.js?v=1.29.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
+
+
+
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"},"twikoo":{"js":"/js/services/twikoo_latest_comment.js"},"waline":{"js":"/js/services/waline_latest_comment.js"},"artalk":{"js":"/js/services/artalk_latest_comment.js"},"giscus":{"js":"/js/services/giscus_latest_comment.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>
