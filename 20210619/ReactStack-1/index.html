@@ -37,7 +37,7 @@
   
   
   
-  <meta name="keywords" content="基础知识,React,JavaScript">
+  <meta name="keywords" content="React,JavaScript,基础知识">
 
   <!-- feed -->
   
@@ -59,7 +59,7 @@
 
   
 
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2021-06-19T00:00:00+08:00","dateModified":"2024-12-13T11:01:08+08:00","datePublished":"2021-06-19T00:00:00+08:00","description":"ECMAScript 6 简介除开JavaScript的基础内容，React 必备的知识肯定非 ES6，其实前面的文章已经讲了一部分的ES6的内容，这边只记录，我觉得比较重要的ES6的内容ECMAScript 6.0（以下简称 ES6）是 JavaScript 语言的下一代标准，已经在 2015 年 6 月正式发布了。它的目标，是使得 JavaScript 语言可以用来编写复杂的大型应用程序，成为企业级开发语言。","headline":"React 技术栈（一）","mainEntityOfPage":{"@type":"WebPage","@id":"https://aichiko0225.github.com/memoirs/20210619/ReactStack-1/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://aichiko0225.github.com/memoirs/20210619/ReactStack-1/","keywords":"基础知识, React, JavaScript","image":[]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2021-06-19T00:00:00+08:00","dateModified":"2024-12-13T11:01:08+08:00","datePublished":"2021-06-19T00:00:00+08:00","description":"ECMAScript 6 简介除开JavaScript的基础内容，React 必备的知识肯定非 ES6，其实前面的文章已经讲了一部分的ES6的内容，这边只记录，我觉得比较重要的ES6的内容ECMAScript 6.0（以下简称 ES6）是 JavaScript 语言的下一代标准，已经在 2015 年 6 月正式发布了。它的目标，是使得 JavaScript 语言可以用来编写复杂的大型应用程序，成为企业级开发语言。","headline":"React 技术栈（一）","mainEntityOfPage":{"@type":"WebPage","@id":"https://aichiko0225.github.com/memoirs/20210619/ReactStack-1/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://aichiko0225.github.com/memoirs/20210619/ReactStack-1/","keywords":"React, JavaScript, 基础知识","image":[]}</script>
   <script>
   (function () {
     if (window.util) return;
@@ -67,12 +67,18 @@
     window.util = {
       viewportLazyload: function (el, callback, lazyload) {
         if (!el || typeof callback !== 'function') return;
-        if (!lazyload) {
+        if (el.dataset.utilLazyloaded === '1') return;
+        var runOnce = function () {
+          if (el.dataset.utilLazyloaded === '1') return;
+          el.dataset.utilLazyloaded = '1';
           callback();
+        };
+        if (!lazyload) {
+          runOnce();
           return;
         }
         if (!('IntersectionObserver' in window)) {
-          callback();
+          runOnce();
           return;
         }
         var loaded = false;
@@ -81,7 +87,7 @@
             if (!loaded && entry.isIntersecting) {
               loaded = true;
               observer.disconnect();
-              callback();
+              runOnce();
             }
           });
         }, { rootMargin: '100px 0px' });

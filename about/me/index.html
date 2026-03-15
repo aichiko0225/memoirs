@@ -64,12 +64,18 @@
     window.util = {
       viewportLazyload: function (el, callback, lazyload) {
         if (!el || typeof callback !== 'function') return;
-        if (!lazyload) {
+        if (el.dataset.utilLazyloaded === '1') return;
+        var runOnce = function () {
+          if (el.dataset.utilLazyloaded === '1') return;
+          el.dataset.utilLazyloaded = '1';
           callback();
+        };
+        if (!lazyload) {
+          runOnce();
           return;
         }
         if (!('IntersectionObserver' in window)) {
-          callback();
+          runOnce();
           return;
         }
         var loaded = false;
@@ -78,7 +84,7 @@
             if (!loaded && entry.isIntersecting) {
               loaded = true;
               observer.disconnect();
-              callback();
+              runOnce();
             }
           });
         }, { rootMargin: '100px 0px' });
@@ -159,7 +165,7 @@
   </div>
   </div><article class="md-text content"><p>赵光飞</p>
 <p> 15172386472</p>
-<p> <a href="mailto:&#x61;&#105;&#99;&#104;&#105;&#107;&#111;&#54;&#x36;&#64;&#x31;&#54;&#x33;&#46;&#x63;&#x6f;&#x6d;">aichiko66@163.com</a></p>
+<p> <a href="mailto:&#x61;&#x69;&#x63;&#104;&#105;&#107;&#111;&#x36;&#54;&#64;&#49;&#x36;&#51;&#x2e;&#99;&#x6f;&#109;">aichiko66@163.com</a></p>
 <p>10年工作经验 | 求职意向：前端&#x2F;移动开发工程师 | 期望城市：武汉</p>
 <h3 id="个人优势"><a href="#个人优势" class="headerlink" title="个人优势"></a><strong>个人优势</strong></h3><ol>
 <li><p><strong>高级 React 开发能力</strong>  </p>

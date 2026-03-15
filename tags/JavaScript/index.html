@@ -62,12 +62,18 @@
     window.util = {
       viewportLazyload: function (el, callback, lazyload) {
         if (!el || typeof callback !== 'function') return;
-        if (!lazyload) {
+        if (el.dataset.utilLazyloaded === '1') return;
+        var runOnce = function () {
+          if (el.dataset.utilLazyloaded === '1') return;
+          el.dataset.utilLazyloaded = '1';
           callback();
+        };
+        if (!lazyload) {
+          runOnce();
           return;
         }
         if (!('IntersectionObserver' in window)) {
-          callback();
+          runOnce();
           return;
         }
         var loaded = false;
@@ -76,7 +82,7 @@
             if (!loaded && entry.isIntersecting) {
               loaded = true;
               observer.disconnect();
-              callback();
+              runOnce();
             }
           });
         }, { rootMargin: '100px 0px' });

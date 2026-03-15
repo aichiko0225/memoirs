@@ -37,7 +37,7 @@
   
   
   
-  <meta name="keywords" content="基础知识,JavaScript,Web">
+  <meta name="keywords" content="JavaScript,基础知识,Web">
 
   <!-- feed -->
   
@@ -59,7 +59,7 @@
 
   
 
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2020-10-30T00:00:00+08:00","dateModified":"2024-12-13T11:00:50+08:00","datePublished":"2020-10-30T00:00:00+08:00","description":"写在前面的话最近用react-native 完成了一个公司的项目，JavaScript 其实已经看过很多遍了，上个月就看了一遍全部的教程，但是没有系统的记录，以及一些比较麻烦的地方。有一些三方的源码还是看的不太懂，而且js的坑不算少，我希望能够记录一下，下次能够快速定位问题。（起码我可以看得懂三方的源代码o(╯□╰)o）","headline":"JavaScript 温习记录（一）","mainEntityOfPage":{"@type":"WebPage","@id":"https://aichiko0225.github.com/memoirs/20201030/learning/JavaScript-study-record/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://aichiko0225.github.com/memoirs/20201030/learning/JavaScript-study-record/","keywords":"基础知识, JavaScript, Web","image":[]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2020-10-30T00:00:00+08:00","dateModified":"2024-12-13T11:00:50+08:00","datePublished":"2020-10-30T00:00:00+08:00","description":"写在前面的话最近用react-native 完成了一个公司的项目，JavaScript 其实已经看过很多遍了，上个月就看了一遍全部的教程，但是没有系统的记录，以及一些比较麻烦的地方。有一些三方的源码还是看的不太懂，而且js的坑不算少，我希望能够记录一下，下次能够快速定位问题。（起码我可以看得懂三方的源代码o(╯□╰)o）","headline":"JavaScript 温习记录（一）","mainEntityOfPage":{"@type":"WebPage","@id":"https://aichiko0225.github.com/memoirs/20201030/learning/JavaScript-study-record/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://aichiko0225.github.com/memoirs/20201030/learning/JavaScript-study-record/","keywords":"JavaScript, 基础知识, Web","image":[]}</script>
   <script>
   (function () {
     if (window.util) return;
@@ -67,12 +67,18 @@
     window.util = {
       viewportLazyload: function (el, callback, lazyload) {
         if (!el || typeof callback !== 'function') return;
-        if (!lazyload) {
+        if (el.dataset.utilLazyloaded === '1') return;
+        var runOnce = function () {
+          if (el.dataset.utilLazyloaded === '1') return;
+          el.dataset.utilLazyloaded = '1';
           callback();
+        };
+        if (!lazyload) {
+          runOnce();
           return;
         }
         if (!('IntersectionObserver' in window)) {
-          callback();
+          runOnce();
           return;
         }
         var loaded = false;
@@ -81,7 +87,7 @@
             if (!loaded && entry.isIntersecting) {
               loaded = true;
               observer.disconnect();
-              callback();
+              runOnce();
             }
           });
         }, { rootMargin: '100px 0px' });
