@@ -1,0 +1,2590 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1" theme-name="Stellar" theme-version="1.33.1">
+  
+  
+  <meta name="generator" content="Hexo 8.1.1">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  <title>软考网络工程师备考全攻略：8 周计划、速记表与端口协议清单 - ash</title>
+
+  
+    <meta name="description" content="如果你和我一样，白天上班，真正能拿出来备考的时间只有工作日晚间 2-3 小时，同时又不是网络科班出身，而是有开发经验、懂一些网络但没有系统梳理过，那么软考 Network Engineer 的难点通常不是“完全看不懂”，而是：知识点很散、真题节奏不熟、下午案例题写不出关键词。 这篇文章把三份资料合成了一篇可以直接照着执行的长文：  8 周备考计划 高频知识速记表 端口 + 协议 + 易混点清单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="软考网络工程师备考全攻略：8 周计划、速记表与端口协议清单">
+<meta property="og:url" content="https://minniexcode.github.io/memoirs/20260325/learning/ruankao-network-engineer-study-guide/">
+<meta property="og:site_name" content="ash">
+<meta property="og:description" content="如果你和我一样，白天上班，真正能拿出来备考的时间只有工作日晚间 2-3 小时，同时又不是网络科班出身，而是有开发经验、懂一些网络但没有系统梳理过，那么软考 Network Engineer 的难点通常不是“完全看不懂”，而是：知识点很散、真题节奏不熟、下午案例题写不出关键词。 这篇文章把三份资料合成了一篇可以直接照着执行的长文：  8 周备考计划 高频知识速记表 端口 + 协议 + 易混点清单">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-25T14:50:10.755Z">
+<meta property="article:author" content="ash66">
+<meta property="article:tag" content="Certification">
+<meta property="article:tag" content="Exam">
+<meta property="article:tag" content="Networking">
+<meta property="article:tag" content="Ruankao">
+<meta property="article:tag" content="Study">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="Networking,Certification,Study,Ruankao,Exam">
+
+  <!-- feed -->
+  
+    
+
+    
+      
+        <link rel="alternate" href="/memoirs/atom.xml" title="ash" type="application/atom+xml">
+      
+    
+  
+
+  <link rel="stylesheet" href="/memoirs/css/main.css?v=1.33.1">
+
+
+  
+    <link rel="shortcut icon" href="/memoirs/favicon.png">
+  
+
+  
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2026-03-25T00:00:00+08:00","dateModified":"2026-03-25T22:50:10+08:00","datePublished":"2026-03-25T00:00:00+08:00","description":"如果你和我一样，白天上班，真正能拿出来备考的时间只有工作日晚间 2-3 小时，同时又不是网络科班出身，而是有开发经验、懂一些网络但没有系统梳理过，那么软考 Network Engineer 的难点通常不是“完全看不懂”，而是：知识点很散、真题节奏不熟、下午案例题写不出关键词。\n这篇文章把三份资料合成了一篇可以直接照着执行的长文：\n\n8 周备考计划\n高频知识速记表\n端口 + 协议 + 易混点清单\n\n目标不是追求高分，而是尽量在本次考试通过；即使这次没过，也把下一次复习的框架一次搭好。我会保留 English concepts 的组织方式，因为对很多有工程背景的人来说，这种方式更容易形成检索路径。","headline":"软考网络工程师备考全攻略：8 周计划、速记表与端口协议清单","mainEntityOfPage":{"@type":"WebPage","@id":"https://minniexcode.github.io/memoirs/20260325/learning/ruankao-network-engineer-study-guide/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://minniexcode.github.io/memoirs/20260325/learning/ruankao-network-engineer-study-guide/","keywords":"Networking, Certification, Study, Ruankao, Exam","image":[]}</script>
+  <script>
+  (function () {
+    if (window.util) return;
+
+    window.util = {
+      viewportLazyload: function (el, callback, lazyload) {
+        if (!el || typeof callback !== 'function') return;
+        if (el.dataset.utilLazyloaded === '1') return;
+        var runOnce = function () {
+          if (el.dataset.utilLazyloaded === '1') return;
+          el.dataset.utilLazyloaded = '1';
+          callback();
+        };
+        if (!lazyload) {
+          runOnce();
+          return;
+        }
+        if (!('IntersectionObserver' in window)) {
+          runOnce();
+          return;
+        }
+        var loaded = false;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!loaded && entry.isIntersecting) {
+              loaded = true;
+              observer.disconnect();
+              runOnce();
+            }
+          });
+        }, { rootMargin: '100px 0px' });
+        observer.observe(el);
+      },
+      toggle: function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var hidden = el.style.height === '0px' || el.style.opacity === '0';
+        if (hidden) {
+          el.style.opacity = '1';
+          el.style.height = 'auto';
+        } else {
+          el.style.opacity = '0';
+          el.style.height = '0';
+        }
+      },
+      copy: function (id, message) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var text = el.value || el.textContent || '';
+        var done = function () {
+          if (message) console.log(message);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {});
+          return;
+        }
+        var area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(area);
+        done();
+      },
+      scrollTop: function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+  })();
+</script>
+
+</head>
+<body><div id="l_cover"></div><div class="l_body content" id="start" layout="post" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/memoirs/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/memoirs/images/image1.jpeg" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main">ash</div><div class="sub cap">我只是一个影子，虽然我发着光。。。</div></a></div></header>
+
+<div class="nav-area">
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/memoirs/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="笔记本" href="/memoirs/notes/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="AboutMe" href="/memoirs/about/me/" style="color:#F44336"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m13.629 20.472l-.542.916c-.483.816-1.69.816-2.174 0l-.542-.916c-.42-.71-.63-1.066-.968-1.262c-.338-.197-.763-.204-1.613-.219c-1.256-.021-2.043-.098-2.703-.372a5 5 0 0 1-2.706-2.706C2 14.995 2 13.83 2 11.5v-1c0-3.273 0-4.91.737-6.112a5 5 0 0 1 1.65-1.651C5.59 2 7.228 2 10.5 2h3c3.273 0 4.91 0 6.113.737a5 5 0 0 1 1.65 1.65C22 5.59 22 7.228 22 10.5v1c0 2.33 0 3.495-.38 4.413a5 5 0 0 1-2.707 2.706c-.66.274-1.447.35-2.703.372c-.85.015-1.275.022-1.613.219c-.338.196-.548.551-.968 1.262" opacity=".5"/><path fill="currentColor" d="M10.99 14.308c-1.327-.978-3.49-2.84-3.49-4.593c0-2.677 2.475-3.677 4.5-1.609c2.025-2.068 4.5-1.068 4.5 1.609c0 1.752-2.163 3.615-3.49 4.593c-.454.335-.681.502-1.01.502c-.329 0-.556-.167-1.01-.502"/></svg></a></nav>
+</div>
+<div class="widgets">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+
+<widget class="widget-wrapper recent post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/memoirs/20260325/learning/ruankao-network-engineer-study-guide/"><span class="title">软考网络工程师备考全攻略：8 周计划、速记表与端口协议清单</span></a><a class="item title" href="/memoirs/20200305/python/Python-100-1/"><span class="title">Python-100天(一)</span></a><a class="item title" href="/memoirs/20260318/nano-config-guide/"><span class="title">Nano 配置文件编辑指南（附极简 Vim 备忘）</span></a><a class="item title" href="/memoirs/20260317/learning/wezterm-guide-windows-macos/"><span class="title">WezTerm Guide：Windows 和 macOS 的入门、配置与日常工作流</span></a><a class="item title" href="/memoirs/20200208/iOS/rumtime-introduction-1/"><span class="title">Runtime介绍(一)</span></a><a class="item title" href="/memoirs/20200128/wuhan/wuhan1/"><span class="title">2020-01-28 武汉封城第五天</span></a><a class="item title" href="/memoirs/20200217/reverse-progression/"><span class="title">逆向工程进阶</span></a><a class="item title" href="/memoirs/20241212/running/guangzhou/"><span class="title">广州马拉松</span></a><a class="item title" href="/memoirs/20200123/wuhan/wuhan/"><span class="title">2020-01-23 武汉封城第一天</span></a><a class="item title" href="/memoirs/20170706/linux/"><span class="title">Linux 基础</span></a></div></widget>
+</div>
+<footer class="footer dis-select"><div class="social-wrap"><a class="social" href="https://github.com/minniexcode" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/08a41b181ce68.svg"/></a></div></footer>
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/memoirs/memoirs/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/memoirs/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/memoirs/categories/%E6%8A%80%E6%9C%AF/">技术</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2026-03-24T16:00:00.000Z">2026-03-25</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2026-03-25T14:50:10.755Z">2026-03-25</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>软考网络工程师备考全攻略：8 周计划、速记表与端口协议清单</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>如果你和我一样，白天上班，真正能拿出来备考的时间只有工作日晚间 <code>2-3 小时</code>，同时又不是网络科班出身，而是有开发经验、懂一些网络但没有系统梳理过，那么软考 <code>Network Engineer</code> 的难点通常不是“完全看不懂”，而是：知识点很散、真题节奏不熟、下午案例题写不出关键词。</p>
+<p>这篇文章把三份资料合成了一篇可以直接照着执行的长文：</p>
+<ul>
+<li><code>8 周备考计划</code></li>
+<li><code>高频知识速记表</code></li>
+<li><code>端口 + 协议 + 易混点清单</code></li>
+</ul>
+<p>目标不是追求高分，而是尽量在本次考试通过；即使这次没过，也把下一次复习的框架一次搭好。我会保留 <code>English concepts</code> 的组织方式，因为对很多有工程背景的人来说，这种方式更容易形成检索路径。</p>
+<span id="more"></span>
+
+<blockquote>
+<p>如果你不是按 <code>3/25 -&gt; 5/23</code> 这个时间窗备考，也没关系，直接把下面的 <code>Week 0 - Week 8</code> 整体平移即可。</p>
+</blockquote>
+<hr>
+<h2 id="一、先讲策略：这场考试怎么准备更像“冲刺”而不是“啃书”"><a href="#一、先讲策略：这场考试怎么准备更像“冲刺”而不是“啃书”" class="headerlink" title="一、先讲策略：这场考试怎么准备更像“冲刺”而不是“啃书”"></a>一、先讲策略：这场考试怎么准备更像“冲刺”而不是“啃书”</h2><h3 id="1）目标分数"><a href="#1）目标分数" class="headerlink" title="1）目标分数"></a>1）目标分数</h3><ul>
+<li><code>Morning paper</code>：稳住基础分，目标 <code>52-58</code></li>
+<li><code>Afternoon paper</code>：不崩盘，目标 <code>48-55</code></li>
+<li>最终目标：<code>两科都过线</code></li>
+</ul>
+<h3 id="2）学习原则"><a href="#2）学习原则" class="headerlink" title="2）学习原则"></a>2）学习原则</h3><ul>
+<li>不走“从头到尾啃厚书”的路线</li>
+<li>采用 <code>concept -&gt; real questions -&gt; notes -&gt; revisit</code> 的闭环</li>
+<li>优先抓 <code>high-frequency topics</code></li>
+<li>从第 <code>2</code> 周开始，必须接触 <code>afternoon case</code></li>
+</ul>
+<h3 id="3）时间预算"><a href="#3）时间预算" class="headerlink" title="3）时间预算"></a>3）时间预算</h3><p>按照工作日晚间 <code>2-3h</code> 计算，<code>8</code> 周大约可投入：</p>
+<ul>
+<li><code>2h/night</code>：约 <code>86h</code></li>
+<li><code>2.5h/night</code>：约 <code>107h</code></li>
+<li><code>3h/night</code>：约 <code>129h</code></li>
+</ul>
+<p>这个投入量，对于“有多年开发经验、但网络知识没有系统梳理”的人来说，足够完成一次质量不错的冲刺。</p>
+<h3 id="4）Morning-和-Afternoon-分别怎么打"><a href="#4）Morning-和-Afternoon-分别怎么打" class="headerlink" title="4）Morning 和 Afternoon 分别怎么打"></a>4）Morning 和 Afternoon 分别怎么打</h3><h4 id="Morning"><a href="#Morning" class="headerlink" title="Morning"></a>Morning</h4><ul>
+<li>覆盖面广</li>
+<li>小知识点很多</li>
+<li>很容易在端口、术语、协议差异上丢分</li>
+<li>做题速度很重要</li>
+</ul>
+<h4 id="Afternoon"><a href="#Afternoon" class="headerlink" title="Afternoon"></a>Afternoon</h4><ul>
+<li>题量少，但更偏场景题</li>
+<li>高频题型喜欢考：<code>address planning</code>、<code>VLAN</code>、<code>routing</code>、<code>ACL/NAT</code>、<code>fault analysis</code>、<code>design</code></li>
+<li><code>partial credit</code> 很重要</li>
+<li>关键词比长篇大论更重要</li>
+</ul>
+<p>下午题一个很实用的答题原则是：</p>
+<ol>
+<li>要解决什么问题</li>
+<li>采用什么技术或协议</li>
+<li>为什么这个方案适合当前场景</li>
+<li>最终能达到什么效果</li>
+</ol>
+<h3 id="5）如果时间很紧，优先锁定这些内容"><a href="#5）如果时间很紧，优先锁定这些内容" class="headerlink" title="5）如果时间很紧，优先锁定这些内容"></a>5）如果时间很紧，优先锁定这些内容</h3><ul>
+<li><code>IPv4</code>, <code>subnetting</code>, <code>CIDR</code>, <code>VLSM</code>, <code>route summarization</code></li>
+<li><code>VLAN</code>, <code>Trunk</code>, <code>STP</code></li>
+<li><code>static routing</code>, <code>RIP</code>, <code>OSPF</code>, <code>BGP basics</code></li>
+<li><code>ACL</code>, <code>NAT</code>, <code>PAT</code>, <code>firewall</code>, <code>VPN basics</code></li>
+<li><code>DNS</code>, <code>DHCP</code>, <code>HTTP/HTTPS</code>, <code>SMTP</code>, <code>POP3</code>, <code>IMAP</code>, <code>FTP</code></li>
+<li><code>network design</code>, <code>redundancy</code>, <code>troubleshooting</code>, <code>cabling/media</code></li>
+</ul>
+<p>如果时间特别紧，不要过度投入这些内容：</p>
+<ul>
+<li>很深的 <code>BGP policy</code></li>
+<li>很细的 <code>IPv6 details</code></li>
+<li><code>SDN / 5G / cloud overview</code> 这类只需要认知级理解的内容</li>
+</ul>
+<hr>
+<h2 id="二、资料怎么选：尽量少而有效"><a href="#二、资料怎么选：尽量少而有效" class="headerlink" title="二、资料怎么选：尽量少而有效"></a>二、资料怎么选：尽量少而有效</h2><h3 id="1）官方信息"><a href="#1）官方信息" class="headerlink" title="1）官方信息"></a>1）官方信息</h3><ul>
+<li>官方网站：<code>https://www.ruankao.org.cn/</code></li>
+<li>考试计划：<code>https://www.ruankao.org.cn/exam/plan.html</code></li>
+<li>官方教材入口：<code>https://www.ruankao.org.cn/book/main.html</code></li>
+<li>报名入口：<code>https://bm.ruankao.org.cn/sign/welcome</code></li>
+<li>机考模拟&#x2F;下载入口：<code>https://bm.ruankao.org.cn/sign/in?type=query&amp;s=vexam/download/main</code></li>
+</ul>
+<h3 id="2）教材"><a href="#2）教材" class="headerlink" title="2）教材"></a>2）教材</h3><ul>
+<li>推荐主教材：<code>网络工程师教程（第6版）</code></li>
+<li>清华大学出版社页面：<code>https://www.tup.com.cn/booksCenter/book_10453401.html</code></li>
+</ul>
+<p>使用方式不要搞反：</p>
+<ul>
+<li>把它当 <code>reference book</code></li>
+<li>不要从第一页一路硬读到最后一页</li>
+<li>哪些真题章节反复出错，再回书里补对应章节</li>
+</ul>
+<h3 id="3）免费视频"><a href="#3）免费视频" class="headerlink" title="3）免费视频"></a>3）免费视频</h3><p>晚间时间有限，更适合按专题看，所以优先用 <code>Bilibili</code>。</p>
+<ul>
+<li>考试介绍 &#x2F; 报考指南：<code>https://www.bilibili.com/video/BV1ZAivYsEt3/</code></li>
+<li>搜索关键词 1：<code>希赛软考 网络工程师 第6版</code></li>
+<li>搜索关键词 2：<code>网络工程师 下午真题 解析</code></li>
+<li>搜索关键词 3：<code>软考 网络工程师 机考</code></li>
+<li>搜索关键词 4：<code>子网划分 VLAN STP OSPF ACL NAT 网络工程师</code></li>
+</ul>
+<p>建议只看三类视频：</p>
+<ul>
+<li><code>high-frequency concept videos</code></li>
+<li><code>afternoon case analysis</code></li>
+<li><code>机考/答题节奏</code> 视频</li>
+</ul>
+<h3 id="4）高频知识点与真题"><a href="#4）高频知识点与真题" class="headerlink" title="4）高频知识点与真题"></a>4）高频知识点与真题</h3><ul>
+<li>高频知识点参考：<code>https://www.educity.cn/rk/5374342.html</code></li>
+<li>真题优先做近 <code>5 年</code></li>
+<li>如果纸质真题不全，优先补 <code>2023-2025</code> 的线上真题和解析</li>
+</ul>
+<hr>
+<h2 id="三、每晚怎么学：把时间切成可执行模板"><a href="#三、每晚怎么学：把时间切成可执行模板" class="headerlink" title="三、每晚怎么学：把时间切成可执行模板"></a>三、每晚怎么学：把时间切成可执行模板</h2><h3 id="Option-A：只有-2-hours"><a href="#Option-A：只有-2-hours" class="headerlink" title="Option A：只有 2 hours"></a>Option A：只有 <code>2 hours</code></h3><ol>
+<li><code>15 min</code>：回顾昨天错题 &#x2F; notes</li>
+<li><code>45 min</code>：学习当天主题的核心概念</li>
+<li><code>40 min</code>：做 <code>15-20</code> 道 morning 选择题</li>
+<li><code>20 min</code>：订正 + 记 <code>3-5</code> 条 notes</li>
+</ol>
+<h3 id="Option-B：有-2-5-3-hours"><a href="#Option-B：有-2-5-3-hours" class="headerlink" title="Option B：有 2.5-3 hours"></a>Option B：有 <code>2.5-3 hours</code></h3><p>在上面的基础上再增加：</p>
+<ul>
+<li><code>30-60 min</code>：做 <code>1</code> 道 <code>afternoon case</code>，或者看 <code>1</code> 道详细解析</li>
+</ul>
+<h3 id="Weekly-Output-Target"><a href="#Weekly-Output-Target" class="headerlink" title="Weekly Output Target"></a>Weekly Output Target</h3><p>每周至少完成：</p>
+<ul>
+<li><code>80-100</code> 道 morning questions</li>
+<li><code>1-2</code> 道 afternoon case</li>
+<li><code>1</code> 页自己的 topic notes</li>
+</ul>
+<h3 id="我额外建议你固定做的-4-张纸"><a href="#我额外建议你固定做的-4-张纸" class="headerlink" title="我额外建议你固定做的 4 张纸"></a>我额外建议你固定做的 4 张纸</h3><p>这些不是“可选项”，而是复习越到后面越关键：</p>
+<ul>
+<li><code>protocol comparison</code></li>
+<li><code>common ports</code></li>
+<li><code>subnetting cheat sheet</code></li>
+<li><code>afternoon keywords</code></li>
+</ul>
+<hr>
+<h2 id="四、考点优先级：先打通主线，再补边缘"><a href="#四、考点优先级：先打通主线，再补边缘" class="headerlink" title="四、考点优先级：先打通主线，再补边缘"></a>四、考点优先级：先打通主线，再补边缘</h2><h3 id="A-Level：必须拿下"><a href="#A-Level：必须拿下" class="headerlink" title="A-Level：必须拿下"></a>A-Level：必须拿下</h3><ul>
+<li><code>IPv4 addressing</code></li>
+<li><code>subnetting / VLSM / CIDR</code></li>
+<li><code>route summarization</code></li>
+<li><code>VLAN / Trunk</code></li>
+<li><code>STP</code></li>
+<li><code>static routing / default route</code></li>
+<li><code>RIP / OSPF / BGP basics</code></li>
+<li><code>ACL</code></li>
+<li><code>NAT / PAT</code></li>
+<li><code>firewall / VPN basics</code></li>
+<li><code>DNS / DHCP / HTTP / SMTP</code></li>
+<li><code>network design / redundancy / troubleshooting</code></li>
+</ul>
+<h3 id="B-Level：必须会做题"><a href="#B-Level：必须会做题" class="headerlink" title="B-Level：必须会做题"></a>B-Level：必须会做题</h3><ul>
+<li><code>SNMP / Syslog</code></li>
+<li><code>proxy</code></li>
+<li><code>FTP / POP3 / IMAP</code></li>
+<li><code>RAID</code></li>
+<li><code>server basics</code></li>
+<li><code>wireless LAN</code></li>
+<li><code>IPv6 basics</code></li>
+<li><code>cabling / media selection</code></li>
+</ul>
+<h3 id="C-Level：知道就行"><a href="#C-Level：知道就行" class="headerlink" title="C-Level：知道就行"></a>C-Level：知道就行</h3><ul>
+<li><code>SDN</code></li>
+<li><code>cloud networking overview</code></li>
+<li><code>5G / new-outline overview topics</code></li>
+<li>其他明显偏概念、偏新大纲的边缘内容</li>
+</ul>
+<hr>
+<h2 id="五、8-周冲刺计划：按周推进，不要每天重新想“今天学什么”"><a href="#五、8-周冲刺计划：按周推进，不要每天重新想“今天学什么”" class="headerlink" title="五、8 周冲刺计划：按周推进，不要每天重新想“今天学什么”"></a>五、8 周冲刺计划：按周推进，不要每天重新想“今天学什么”</h2><h2 id="Week-0：3-25-Wed-3-27-Fri"><a href="#Week-0：3-25-Wed-3-27-Fri" class="headerlink" title="Week 0：3/25 Wed - 3/27 Fri"></a>Week 0：<code>3/25 Wed - 3/27 Fri</code></h2><h3 id="Goal"><a href="#Goal" class="headerlink" title="Goal"></a>Goal</h3><ul>
+<li>建立考试框架</li>
+<li>知道 morning &#x2F; afternoon 分别怎么考</li>
+<li>完成一次 baseline test</li>
+</ul>
+<h3 id="Plan"><a href="#Plan" class="headerlink" title="Plan"></a>Plan</h3><ul>
+<li><code>3/25 Wed</code><ul>
+<li>了解考试结构、题型、时间分配</li>
+<li>建立笔记文档：<code>wrong questions</code>、<code>topic notes</code>、<code>formula sheet</code></li>
+<li>做一套 <code>morning</code> 的前 <code>20-30</code> 题，感受题型</li>
+</ul>
+</li>
+<li><code>3/26 Thu</code><ul>
+<li>学 <code>OSI / TCP-IP / encapsulation / decapsulation</code></li>
+<li>学 <code>Ethernet / MAC / ARP</code></li>
+<li>做 <code>15-20</code> 道对应选择题</li>
+</ul>
+</li>
+<li><code>3/27 Fri</code><ul>
+<li>学 <code>IPv4 addressing</code>、<code>subnet mask</code>、<code>CIDR</code></li>
+<li>做 <code>15-20</code> 道地址基础题</li>
+<li>记录第一次暴露出的薄弱点</li>
+</ul>
+</li>
+</ul>
+<h3 id="Optional-Weekend-Catch-up"><a href="#Optional-Weekend-Catch-up" class="headerlink" title="Optional Weekend Catch-up"></a>Optional Weekend Catch-up</h3><ul>
+<li>用 <code>60-90 min</code> 回顾本周错题</li>
+<li>看 <code>1</code> 道 <code>afternoon case</code> 解析，先理解答题风格，不求会做</li>
+</ul>
+<hr>
+<h2 id="Week-1：3-30-Mon-4-3-Fri"><a href="#Week-1：3-30-Mon-4-3-Fri" class="headerlink" title="Week 1：3/30 Mon - 4/3 Fri"></a>Week 1：<code>3/30 Mon - 4/3 Fri</code></h2><h3 id="Goal-1"><a href="#Goal-1" class="headerlink" title="Goal"></a>Goal</h3><ul>
+<li>拿下 <code>subnetting</code> 这个高频送分点</li>
+<li>对 <code>VLAN / Trunk</code> 建立基本理解</li>
+</ul>
+<h3 id="Plan-1"><a href="#Plan-1" class="headerlink" title="Plan"></a>Plan</h3><ul>
+<li><code>3/30 Mon</code><ul>
+<li><code>subnetting</code>：网络地址、广播地址、可用主机数</li>
+<li>做 <code>15</code> 道子网题</li>
+</ul>
+</li>
+<li><code>3/31 Tue</code><ul>
+<li><code>VLSM</code> 和 <code>CIDR</code></li>
+<li>做 <code>15-20</code> 道地址规划题</li>
+</ul>
+</li>
+<li><code>4/1 Wed</code><ul>
+<li><code>route summarization</code></li>
+<li>建一张地址计算速记表</li>
+<li>做 <code>15</code> 道题</li>
+</ul>
+</li>
+<li><code>4/2 Thu</code><ul>
+<li><code>VLAN</code>、<code>access port</code>、<code>Trunk</code></li>
+<li>做 <code>15-20</code> 道交换基础题</li>
+</ul>
+</li>
+<li><code>4/3 Fri</code><ul>
+<li>做一个小复盘</li>
+<li><code>1</code> 道 <code>afternoon case</code>：address planning 或 VLAN 基础题</li>
+</ul>
+</li>
+</ul>
+<h3 id="End-of-Week-Check"><a href="#End-of-Week-Check" class="headerlink" title="End-of-Week Check"></a>End-of-Week Check</h3><ul>
+<li>能快速计算网段 &#x2F; 广播地址 &#x2F; 主机范围</li>
+<li>知道 <code>VLAN</code> 和 <code>Trunk</code> 的作用</li>
+<li>能看懂基本地址规划题</li>
+</ul>
+<hr>
+<h2 id="Week-2：4-6-Mon-4-10-Fri"><a href="#Week-2：4-6-Mon-4-10-Fri" class="headerlink" title="Week 2：4/6 Mon - 4/10 Fri"></a>Week 2：<code>4/6 Mon - 4/10 Fri</code></h2><h3 id="Goal-2"><a href="#Goal-2" class="headerlink" title="Goal"></a>Goal</h3><ul>
+<li>建立 <code>switching + routing basics</code></li>
+<li>开始接触 <code>STP</code> 和动态路由</li>
+</ul>
+<h3 id="Plan-2"><a href="#Plan-2" class="headerlink" title="Plan"></a>Plan</h3><ul>
+<li><code>4/6 Mon</code><ul>
+<li><code>STP</code>：why it exists、loop avoidance、root bridge</li>
+<li>做 <code>15</code> 道题</li>
+</ul>
+</li>
+<li><code>4/7 Tue</code><ul>
+<li><code>link aggregation</code>、switch basics</li>
+<li>做 <code>15</code> 道题</li>
+</ul>
+</li>
+<li><code>4/8 Wed</code><ul>
+<li><code>static route</code>、<code>default route</code></li>
+<li>做 <code>15-20</code> 道题</li>
+</ul>
+</li>
+<li><code>4/9 Thu</code><ul>
+<li><code>RIP</code>：hop count、convergence、suitable scenarios</li>
+<li>做 <code>15</code> 道题</li>
+</ul>
+</li>
+<li><code>4/10 Fri</code><ul>
+<li><code>OSPF basics</code>：link-state、metric、area</li>
+<li>做 <code>1</code> 道 afternoon case：switch &#x2F; routing basics</li>
+</ul>
+</li>
+</ul>
+<h3 id="End-of-Week-Check-1"><a href="#End-of-Week-Check-1" class="headerlink" title="End-of-Week Check"></a>End-of-Week Check</h3><ul>
+<li>能说明 <code>STP</code> 解决什么问题</li>
+<li>能区分 <code>static route</code>、<code>RIP</code>、<code>OSPF</code></li>
+<li>能做基础的交换 &#x2F; 路由题</li>
+</ul>
+<hr>
+<h2 id="Week-3：4-13-Mon-4-17-Fri"><a href="#Week-3：4-13-Mon-4-17-Fri" class="headerlink" title="Week 3：4/13 Mon - 4/17 Fri"></a>Week 3：<code>4/13 Mon - 4/17 Fri</code></h2><h3 id="Goal-3"><a href="#Goal-3" class="headerlink" title="Goal"></a>Goal</h3><ul>
+<li>进入网络工程师核心区：<code>OSPF / BGP / ACL / NAT</code></li>
+<li>afternoon 开始真正练习表达</li>
+</ul>
+<h3 id="Plan-3"><a href="#Plan-3" class="headerlink" title="Plan"></a>Plan</h3><ul>
+<li><code>4/13 Mon</code><ul>
+<li><code>OSPF</code>：neighbor、metric、convergence、area basics</li>
+<li>做 <code>15-20</code> 道题</li>
+</ul>
+</li>
+<li><code>4/14 Tue</code><ul>
+<li><code>BGP basics</code>：path selection basic ideas、inter-domain scenarios</li>
+<li>做 <code>10-15</code> 道题</li>
+</ul>
+</li>
+<li><code>4/15 Wed</code><ul>
+<li><code>ACL</code>：standard vs extended、matching logic</li>
+<li>做 <code>15-20</code> 道题</li>
+</ul>
+</li>
+<li><code>4/16 Thu</code><ul>
+<li><code>NAT / PAT</code>、<code>firewall basics</code></li>
+<li>做 <code>15-20</code> 道题</li>
+</ul>
+</li>
+<li><code>4/17 Fri</code><ul>
+<li><code>VPN basics</code></li>
+<li>做 <code>1-2</code> 道 afternoon case：ACL &#x2F; NAT &#x2F; routing</li>
+</ul>
+</li>
+</ul>
+<h3 id="End-of-Week-Check-2"><a href="#End-of-Week-Check-2" class="headerlink" title="End-of-Week Check"></a>End-of-Week Check</h3><ul>
+<li>能说清 <code>OSPF</code> 和 <code>BGP</code> 的最核心差别</li>
+<li>知道 <code>ACL</code> 一般按什么匹配</li>
+<li>知道 <code>NAT / PAT</code> 的常见题型</li>
+</ul>
+<hr>
+<h2 id="Week-4：4-20-Mon-4-24-Fri"><a href="#Week-4：4-20-Mon-4-24-Fri" class="headerlink" title="Week 4：4/20 Mon - 4/24 Fri"></a>Week 4：<code>4/20 Mon - 4/24 Fri</code></h2><h3 id="Goal-4"><a href="#Goal-4" class="headerlink" title="Goal"></a>Goal</h3><ul>
+<li>补齐服务类高频考点</li>
+<li>建立“服务 + 端口 + 故障”的联动记忆</li>
+</ul>
+<h3 id="Plan-4"><a href="#Plan-4" class="headerlink" title="Plan"></a>Plan</h3><ul>
+<li><code>4/20 Mon</code><ul>
+<li><code>DNS</code>：recursion、authoritative、cache、typical issues</li>
+<li>做 <code>15-20</code> 道题</li>
+</ul>
+</li>
+<li><code>4/21 Tue</code><ul>
+<li><code>DHCP</code>：lease、relay、address assignment flow</li>
+<li>做 <code>15-20</code> 道题</li>
+</ul>
+</li>
+<li><code>4/22 Wed</code><ul>
+<li><code>HTTP / HTTPS</code>、<code>proxy</code>、basic web service concepts</li>
+<li>做 <code>15</code> 道题</li>
+</ul>
+</li>
+<li><code>4/23 Thu</code><ul>
+<li><code>SMTP / POP3 / IMAP / FTP</code></li>
+<li>整理一张 <code>common ports</code> 速记表</li>
+<li>做 <code>15-20</code> 道题</li>
+</ul>
+</li>
+<li><code>4/24 Fri</code><ul>
+<li><code>SNMP</code>、<code>Syslog</code>、<code>server basics</code>、<code>RAID</code></li>
+<li>做 <code>1</code> 道 afternoon case：service &#x2F; operation &#x2F; fault diagnosis</li>
+</ul>
+</li>
+</ul>
+<h3 id="End-of-Week-Check-3"><a href="#End-of-Week-Check-3" class="headerlink" title="End-of-Week Check"></a>End-of-Week Check</h3><ul>
+<li>常见服务端口能认出来</li>
+<li>知道 <code>DNS / DHCP / Mail</code> 常见故障模式</li>
+<li>afternoon 答题开始能写出关键词</li>
+</ul>
+<hr>
+<h2 id="Week-5：4-27-Mon-5-1-Fri"><a href="#Week-5：4-27-Mon-5-1-Fri" class="headerlink" title="Week 5：4/27 Mon - 5/1 Fri"></a>Week 5：<code>4/27 Mon - 5/1 Fri</code></h2><h3 id="Goal-5"><a href="#Goal-5" class="headerlink" title="Goal"></a>Goal</h3><ul>
+<li>切入 <code>design / topology / availability / troubleshooting</code></li>
+<li>让 afternoon 更像“写方案”而不是“猜答案”</li>
+</ul>
+<h3 id="Plan-5"><a href="#Plan-5" class="headerlink" title="Plan"></a>Plan</h3><ul>
+<li><code>4/27 Mon</code><ul>
+<li><code>network topology</code>、core &#x2F; distribution &#x2F; access</li>
+<li>做 <code>15</code> 道题</li>
+</ul>
+</li>
+<li><code>4/28 Tue</code><ul>
+<li><code>redundancy</code>、<code>high availability</code>、backup links</li>
+<li>做 <code>15</code> 道题</li>
+</ul>
+</li>
+<li><code>4/29 Wed</code><ul>
+<li><code>troubleshooting</code>：fault isolation、layered diagnosis mindset</li>
+<li>做 <code>15-20</code> 道题</li>
+</ul>
+</li>
+<li><code>4/30 Thu</code><ul>
+<li><code>cabling / media selection</code>、<code>wireless LAN basics</code></li>
+<li>做 <code>15</code> 道题</li>
+</ul>
+</li>
+<li><code>5/1 Fri</code><ul>
+<li><code>IPv6 basics</code> + 新大纲轻量内容扫一遍</li>
+<li>做 <code>1-2</code> 道 afternoon case：design &#x2F; troubleshooting</li>
+</ul>
+</li>
+</ul>
+<h3 id="End-of-Week-Check-4"><a href="#End-of-Week-Check-4" class="headerlink" title="End-of-Week Check"></a>End-of-Week Check</h3><ul>
+<li>知道典型企业网络分层结构</li>
+<li>能解释冗余设计的目的</li>
+<li>遇到故障题不会完全没思路</li>
+</ul>
+<hr>
+<h2 id="Week-6：5-4-Mon-5-8-Fri"><a href="#Week-6：5-4-Mon-5-8-Fri" class="headerlink" title="Week 6：5/4 Mon - 5/8 Fri"></a>Week 6：<code>5/4 Mon - 5/8 Fri</code></h2><h3 id="Goal-6"><a href="#Goal-6" class="headerlink" title="Goal"></a>Goal</h3><ul>
+<li>从“学知识”切换到“拿分”</li>
+<li>真题优先级高于新视频</li>
+</ul>
+<h3 id="Plan-6"><a href="#Plan-6" class="headerlink" title="Plan"></a>Plan</h3><ul>
+<li><code>5/4 Mon</code><ul>
+<li>做 <code>1</code> 套完整 <code>morning</code> 真题</li>
+<li>统计错题分布</li>
+</ul>
+</li>
+<li><code>5/5 Tue</code><ul>
+<li>复盘错题最多的两个专题</li>
+<li>补对应概念或视频</li>
+</ul>
+</li>
+<li><code>5/6 Wed</code><ul>
+<li>做 <code>1</code> 道 <code>afternoon case</code></li>
+<li>按标准答案整理关键词</li>
+</ul>
+</li>
+<li><code>5/7 Thu</code><ul>
+<li>再做 <code>20-25</code> 道 morning 高频专题题</li>
+<li>重点盯 <code>subnetting / routing / services</code></li>
+</ul>
+</li>
+<li><code>5/8 Fri</code><ul>
+<li>做 <code>1</code> 道 afternoon case</li>
+<li>输出一页 <code>high-frequency notes</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="End-of-Week-Check-5"><a href="#End-of-Week-Check-5" class="headerlink" title="End-of-Week Check"></a>End-of-Week Check</h3><ul>
+<li>知道自己最弱的 <code>3</code> 个专题</li>
+<li>开始形成自己的速记表</li>
+</ul>
+<hr>
+<h2 id="Week-7：5-11-Mon-5-15-Fri"><a href="#Week-7：5-11-Mon-5-15-Fri" class="headerlink" title="Week 7：5/11 Mon - 5/15 Fri"></a>Week 7：<code>5/11 Mon - 5/15 Fri</code></h2><h3 id="Goal-7"><a href="#Goal-7" class="headerlink" title="Goal"></a>Goal</h3><ul>
+<li>稳定做题节奏</li>
+<li>压缩知识点到考场可调用状态</li>
+</ul>
+<h3 id="Plan-7"><a href="#Plan-7" class="headerlink" title="Plan"></a>Plan</h3><ul>
+<li><code>5/11 Mon</code><ul>
+<li>做第 <code>2</code> 套完整 <code>morning</code> 真题</li>
+</ul>
+</li>
+<li><code>5/12 Tue</code><ul>
+<li>做 <code>1</code> 道 afternoon case，限时作答</li>
+</ul>
+</li>
+<li><code>5/13 Wed</code><ul>
+<li>回顾 <code>ACL / NAT / OSPF / DNS / DHCP</code></li>
+<li>做 <code>20</code> 道专题题</li>
+</ul>
+</li>
+<li><code>5/14 Thu</code><ul>
+<li>做 <code>1</code> 套 <code>mini mock</code>：morning <code>30-40</code> 题 + <code>1</code> 道 afternoon</li>
+</ul>
+</li>
+<li><code>5/15 Fri</code><ul>
+<li>复盘整周错题</li>
+<li>完成最终版 <code>common ports + protocol comparison</code> 速记表</li>
+</ul>
+</li>
+</ul>
+<h3 id="End-of-Week-Check-6"><a href="#End-of-Week-Check-6" class="headerlink" title="End-of-Week Check"></a>End-of-Week Check</h3><ul>
+<li>morning 做题速度明显提升</li>
+<li>afternoon 不再只会看答案</li>
+<li>高频知识点开始成体系</li>
+</ul>
+<hr>
+<h2 id="Week-8：5-18-Mon-5-22-Fri"><a href="#Week-8：5-18-Mon-5-22-Fri" class="headerlink" title="Week 8：5/18 Mon - 5/22 Fri"></a>Week 8：<code>5/18 Mon - 5/22 Fri</code></h2><h3 id="Goal-8"><a href="#Goal-8" class="headerlink" title="Goal"></a>Goal</h3><ul>
+<li>只收口，不扩张</li>
+<li>把已学内容压成可复述、可作答、可拿分的状态</li>
+</ul>
+<h3 id="Plan-8"><a href="#Plan-8" class="headerlink" title="Plan"></a>Plan</h3><ul>
+<li><code>5/18 Mon</code><ul>
+<li>做最后 <code>1</code> 套完整 <code>morning</code> 真题</li>
+<li>只记高频错点</li>
+</ul>
+</li>
+<li><code>5/19 Tue</code><ul>
+<li>做 <code>1</code> 道 afternoon case</li>
+<li>复盘答案模板</li>
+</ul>
+</li>
+<li><code>5/20 Wed</code><ul>
+<li>重点回顾：<code>subnetting / VLAN / STP / OSPF / ACL / NAT</code></li>
+</ul>
+</li>
+<li><code>5/21 Thu</code><ul>
+<li>重点回顾：<code>DNS / DHCP / HTTP / Mail / troubleshooting / design</code></li>
+</ul>
+</li>
+<li><code>5/22 Fri</code><ul>
+<li>只看自己的 <code>wrong questions + notes + formulas + ports</code></li>
+<li>不再开新专题</li>
+<li>提前调整作息</li>
+</ul>
+</li>
+</ul>
+<h3 id="Exam-Eve-Rules"><a href="#Exam-Eve-Rules" class="headerlink" title="Exam-Eve Rules"></a>Exam-Eve Rules</h3><ul>
+<li>不熬夜</li>
+<li>不刷偏题、怪题</li>
+<li>不再看大段新视频</li>
+<li>相信你已经完成的复习闭环</li>
+</ul>
+<hr>
+<h2 id="六、把知识串起来：一张紧凑的知识地图"><a href="#六、把知识串起来：一张紧凑的知识地图" class="headerlink" title="六、把知识串起来：一张紧凑的知识地图"></a>六、把知识串起来：一张紧凑的知识地图</h2><h3 id="Layer-2-Layer-3"><a href="#Layer-2-Layer-3" class="headerlink" title="Layer 2 &#x2F; Layer 3"></a>Layer 2 &#x2F; Layer 3</h3><ul>
+<li><code>Ethernet</code></li>
+<li><code>MAC / ARP</code></li>
+<li><code>VLAN / Trunk</code></li>
+<li><code>STP</code></li>
+<li><code>routing / forwarding</code></li>
+</ul>
+<h3 id="Addressing"><a href="#Addressing" class="headerlink" title="Addressing"></a>Addressing</h3><ul>
+<li><code>IPv4</code></li>
+<li><code>subnetting</code></li>
+<li><code>VLSM</code></li>
+<li><code>CIDR</code></li>
+<li><code>route summarization</code></li>
+<li><code>IPv6 basics</code></li>
+</ul>
+<h3 id="Routing"><a href="#Routing" class="headerlink" title="Routing"></a>Routing</h3><ul>
+<li><code>static route</code></li>
+<li><code>default route</code></li>
+<li><code>RIP</code></li>
+<li><code>OSPF</code></li>
+<li><code>BGP basics</code></li>
+</ul>
+<h3 id="Security"><a href="#Security" class="headerlink" title="Security"></a>Security</h3><ul>
+<li><code>ACL</code></li>
+<li><code>NAT / PAT</code></li>
+<li><code>firewall</code></li>
+<li><code>VPN</code></li>
+<li>常见攻击与基础防护思路</li>
+</ul>
+<h3 id="Services"><a href="#Services" class="headerlink" title="Services"></a>Services</h3><ul>
+<li><code>DNS</code></li>
+<li><code>DHCP</code></li>
+<li><code>HTTP / HTTPS</code></li>
+<li><code>SMTP / POP3 / IMAP</code></li>
+<li><code>FTP</code></li>
+<li><code>proxy</code></li>
+<li><code>SNMP / Syslog</code></li>
+</ul>
+<h3 id="Design-Ops"><a href="#Design-Ops" class="headerlink" title="Design &#x2F; Ops"></a>Design &#x2F; Ops</h3><ul>
+<li><code>topology</code></li>
+<li><code>core / distribution / access</code></li>
+<li><code>redundancy / HA</code></li>
+<li><code>load balancing</code></li>
+<li><code>troubleshooting</code></li>
+<li><code>RAID</code></li>
+<li><code>cabling / media</code></li>
+</ul>
+<h3 id="这些东西要明确背，不要只靠“理解过”"><a href="#这些东西要明确背，不要只靠“理解过”" class="headerlink" title="这些东西要明确背，不要只靠“理解过”"></a>这些东西要明确背，不要只靠“理解过”</h3><ul>
+<li>常见服务端口</li>
+<li><code>RIP / OSPF / BGP</code> 对比</li>
+<li><code>ACL</code> 分类和匹配逻辑</li>
+<li><code>NAT / PAT</code> 区别</li>
+<li><code>VLAN / Trunk / STP</code> 关键词</li>
+<li>子网划分计算套路</li>
+<li><code>RAID</code> 级别特点</li>
+<li>常见设备 &#x2F; 介质适用场景</li>
+</ul>
+<hr>
+<h2 id="七、高频知识速记表：把最常考的地方先压缩到脑子里"><a href="#七、高频知识速记表：把最常考的地方先压缩到脑子里" class="headerlink" title="七、高频知识速记表：把最常考的地方先压缩到脑子里"></a>七、高频知识速记表：把最常考的地方先压缩到脑子里</h2><h2 id="1-IPv4-和-Subnetting"><a href="#1-IPv4-和-Subnetting" class="headerlink" title="1. IPv4 和 Subnetting"></a>1. IPv4 和 Subnetting</h2><h3 id="Core-Formulas"><a href="#Core-Formulas" class="headerlink" title="Core Formulas"></a>Core Formulas</h3><ul>
+<li>子网总地址数：<code>2^(32-prefix)</code></li>
+<li>常规可用主机数：<code>2^(32-prefix) - 2</code></li>
+<li>子网步长：找 <code>interesting octet</code>，计算 <code>256 - mask</code></li>
+</ul>
+<h3 id="Fast-Memory-Table"><a href="#Fast-Memory-Table" class="headerlink" title="Fast Memory Table"></a>Fast Memory Table</h3><table>
+<thead>
+<tr>
+<th>Prefix</th>
+<th>Mask</th>
+<th align="right">Total IPs</th>
+<th align="right">Usable Hosts</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/24</code></td>
+<td><code>255.255.255.0</code></td>
+<td align="right">256</td>
+<td align="right">254</td>
+</tr>
+<tr>
+<td><code>/25</code></td>
+<td><code>255.255.255.128</code></td>
+<td align="right">128</td>
+<td align="right">126</td>
+</tr>
+<tr>
+<td><code>/26</code></td>
+<td><code>255.255.255.192</code></td>
+<td align="right">64</td>
+<td align="right">62</td>
+</tr>
+<tr>
+<td><code>/27</code></td>
+<td><code>255.255.255.224</code></td>
+<td align="right">32</td>
+<td align="right">30</td>
+</tr>
+<tr>
+<td><code>/28</code></td>
+<td><code>255.255.255.240</code></td>
+<td align="right">16</td>
+<td align="right">14</td>
+</tr>
+<tr>
+<td><code>/29</code></td>
+<td><code>255.255.255.248</code></td>
+<td align="right">8</td>
+<td align="right">6</td>
+</tr>
+<tr>
+<td><code>/30</code></td>
+<td><code>255.255.255.252</code></td>
+<td align="right">4</td>
+<td align="right">2</td>
+</tr>
+</tbody></table>
+<h3 id="Workflow-for-Subnetting-Questions"><a href="#Workflow-for-Subnetting-Questions" class="headerlink" title="Workflow for Subnetting Questions"></a>Workflow for Subnetting Questions</h3><ol>
+<li>先看每个子网需要多少主机</li>
+<li>选能满足需求的最小前缀</li>
+<li><code>VLSM</code> 题先分配大网段，再分配小网段</li>
+<li>写清楚 <code>network address</code>、<code>usable range</code>、<code>broadcast address</code></li>
+<li>最后检查是否发生 overlap</li>
+</ol>
+<h3 id="High-Frequency-Traps"><a href="#High-Frequency-Traps" class="headerlink" title="High-Frequency Traps"></a>High-Frequency Traps</h3><ul>
+<li>把 <code>network address</code> 和 <code>first usable host</code> 搞混</li>
+<li>忘了 <code>broadcast address</code></li>
+<li><code>VLSM</code> 没有先分配最大的子网</li>
+<li><code>route summarization</code> 既要覆盖所有路由，又要尽量避免多余覆盖</li>
+</ul>
+<h2 id="2-VLAN、Trunk、STP"><a href="#2-VLAN、Trunk、STP" class="headerlink" title="2. VLAN、Trunk、STP"></a>2. VLAN、Trunk、STP</h2><h3 id="VLAN"><a href="#VLAN" class="headerlink" title="VLAN"></a>VLAN</h3><ul>
+<li>逻辑上分割广播域</li>
+<li>提升隔离性、可管理性和安全性</li>
+<li>不同 VLAN 的主机通信需要 <code>Layer 3</code> 转发</li>
+</ul>
+<h3 id="Trunk"><a href="#Trunk" class="headerlink" title="Trunk"></a>Trunk</h3><ul>
+<li>用来承载多个 VLAN 的流量</li>
+<li>一般依赖 tagging</li>
+<li>常见场景是交换机与交换机之间的链路</li>
+</ul>
+<h3 id="STP"><a href="#STP" class="headerlink" title="STP"></a>STP</h3><ul>
+<li>作用：防止二层环路</li>
+<li>核心思路：阻塞冗余路径，但保留备份链路</li>
+<li>必记术语：<code>root bridge</code>、<code>root port</code>、<code>designated port</code>、<code>blocking</code></li>
+</ul>
+<h3 id="Common-Traps"><a href="#Common-Traps" class="headerlink" title="Common Traps"></a>Common Traps</h3><ul>
+<li><code>VLAN</code> 解决的是分段，不会自动解决跨 VLAN 通信</li>
+<li><code>Trunk</code> 不等于 <code>access port</code></li>
+<li>冗余链路如果没有 <code>STP</code>，可能造成广播风暴和 MAC 表震荡</li>
+</ul>
+<h2 id="3-Routing-Cheat-Sheet"><a href="#3-Routing-Cheat-Sheet" class="headerlink" title="3. Routing Cheat Sheet"></a>3. Routing Cheat Sheet</h2><h3 id="Static-Route"><a href="#Static-Route" class="headerlink" title="Static Route"></a>Static Route</h3><ul>
+<li>简单</li>
+<li>可预测</li>
+<li>开销低</li>
+<li>在大网络里可扩展性差</li>
+</ul>
+<h3 id="RIP"><a href="#RIP" class="headerlink" title="RIP"></a>RIP</h3><ul>
+<li><code>distance-vector</code></li>
+<li>度量：<code>hop count</code></li>
+<li>收敛慢</li>
+<li>只适合小型、简单网络</li>
+</ul>
+<h3 id="OSPF"><a href="#OSPF" class="headerlink" title="OSPF"></a>OSPF</h3><ul>
+<li><code>link-state</code></li>
+<li>比 <code>RIP</code> 收敛更快</li>
+<li>支持 <code>areas</code> 的分层设计</li>
+<li>适合中大型内部网络</li>
+</ul>
+<h3 id="BGP"><a href="#BGP" class="headerlink" title="BGP"></a>BGP</h3><ul>
+<li><code>inter-domain routing</code></li>
+<li>偏 <code>policy-oriented</code></li>
+<li>常见于 <code>ISP / multi-AS scenarios</code></li>
+<li>不是普通企业内部路由的默认答案</li>
+</ul>
+<h3 id="Fast-Comparison-Table"><a href="#Fast-Comparison-Table" class="headerlink" title="Fast Comparison Table"></a>Fast Comparison Table</h3><table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Type</th>
+<th>Metric &#x2F; Key Idea</th>
+<th>Typical Use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Static</code></td>
+<td>manual</td>
+<td>admin control</td>
+<td>small&#x2F;stable networks</td>
+</tr>
+<tr>
+<td><code>RIP</code></td>
+<td>distance-vector</td>
+<td>hop count</td>
+<td>small LAN&#x2F;WAN</td>
+</tr>
+<tr>
+<td><code>OSPF</code></td>
+<td>link-state</td>
+<td>cost</td>
+<td>enterprise internal routing</td>
+</tr>
+<tr>
+<td><code>BGP</code></td>
+<td>path-vector</td>
+<td>policy&#x2F;path attributes</td>
+<td>inter-AS &#x2F; ISP</td>
+</tr>
+</tbody></table>
+<h3 id="High-Frequency-Traps-1"><a href="#High-Frequency-Traps-1" class="headerlink" title="High-Frequency Traps"></a>High-Frequency Traps</h3><ul>
+<li><code>RIP</code> 简单，但不适合大规模网络</li>
+<li><code>OSPF</code> 通常用于内部，<code>BGP</code> 通常用于域间</li>
+<li>不要脱离场景写出“<code>BGP</code> 比 <code>OSPF</code> 更好”这种答案</li>
+</ul>
+<h2 id="4-ACL、NAT、Firewall、VPN"><a href="#4-ACL、NAT、Firewall、VPN" class="headerlink" title="4. ACL、NAT、Firewall、VPN"></a>4. ACL、NAT、Firewall、VPN</h2><h3 id="ACL"><a href="#ACL" class="headerlink" title="ACL"></a>ACL</h3><ul>
+<li>做流量过滤和访问控制</li>
+<li>标准 ACL：主要按源地址匹配</li>
+<li>扩展 ACL：可按源、目的、协议、端口匹配</li>
+</ul>
+<h3 id="NAT-PAT"><a href="#NAT-PAT" class="headerlink" title="NAT &#x2F; PAT"></a>NAT &#x2F; PAT</h3><ul>
+<li><code>NAT</code>：私网地址和公网地址之间转换</li>
+<li><code>PAT</code>：多个内网主机共用一个公网 IP，通过不同端口复用</li>
+</ul>
+<h3 id="Firewall"><a href="#Firewall" class="headerlink" title="Firewall"></a>Firewall</h3><ul>
+<li>执行安全策略</li>
+<li>按规则允许或拒绝流量</li>
+<li>常部署在网络边界或不同安全域之间</li>
+</ul>
+<h3 id="VPN"><a href="#VPN" class="headerlink" title="VPN"></a>VPN</h3><ul>
+<li>在公共网络之上建立安全隧道</li>
+<li>可用于 site-to-site 或 remote access</li>
+</ul>
+<h3 id="High-Frequency-Traps-2"><a href="#High-Frequency-Traps-2" class="headerlink" title="High-Frequency Traps"></a>High-Frequency Traps</h3><ul>
+<li><code>ACL</code> 过滤流量，不等于 <code>NAT</code></li>
+<li>多个私网主机共享少量公网 IP 时，<code>PAT</code> 往往才是题目的实际答案</li>
+<li>远程管理里 <code>telnet</code> 不安全，<code>SSH</code> 更安全</li>
+</ul>
+<h2 id="5-Services-and-Servers"><a href="#5-Services-and-Servers" class="headerlink" title="5. Services and Servers"></a>5. Services and Servers</h2><h3 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h3><ul>
+<li>域名解析</li>
+<li>必记：<code>UDP/TCP 53</code></li>
+<li>高频考法：cache、recursion、authoritative answer、DNS 故障症状</li>
+</ul>
+<h3 id="DHCP"><a href="#DHCP" class="headerlink" title="DHCP"></a>DHCP</h3><ul>
+<li>自动分配 IP</li>
+<li>必记：<code>UDP 67/68</code></li>
+<li>关键概念：lease、pool、gateway、DNS server options、relay</li>
+</ul>
+<h3 id="HTTP-HTTPS"><a href="#HTTP-HTTPS" class="headerlink" title="HTTP &#x2F; HTTPS"></a>HTTP &#x2F; HTTPS</h3><ul>
+<li>Web 服务</li>
+<li>必记：<code>80 / 443</code></li>
+<li><code>HTTPS</code> 在 <code>HTTP</code> 基础上增加了 TLS 加密和身份校验</li>
+</ul>
+<h3 id="Mail"><a href="#Mail" class="headerlink" title="Mail"></a>Mail</h3><ul>
+<li><code>SMTP</code>：发信</li>
+<li><code>POP3</code>：收信，偏简单下载模型</li>
+<li><code>IMAP</code>：收信，偏服务器端邮箱同步</li>
+</ul>
+<h3 id="SNMP-Syslog"><a href="#SNMP-Syslog" class="headerlink" title="SNMP &#x2F; Syslog"></a>SNMP &#x2F; Syslog</h3><ul>
+<li><code>SNMP</code>：监控和管理</li>
+<li><code>Syslog</code>：集中日志传输</li>
+</ul>
+<h3 id="RAID-Basics"><a href="#RAID-Basics" class="headerlink" title="RAID Basics"></a>RAID Basics</h3><table>
+<thead>
+<tr>
+<th>RAID</th>
+<th>Key Feature</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>RAID 0</code></td>
+<td>striping，性能好，但无冗余</td>
+</tr>
+<tr>
+<td><code>RAID 1</code></td>
+<td>mirroring，有冗余</td>
+</tr>
+<tr>
+<td><code>RAID 5</code></td>
+<td>striping + parity，容量和容错平衡</td>
+</tr>
+<tr>
+<td><code>RAID 10</code></td>
+<td>性能和冗余兼顾，但成本更高</td>
+</tr>
+</tbody></table>
+<h2 id="6-Design-and-Troubleshooting"><a href="#6-Design-and-Troubleshooting" class="headerlink" title="6. Design and Troubleshooting"></a>6. Design and Troubleshooting</h2><h3 id="Design-Keywords"><a href="#Design-Keywords" class="headerlink" title="Design Keywords"></a>Design Keywords</h3><ul>
+<li><code>availability</code></li>
+<li><code>redundancy</code></li>
+<li><code>scalability</code></li>
+<li><code>security</code></li>
+<li><code>manageability</code></li>
+<li><code>performance</code></li>
+</ul>
+<h3 id="Typical-Topology-Terms"><a href="#Typical-Topology-Terms" class="headerlink" title="Typical Topology Terms"></a>Typical Topology Terms</h3><ul>
+<li><code>core layer</code></li>
+<li><code>distribution layer</code></li>
+<li><code>access layer</code></li>
+</ul>
+<h3 id="Troubleshooting-Method"><a href="#Troubleshooting-Method" class="headerlink" title="Troubleshooting Method"></a>Troubleshooting Method</h3><ol>
+<li>先定义清楚症状</li>
+<li>判断影响范围：单主机、单 VLAN、单子网、单服务还是全网</li>
+<li>必要时先看物理连通性</li>
+<li>按顺序排查：addressing、gateway、VLAN、ACL、routing、DNS</li>
+<li>验证修复前后状态</li>
+</ol>
+<h3 id="Common-Fault-Paths"><a href="#Common-Fault-Paths" class="headerlink" title="Common Fault Paths"></a>Common Fault Paths</h3><ul>
+<li>域名访问不了，但 IP 能访问：大概率是 <code>DNS</code></li>
+<li>本地子网正常，跨子网失败：优先查 gateway &#x2F; routing &#x2F; ACL</li>
+<li>间歇性环路或广播风暴：优先怀疑二层冗余没有正确跑 <code>STP</code></li>
+<li>内网用户无法出网：优先查 <code>NAT</code>、default route、firewall policy</li>
+</ul>
+<h2 id="7-Cabling-and-Media"><a href="#7-Cabling-and-Media" class="headerlink" title="7. Cabling and Media"></a>7. Cabling and Media</h2><p>不用深挖到物理层细枝末节，但方向要清楚：</p>
+<ul>
+<li>双绞线：常见于接入层 LAN</li>
+<li>光纤：距离更长、抗干扰更强，常用于骨干或上联</li>
+<li>介质选型看：<code>distance</code>、<code>bandwidth</code>、<code>cost</code>、<code>environment</code>、<code>anti-interference</code></li>
+</ul>
+<hr>
+<h2 id="八、端口与协议清单：这一块最适合考前反复默写"><a href="#八、端口与协议清单：这一块最适合考前反复默写" class="headerlink" title="八、端口与协议清单：这一块最适合考前反复默写"></a>八、端口与协议清单：这一块最适合考前反复默写</h2><h2 id="1-Must-Memorize-Ports"><a href="#1-Must-Memorize-Ports" class="headerlink" title="1. Must-Memorize Ports"></a>1. Must-Memorize Ports</h2><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Port &#x2F; Protocol</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>FTP data</code></td>
+<td><code>20/TCP</code></td>
+<td>active mode data channel</td>
+</tr>
+<tr>
+<td><code>FTP control</code></td>
+<td><code>21/TCP</code></td>
+<td>control channel</td>
+</tr>
+<tr>
+<td><code>SSH</code></td>
+<td><code>22/TCP</code></td>
+<td>secure remote login</td>
+</tr>
+<tr>
+<td><code>Telnet</code></td>
+<td><code>23/TCP</code></td>
+<td>insecure remote login</td>
+</tr>
+<tr>
+<td><code>SMTP</code></td>
+<td><code>25/TCP</code></td>
+<td>mail sending</td>
+</tr>
+<tr>
+<td><code>DNS</code></td>
+<td><code>53/UDP,TCP</code></td>
+<td>UDP 用于常规查询，TCP 常见于 zone transfer 或大响应</td>
+</tr>
+<tr>
+<td><code>DHCP server</code></td>
+<td><code>67/UDP</code></td>
+<td>server side</td>
+</tr>
+<tr>
+<td><code>DHCP client</code></td>
+<td><code>68/UDP</code></td>
+<td>client side</td>
+</tr>
+<tr>
+<td><code>TFTP</code></td>
+<td><code>69/UDP</code></td>
+<td>simple file transfer</td>
+</tr>
+<tr>
+<td><code>HTTP</code></td>
+<td><code>80/TCP</code></td>
+<td>web</td>
+</tr>
+<tr>
+<td><code>POP3</code></td>
+<td><code>110/TCP</code></td>
+<td>receive mail</td>
+</tr>
+<tr>
+<td><code>NTP</code></td>
+<td><code>123/UDP</code></td>
+<td>time sync</td>
+</tr>
+<tr>
+<td><code>IMAP</code></td>
+<td><code>143/TCP</code></td>
+<td>receive mail, synchronized mailbox</td>
+</tr>
+<tr>
+<td><code>SNMP</code></td>
+<td><code>161/UDP</code></td>
+<td>management&#x2F;query</td>
+</tr>
+<tr>
+<td><code>SNMP Trap</code></td>
+<td><code>162/UDP</code></td>
+<td>unsolicited event&#x2F;alert</td>
+</tr>
+<tr>
+<td><code>BGP</code></td>
+<td><code>179/TCP</code></td>
+<td>routing between ASes</td>
+</tr>
+<tr>
+<td><code>LDAP</code></td>
+<td><code>389/TCP,UDP</code></td>
+<td>directory service</td>
+</tr>
+<tr>
+<td><code>HTTPS</code></td>
+<td><code>443/TCP</code></td>
+<td>encrypted web</td>
+</tr>
+<tr>
+<td><code>SMTPS</code></td>
+<td><code>465/TCP</code></td>
+<td>secure SMTP，部分题目或资料中会出现</td>
+</tr>
+<tr>
+<td><code>Syslog</code></td>
+<td><code>514/UDP</code></td>
+<td>centralized logs</td>
+</tr>
+<tr>
+<td><code>RIP</code></td>
+<td><code>520/UDP</code></td>
+<td>routing update protocol</td>
+</tr>
+<tr>
+<td><code>RIPng</code></td>
+<td><code>521/UDP</code></td>
+<td>RIP for IPv6</td>
+</tr>
+<tr>
+<td><code>DHCPv6 client</code></td>
+<td><code>546/UDP</code></td>
+<td>IPv6 DHCP client</td>
+</tr>
+<tr>
+<td><code>DHCPv6 server</code></td>
+<td><code>547/UDP</code></td>
+<td>IPv6 DHCP server</td>
+</tr>
+</tbody></table>
+<h2 id="2-Very-Common-Exam-Traps"><a href="#2-Very-Common-Exam-Traps" class="headerlink" title="2. Very Common Exam Traps"></a>2. Very Common Exam Traps</h2><h3 id="DNS-1"><a href="#DNS-1" class="headerlink" title="DNS"></a>DNS</h3><ul>
+<li>不要只背 <code>53/UDP</code></li>
+<li><code>DNS</code> 也会用 <code>TCP 53</code></li>
+<li>典型考法包括 <code>zone transfer</code> 和大响应场景</li>
+</ul>
+<h3 id="FTP"><a href="#FTP" class="headerlink" title="FTP"></a>FTP</h3><ul>
+<li><code>21</code> 是控制连接</li>
+<li><code>20</code> 是主动模式下的数据连接</li>
+<li>如果题目问得比较宽，不要只写一个端口而不加上下文</li>
+</ul>
+<h3 id="Mail-1"><a href="#Mail-1" class="headerlink" title="Mail"></a>Mail</h3><ul>
+<li><code>SMTP</code> 负责发送</li>
+<li><code>POP3</code> 和 <code>IMAP</code> 负责接收</li>
+<li><code>IMAP</code> 更适合多设备同步邮箱</li>
+</ul>
+<h3 id="Remote-Management"><a href="#Remote-Management" class="headerlink" title="Remote Management"></a>Remote Management</h3><ul>
+<li><code>Telnet</code> 是明文，不安全</li>
+<li><code>SSH</code> 才是更安全的管理方案</li>
+</ul>
+<h2 id="3-Protocols-Without-a-Classic-Port-Number"><a href="#3-Protocols-Without-a-Classic-Port-Number" class="headerlink" title="3. Protocols Without a Classic Port Number"></a>3. Protocols Without a Classic Port Number</h2><p>有些协议不是靠 TCP&#x2F;UDP 端口来识别，而是靠 <code>IP protocol number</code>。</p>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Identifier</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ICMP</code></td>
+<td><code>IP protocol 1</code></td>
+<td>error reporting, diagnostics</td>
+</tr>
+<tr>
+<td><code>TCP</code></td>
+<td><code>IP protocol 6</code></td>
+<td>connection-oriented transport</td>
+</tr>
+<tr>
+<td><code>UDP</code></td>
+<td><code>IP protocol 17</code></td>
+<td>connectionless transport</td>
+</tr>
+<tr>
+<td><code>GRE</code></td>
+<td><code>IP protocol 47</code></td>
+<td>tunneling</td>
+</tr>
+<tr>
+<td><code>ESP</code></td>
+<td><code>IP protocol 50</code></td>
+<td>IPsec encryption</td>
+</tr>
+<tr>
+<td><code>AH</code></td>
+<td><code>IP protocol 51</code></td>
+<td>IPsec authentication</td>
+</tr>
+<tr>
+<td><code>OSPF</code></td>
+<td><code>IP protocol 89</code></td>
+<td>link-state routing</td>
+</tr>
+</tbody></table>
+<p>这一点很重要，因为题目很喜欢把“端口号”和“IP 协议号”混着考。</p>
+<h2 id="4-Transport-and-Core-Internet-Protocols"><a href="#4-Transport-and-Core-Internet-Protocols" class="headerlink" title="4. Transport and Core Internet Protocols"></a>4. Transport and Core Internet Protocols</h2><table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Layer &#x2F; Type</th>
+<th>Key Feature</th>
+<th>Common Exam Angle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ARP</code></td>
+<td>Layer 2&#x2F;3 boundary</td>
+<td>map IP to MAC</td>
+<td>local network resolution</td>
+</tr>
+<tr>
+<td><code>ICMP</code></td>
+<td>network</td>
+<td>control and diagnostics</td>
+<td><code>ping</code>、error report</td>
+</tr>
+<tr>
+<td><code>TCP</code></td>
+<td>transport</td>
+<td>reliable, ordered, connection-oriented</td>
+<td>web、mail、SSH</td>
+</tr>
+<tr>
+<td><code>UDP</code></td>
+<td>transport</td>
+<td>fast, no connection, lower overhead</td>
+<td>DNS、DHCP、SNMP、RIP</td>
+</tr>
+</tbody></table>
+<h3 id="TCP-vs-UDP"><a href="#TCP-vs-UDP" class="headerlink" title="TCP vs UDP"></a>TCP vs UDP</h3><table>
+<thead>
+<tr>
+<th>Item</th>
+<th><code>TCP</code></th>
+<th><code>UDP</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>connection</td>
+<td>yes</td>
+<td>no</td>
+</tr>
+<tr>
+<td>reliability</td>
+<td>yes</td>
+<td>no built-in reliability</td>
+</tr>
+<tr>
+<td>ordering</td>
+<td>yes</td>
+<td>no</td>
+</tr>
+<tr>
+<td>overhead</td>
+<td>higher</td>
+<td>lower</td>
+</tr>
+<tr>
+<td>typical services</td>
+<td>HTTP, HTTPS, SSH, SMTP, POP3, IMAP, BGP</td>
+<td>DNS, DHCP, SNMP, RIP, TFTP, NTP</td>
+</tr>
+</tbody></table>
+<p>高频判断题思路：</p>
+<ul>
+<li>当可靠性、顺序性重要时，优先想到 <code>TCP</code></li>
+<li>当低开销、速度更重要，且应用层能容忍或处理丢包时，优先想到 <code>UDP</code></li>
+</ul>
+<h2 id="5-Layer-2-and-Switching-Protocols"><a href="#5-Layer-2-and-Switching-Protocols" class="headerlink" title="5. Layer 2 and Switching Protocols"></a>5. Layer 2 and Switching Protocols</h2><table>
+<thead>
+<tr>
+<th>Protocol &#x2F; Tech</th>
+<th>Main Role</th>
+<th>What To Say In Answers</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Ethernet</code></td>
+<td>LAN framing and access</td>
+<td>basic LAN data transmission</td>
+</tr>
+<tr>
+<td><code>VLAN</code></td>
+<td>logical segmentation</td>
+<td>reduce broadcast domain, improve isolation</td>
+</tr>
+<tr>
+<td><code>Trunk</code></td>
+<td>carry multiple VLANs</td>
+<td>inter-switch multi-VLAN transport</td>
+</tr>
+<tr>
+<td><code>STP</code></td>
+<td>loop prevention</td>
+<td>avoid Layer 2 loop, keep redundancy</td>
+</tr>
+<tr>
+<td><code>LACP</code> &#x2F; link aggregation</td>
+<td>bundle links</td>
+<td>increase bandwidth and&#x2F;or redundancy</td>
+</tr>
+</tbody></table>
+<p>Common trap：</p>
+<ul>
+<li><code>VLAN</code> 本身不提供跨 VLAN 通信，跨 VLAN 仍然需要 <code>Layer 3 forwarding</code></li>
+</ul>
+<h2 id="6-Routing-Protocol-Comparison"><a href="#6-Routing-Protocol-Comparison" class="headerlink" title="6. Routing Protocol Comparison"></a>6. Routing Protocol Comparison</h2><table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Category</th>
+<th>Transport &#x2F; Identifier</th>
+<th>Key Metric &#x2F; Idea</th>
+<th>Typical Scenario</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>RIP</code></td>
+<td>distance-vector</td>
+<td><code>UDP 520</code></td>
+<td>hop count</td>
+<td>small&#x2F;simple network</td>
+</tr>
+<tr>
+<td><code>OSPF</code></td>
+<td>link-state</td>
+<td><code>IP protocol 89</code></td>
+<td>cost, SPF</td>
+<td>enterprise internal routing</td>
+</tr>
+<tr>
+<td><code>BGP</code></td>
+<td>path-vector</td>
+<td><code>TCP 179</code></td>
+<td>policy&#x2F;path attributes</td>
+<td>inter-AS &#x2F; ISP</td>
+</tr>
+</tbody></table>
+<h3 id="Quick-Notes"><a href="#Quick-Notes" class="headerlink" title="Quick Notes"></a>Quick Notes</h3><ul>
+<li><code>RIP</code>：简单，但收敛慢、规模受限</li>
+<li><code>OSPF</code>：收敛更快，支持 area 分层</li>
+<li><code>BGP</code>：强调 route policy 和域间控制，不是企业内部路由的默认答案</li>
+</ul>
+<h2 id="7-Security-Protocols-and-Concepts"><a href="#7-Security-Protocols-and-Concepts" class="headerlink" title="7. Security Protocols and Concepts"></a>7. Security Protocols and Concepts</h2><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Identifier &#x2F; Port</th>
+<th>Key Point</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SSH</code></td>
+<td><code>22/TCP</code></td>
+<td>secure remote management</td>
+</tr>
+<tr>
+<td><code>Telnet</code></td>
+<td><code>23/TCP</code></td>
+<td>insecure plaintext management</td>
+</tr>
+<tr>
+<td><code>HTTPS</code></td>
+<td><code>443/TCP</code></td>
+<td>encrypted web access</td>
+</tr>
+<tr>
+<td><code>AH</code></td>
+<td><code>IP protocol 51</code></td>
+<td>IPsec authentication&#x2F;integrity</td>
+</tr>
+<tr>
+<td><code>ESP</code></td>
+<td><code>IP protocol 50</code></td>
+<td>IPsec encryption + protection</td>
+</tr>
+<tr>
+<td><code>VPN</code></td>
+<td>varies</td>
+<td>secure tunnel over public network</td>
+</tr>
+<tr>
+<td><code>ACL</code></td>
+<td>no fixed port</td>
+<td>traffic filtering policy</td>
+</tr>
+<tr>
+<td><code>NAT/PAT</code></td>
+<td>no fixed port</td>
+<td>address translation</td>
+</tr>
+<tr>
+<td><code>Firewall</code></td>
+<td>no fixed port</td>
+<td>policy enforcement and traffic control</td>
+</tr>
+</tbody></table>
+<p>High-frequency trap：</p>
+<ul>
+<li><code>ACL</code> 和 <code>firewall</code> 都能控流，但两者不是同一个概念</li>
+<li><code>NAT</code> 不是安全策略本身，它更多是地址转换，最多只是“隐藏内部地址”</li>
+</ul>
+<h2 id="8-Network-Services"><a href="#8-Network-Services" class="headerlink" title="8. Network Services"></a>8. Network Services</h2><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Protocol &#x2F; Port</th>
+<th>What Questions Often Test</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>DNS</code></td>
+<td><code>53/UDP,TCP</code></td>
+<td>name resolution, cache, zone transfer, DNS faults</td>
+</tr>
+<tr>
+<td><code>DHCP</code></td>
+<td><code>67/68 UDP</code></td>
+<td>automatic addressing, lease, relay</td>
+</tr>
+<tr>
+<td><code>HTTP</code></td>
+<td><code>80/TCP</code></td>
+<td>web access</td>
+</tr>
+<tr>
+<td><code>HTTPS</code></td>
+<td><code>443/TCP</code></td>
+<td>encrypted web access</td>
+</tr>
+<tr>
+<td><code>SMTP</code></td>
+<td><code>25/TCP</code></td>
+<td>send mail</td>
+</tr>
+<tr>
+<td><code>POP3</code></td>
+<td><code>110/TCP</code></td>
+<td>receive mail</td>
+</tr>
+<tr>
+<td><code>IMAP</code></td>
+<td><code>143/TCP</code></td>
+<td>synchronized mailbox access</td>
+</tr>
+<tr>
+<td><code>SNMP</code></td>
+<td><code>161/162 UDP</code></td>
+<td>monitoring and management</td>
+</tr>
+<tr>
+<td><code>Syslog</code></td>
+<td><code>514/UDP</code></td>
+<td>centralized logging</td>
+</tr>
+<tr>
+<td><code>NTP</code></td>
+<td><code>123/UDP</code></td>
+<td>time synchronization</td>
+</tr>
+<tr>
+<td><code>TFTP</code></td>
+<td><code>69/UDP</code></td>
+<td>simple file transfer, device configs&#x2F;images in some contexts</td>
+</tr>
+</tbody></table>
+<h2 id="9-Easy-Confusion-Pairs"><a href="#9-Easy-Confusion-Pairs" class="headerlink" title="9. Easy Confusion Pairs"></a>9. Easy Confusion Pairs</h2><h3 id="HTTP-vs-HTTPS"><a href="#HTTP-vs-HTTPS" class="headerlink" title="HTTP vs HTTPS"></a><code>HTTP</code> vs <code>HTTPS</code></h3><ul>
+<li><code>HTTP</code>：明文 Web 传输</li>
+<li><code>HTTPS</code>：基于 TLS 的加密 Web 传输</li>
+</ul>
+<h3 id="POP3-vs-IMAP"><a href="#POP3-vs-IMAP" class="headerlink" title="POP3 vs IMAP"></a><code>POP3</code> vs <code>IMAP</code></h3><ul>
+<li><code>POP3</code>：更偏简单下载模型</li>
+<li><code>IMAP</code>：更适合多设备同步邮箱</li>
+</ul>
+<h3 id="RIP-vs-OSPF"><a href="#RIP-vs-OSPF" class="headerlink" title="RIP vs OSPF"></a><code>RIP</code> vs <code>OSPF</code></h3><ul>
+<li><code>RIP</code>：hop count，简单，小型网络</li>
+<li><code>OSPF</code>：link-state，收敛更快，适合更大的内部网络</li>
+</ul>
+<h3 id="OSPF-vs-BGP"><a href="#OSPF-vs-BGP" class="headerlink" title="OSPF vs BGP"></a><code>OSPF</code> vs <code>BGP</code></h3><ul>
+<li><code>OSPF</code>：组织内部 &#x2F; 网络域内部路由</li>
+<li><code>BGP</code>：自治系统之间路由</li>
+</ul>
+<h3 id="ACL-vs-NAT"><a href="#ACL-vs-NAT" class="headerlink" title="ACL vs NAT"></a><code>ACL</code> vs <code>NAT</code></h3><ul>
+<li><code>ACL</code>：filter &#x2F; control</li>
+<li><code>NAT</code>：translate addresses</li>
+</ul>
+<h3 id="Telnet-vs-SSH"><a href="#Telnet-vs-SSH" class="headerlink" title="Telnet vs SSH"></a><code>Telnet</code> vs <code>SSH</code></h3><ul>
+<li><code>Telnet</code>：明文，不安全</li>
+<li><code>SSH</code>：加密，优先选择</li>
+</ul>
+<h2 id="10-What-To-Recite-Before-Exam-Day"><a href="#10-What-To-Recite-Before-Exam-Day" class="headerlink" title="10. What To Recite Before Exam Day"></a>10. What To Recite Before Exam Day</h2><p>如果考前只剩 <code>10</code> 分钟，把这些快速背一遍：</p>
+<ul>
+<li><code>20/21 FTP</code>、<code>22 SSH</code>、<code>23 Telnet</code>、<code>25 SMTP</code></li>
+<li><code>53 DNS</code>、<code>67/68 DHCP</code>、<code>69 TFTP</code>、<code>80 HTTP</code></li>
+<li><code>110 POP3</code>、<code>123 NTP</code>、<code>143 IMAP</code></li>
+<li><code>161/162 SNMP</code>、<code>179 BGP</code>、<code>443 HTTPS</code>、<code>514 Syslog</code>、<code>520 RIP</code></li>
+<li><code>OSPF = IP protocol 89</code></li>
+<li><code>AH = 51</code>、<code>ESP = 50</code>、<code>GRE = 47</code></li>
+</ul>
+<hr>
+<h2 id="九、下午题怎么写：不要写成“我觉得大概是这样”"><a href="#九、下午题怎么写：不要写成“我觉得大概是这样”" class="headerlink" title="九、下午题怎么写：不要写成“我觉得大概是这样”"></a>九、下午题怎么写：不要写成“我觉得大概是这样”</h2><p>下午题尽量固定成这个结构：</p>
+<ol>
+<li><code>What is the problem / goal?</code></li>
+<li><code>Which protocol / technology should be used?</code></li>
+<li><code>Why is it suitable here?</code></li>
+<li><code>What result / effect does it achieve?</code></li>
+</ol>
+<h3 id="Example-Skeleton"><a href="#Example-Skeleton" class="headerlink" title="Example Skeleton"></a>Example Skeleton</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">该问题需要解决的是 ______。</span><br><span class="line">可采用 ______ 技术/协议。</span><br><span class="line">原因是：它能够 ______，并且适用于 ______ 场景。</span><br><span class="line">实施后可实现 ______，从而提高 ______。</span><br></pre></td></tr></table></figure>
+
+<p>这个模板可以反复套进这些高频题：</p>
+<ul>
+<li><code>VLAN / Trunk</code></li>
+<li><code>OSPF</code></li>
+<li><code>ACL</code></li>
+<li><code>NAT</code></li>
+<li><code>DNS / DHCP</code></li>
+<li><code>redundancy / backup design</code></li>
+</ul>
+<h3 id="Afternoon-Keywords-You-Should-Reuse"><a href="#Afternoon-Keywords-You-Should-Reuse" class="headerlink" title="Afternoon Keywords You Should Reuse"></a>Afternoon Keywords You Should Reuse</h3><p>答题时能复用就复用这些词：</p>
+<ul>
+<li><code>reduce broadcast domain</code></li>
+<li><code>improve security isolation</code></li>
+<li><code>provide redundancy</code></li>
+<li><code>improve availability</code></li>
+<li><code>speed up convergence</code></li>
+<li><code>support scalable network design</code></li>
+<li><code>centralized management</code></li>
+<li><code>automatic address assignment</code></li>
+<li><code>secure remote access</code></li>
+<li><code>control traffic by policy</code></li>
+</ul>
+<p>我的补充建议是：不要追求句子华丽，先保证关键词到位。很多下午题你写不出完整论文没关系，但一定要让阅卷人看到“你知道问题、知道技术、知道原因、知道结果”。</p>
+<hr>
+<h2 id="十、最后两三周怎么复习：把知识压到“可调用”状态"><a href="#十、最后两三周怎么复习：把知识压到“可调用”状态" class="headerlink" title="十、最后两三周怎么复习：把知识压到“可调用”状态"></a>十、最后两三周怎么复习：把知识压到“可调用”状态</h2><p>这部分最适合搭配上面的速记表使用。</p>
+<h3 id="Last-Week-Review-Checklist"><a href="#Last-Week-Review-Checklist" class="headerlink" title="Last-Week Review Checklist"></a>Last-Week Review Checklist</h3><p>考前一周，确认自己能快速回答这些问题：</p>
+<ul>
+<li>你能不能不慌地做 <code>subnetting</code>？</li>
+<li>你能不能用自己的话解释 <code>VLAN</code>、<code>Trunk</code>、<code>STP</code>？</li>
+<li>你能不能比较 <code>RIP</code>、<code>OSPF</code>、<code>BGP</code>？</li>
+<li>你能不能说清 <code>ACL</code>、<code>NAT</code>、<code>PAT</code>、<code>firewall</code>、<code>VPN</code> 的区别？</li>
+<li>你能不能快速回忆常见端口和服务职责？</li>
+<li>你能不能按 <code>problem -&gt; solution -&gt; reason -&gt; result</code> 写出一段简短下午题答案？</li>
+</ul>
+<p>如果这些你都能做到，说明核心过线能力已经基本具备。</p>
+<h3 id="If-You-Fall-Behind"><a href="#If-You-Fall-Behind" class="headerlink" title="If You Fall Behind"></a>If You Fall Behind</h3><p>如果某一周被工作打乱，不要慌，按照这个优先级保底。</p>
+<h4 id="Never-Drop"><a href="#Never-Drop" class="headerlink" title="Never Drop"></a>Never Drop</h4><ul>
+<li><code>subnetting</code></li>
+<li><code>VLAN / STP</code></li>
+<li><code>static / RIP / OSPF / BGP basics</code></li>
+<li><code>ACL / NAT</code></li>
+<li><code>DNS / DHCP</code></li>
+<li><code>afternoon case practice</code></li>
+</ul>
+<h4 id="Can-Be-Simplified"><a href="#Can-Be-Simplified" class="headerlink" title="Can Be Simplified"></a>Can Be Simplified</h4><ul>
+<li><code>wireless</code></li>
+<li><code>IPv6 details</code></li>
+<li><code>SDN / 5G / cloud overview</code></li>
+<li>比较偏的管理类或边缘新概念</li>
+</ul>
+<h4 id="Recovery-Strategy"><a href="#Recovery-Strategy" class="headerlink" title="Recovery Strategy"></a>Recovery Strategy</h4><ul>
+<li>工作日只保留 <code>1h</code> 也没关系，但不要断线</li>
+<li>真断线时，至少完成：<code>10</code> 道题 + <code>10</code> 分钟复盘</li>
+<li>追赶进度时优先补 <code>real questions</code>，不要先补长视频</li>
+</ul>
+<h3 id="Exam-Eve-Rules-1"><a href="#Exam-Eve-Rules-1" class="headerlink" title="Exam-Eve Rules"></a>Exam-Eve Rules</h3><ul>
+<li>不熬夜</li>
+<li>不刷偏题、怪题</li>
+<li>不再看大段新视频</li>
+<li>只看自己的 <code>wrong questions + notes + formulas + ports</code></li>
+<li>相信你已经完成的复习闭环</li>
+</ul>
+<hr>
+<h2 id="十一、临门一脚：6-个自测问题"><a href="#十一、临门一脚：6-个自测问题" class="headerlink" title="十一、临门一脚：6 个自测问题"></a>十一、临门一脚：6 个自测问题</h2><p>如果你不看笔记就能快速答出下面这些，这份清单就算发挥作用了：</p>
+<ol>
+<li><code>BGP</code> 用什么端口？</li>
+<li>为什么 <code>DNS</code> 既可能用 <code>UDP</code>，也可能用 <code>TCP</code>？</li>
+<li>设备远程管理更安全的是 <code>Telnet</code> 还是 <code>SSH</code>？</li>
+<li><code>POP3</code> 和 <code>IMAP</code> 的核心区别是什么？</li>
+<li><code>OSPF</code> 是靠 TCP&#x2F;UDP 端口识别，还是靠 IP 协议号识别？</li>
+<li><code>ACL</code> 和 <code>NAT</code> 的核心区别是什么？</li>
+</ol>
+<hr>
+<h2 id="十二、最后的建议"><a href="#十二、最后的建议" class="headerlink" title="十二、最后的建议"></a>十二、最后的建议</h2><ul>
+<li>如果你本身就有多年开发经验，理解力通常不是问题，真正的问题往往是考试表达和体系化记忆</li>
+<li>不要用“我懂一点网络”替代“我会做真题”</li>
+<li>只要把 <code>subnetting + switching + routing + ACL/NAT + DNS/DHCP + afternoon case</code> 这条主线打通，过线概率就不低</li>
+<li>即使这次没过，下次也不是从零开始，因为你的复习框架已经搭好了</li>
+</ul>
+<p>我再补一句最现实的话：这门考试对在职备考的人来说，最怕的不是难，而是断。哪怕某几天只能学 <code>1</code> 小时，也尽量别让链条断掉。稳定、小步、真题驱动，通常比“周末爆肝一次然后一周不碰”有效得多。</p>
+<p>如果你真准备开始动手，今天晚上就做三件事：</p>
+<ol>
+<li>建好 <code>wrong questions</code>、<code>topic notes</code>、<code>formula sheet</code> 三份笔记。</li>
+<li>先做 <code>20-30</code> 道 morning 题，摸清自己弱点。</li>
+<li>开始做第一张 <code>common ports</code> 速记表。</li>
+</ol>
+</article>
+<div class="article-footer">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    
+
+
+    <section id="share">
+      <div class="header"><span>分享文章</span></div>
+      <div class="body">
+        <div class="link"><input class="copy-area" readonly="true" id="copy-link" value="https://minniexcode.github.io/memoirs/20260325/learning/ruankao-network-engineer-study-guide/" /></div>
+        <div class="social-wrap dis-select"><a class="social share-item wechat" onclick="util.toggle(&quot;qrcode-wechat&quot;)"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/b32ef3da1162a.svg" /></a><a class="social share-item weibo" target="_blank" rel="external nofollow noopener noreferrer" href="https://service.weibo.com/share/share.php?url=https://minniexcode.github.io/memoirs/20260325/learning/ruankao-network-engineer-study-guide/&title=软考网络工程师备考全攻略：8 周计划、速记表与端口协议清单 - ash&summary=如果你和我一样，白天上班，真正能拿出来备考的时间只有工作日晚间 2-3 小时，同时又不是网络科班出身，而是有开发经验、懂一些网络但没有系统梳理过，那么软考 Network Engineer 的难点通常不是“完全看不懂”，而是：知识点很..."><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/80c07e4dbb303.svg" /></a><a class="social share-item email" href="mailto:?subject=软考网络工程师备考全攻略：8 周计划、速记表与端口协议清单 - ash&amp;body=https://minniexcode.github.io/memoirs/20260325/learning/ruankao-network-engineer-study-guide/"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/a1b00e20f425d.svg" /></a><a class="social share-item link" onclick="util.copy(&quot;copy-link&quot;, &quot;复制成功&quot;)"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/8411ed322ced6.svg" /></a></div>
+        
+        <div class="qrcode" id="qrcode-wechat" style="opacity:0;height:0">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=https://minniexcode.github.io/memoirs/20260325/learning/ruankao-network-engineer-study-guide/"/>
+        </div>
+        
+      </div>
+    </section>
+    </div>
+
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">较早文章</div><a href="/memoirs/20260318/nano-config-guide/">Nano 配置文件编辑指南（附极简 Vim 备忘）</a></div></section></div>
+
+
+
+
+  <div class="related-wrap md-text" id="comments">
+    <section class='header cmt-title cap theme'>
+      <p>来都来了，聊两句吧</p>
+
+    </section>
+    <section class='body cmt-body beaudar'>
+      
+
+<svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg>
+
+<div id="beaudar" repo="minniexcode/blog-comments" issue-term="pathname" theme="preferred-color-scheme" label="comments" input-position="top" comment-order="desc" loading="false" branch="main"></div>
+
+    </section>
+  </div>
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">ash66</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar 1.33.1</a> 主题创建。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right"><div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%85%88%E8%AE%B2%E7%AD%96%E7%95%A5%EF%BC%9A%E8%BF%99%E5%9C%BA%E8%80%83%E8%AF%95%E6%80%8E%E4%B9%88%E5%87%86%E5%A4%87%E6%9B%B4%E5%83%8F%E2%80%9C%E5%86%B2%E5%88%BA%E2%80%9D%E8%80%8C%E4%B8%8D%E6%98%AF%E2%80%9C%E5%95%83%E4%B9%A6%E2%80%9D"><span class="toc-text">一、先讲策略：这场考试怎么准备更像“冲刺”而不是“啃书”</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E7%9B%AE%E6%A0%87%E5%88%86%E6%95%B0"><span class="toc-text">1）目标分数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E5%AD%A6%E4%B9%A0%E5%8E%9F%E5%88%99"><span class="toc-text">2）学习原则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E6%97%B6%E9%97%B4%E9%A2%84%E7%AE%97"><span class="toc-text">3）时间预算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89Morning-%E5%92%8C-Afternoon-%E5%88%86%E5%88%AB%E6%80%8E%E4%B9%88%E6%89%93"><span class="toc-text">4）Morning 和 Afternoon 分别怎么打</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Morning"><span class="toc-text">Morning</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Afternoon"><span class="toc-text">Afternoon</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%EF%BC%89%E5%A6%82%E6%9E%9C%E6%97%B6%E9%97%B4%E5%BE%88%E7%B4%A7%EF%BC%8C%E4%BC%98%E5%85%88%E9%94%81%E5%AE%9A%E8%BF%99%E4%BA%9B%E5%86%85%E5%AE%B9"><span class="toc-text">5）如果时间很紧，优先锁定这些内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%B5%84%E6%96%99%E6%80%8E%E4%B9%88%E9%80%89%EF%BC%9A%E5%B0%BD%E9%87%8F%E5%B0%91%E8%80%8C%E6%9C%89%E6%95%88"><span class="toc-text">二、资料怎么选：尽量少而有效</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%AE%98%E6%96%B9%E4%BF%A1%E6%81%AF"><span class="toc-text">1）官方信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E6%95%99%E6%9D%90"><span class="toc-text">2）教材</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E5%85%8D%E8%B4%B9%E8%A7%86%E9%A2%91"><span class="toc-text">3）免费视频</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E9%AB%98%E9%A2%91%E7%9F%A5%E8%AF%86%E7%82%B9%E4%B8%8E%E7%9C%9F%E9%A2%98"><span class="toc-text">4）高频知识点与真题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%AF%8F%E6%99%9A%E6%80%8E%E4%B9%88%E5%AD%A6%EF%BC%9A%E6%8A%8A%E6%97%B6%E9%97%B4%E5%88%87%E6%88%90%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%A8%A1%E6%9D%BF"><span class="toc-text">三、每晚怎么学：把时间切成可执行模板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Option-A%EF%BC%9A%E5%8F%AA%E6%9C%89-2-hours"><span class="toc-text">Option A：只有 2 hours</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Option-B%EF%BC%9A%E6%9C%89-2-5-3-hours"><span class="toc-text">Option B：有 2.5-3 hours</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Weekly-Output-Target"><span class="toc-text">Weekly Output Target</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%91%E9%A2%9D%E5%A4%96%E5%BB%BA%E8%AE%AE%E4%BD%A0%E5%9B%BA%E5%AE%9A%E5%81%9A%E7%9A%84-4-%E5%BC%A0%E7%BA%B8"><span class="toc-text">我额外建议你固定做的 4 张纸</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%80%83%E7%82%B9%E4%BC%98%E5%85%88%E7%BA%A7%EF%BC%9A%E5%85%88%E6%89%93%E9%80%9A%E4%B8%BB%E7%BA%BF%EF%BC%8C%E5%86%8D%E8%A1%A5%E8%BE%B9%E7%BC%98"><span class="toc-text">四、考点优先级：先打通主线，再补边缘</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-Level%EF%BC%9A%E5%BF%85%E9%A1%BB%E6%8B%BF%E4%B8%8B"><span class="toc-text">A-Level：必须拿下</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-Level%EF%BC%9A%E5%BF%85%E9%A1%BB%E4%BC%9A%E5%81%9A%E9%A2%98"><span class="toc-text">B-Level：必须会做题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-Level%EF%BC%9A%E7%9F%A5%E9%81%93%E5%B0%B1%E8%A1%8C"><span class="toc-text">C-Level：知道就行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%818-%E5%91%A8%E5%86%B2%E5%88%BA%E8%AE%A1%E5%88%92%EF%BC%9A%E6%8C%89%E5%91%A8%E6%8E%A8%E8%BF%9B%EF%BC%8C%E4%B8%8D%E8%A6%81%E6%AF%8F%E5%A4%A9%E9%87%8D%E6%96%B0%E6%83%B3%E2%80%9C%E4%BB%8A%E5%A4%A9%E5%AD%A6%E4%BB%80%E4%B9%88%E2%80%9D"><span class="toc-text">五、8 周冲刺计划：按周推进，不要每天重新想“今天学什么”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Week-0%EF%BC%9A3-25-Wed-3-27-Fri"><span class="toc-text">Week 0：3&#x2F;25 Wed - 3&#x2F;27 Fri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Goal"><span class="toc-text">Goal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Plan"><span class="toc-text">Plan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optional-Weekend-Catch-up"><span class="toc-text">Optional Weekend Catch-up</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Week-1%EF%BC%9A3-30-Mon-4-3-Fri"><span class="toc-text">Week 1：3&#x2F;30 Mon - 4&#x2F;3 Fri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Goal-1"><span class="toc-text">Goal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Plan-1"><span class="toc-text">Plan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#End-of-Week-Check"><span class="toc-text">End-of-Week Check</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Week-2%EF%BC%9A4-6-Mon-4-10-Fri"><span class="toc-text">Week 2：4&#x2F;6 Mon - 4&#x2F;10 Fri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Goal-2"><span class="toc-text">Goal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Plan-2"><span class="toc-text">Plan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#End-of-Week-Check-1"><span class="toc-text">End-of-Week Check</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Week-3%EF%BC%9A4-13-Mon-4-17-Fri"><span class="toc-text">Week 3：4&#x2F;13 Mon - 4&#x2F;17 Fri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Goal-3"><span class="toc-text">Goal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Plan-3"><span class="toc-text">Plan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#End-of-Week-Check-2"><span class="toc-text">End-of-Week Check</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Week-4%EF%BC%9A4-20-Mon-4-24-Fri"><span class="toc-text">Week 4：4&#x2F;20 Mon - 4&#x2F;24 Fri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Goal-4"><span class="toc-text">Goal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Plan-4"><span class="toc-text">Plan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#End-of-Week-Check-3"><span class="toc-text">End-of-Week Check</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Week-5%EF%BC%9A4-27-Mon-5-1-Fri"><span class="toc-text">Week 5：4&#x2F;27 Mon - 5&#x2F;1 Fri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Goal-5"><span class="toc-text">Goal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Plan-5"><span class="toc-text">Plan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#End-of-Week-Check-4"><span class="toc-text">End-of-Week Check</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Week-6%EF%BC%9A5-4-Mon-5-8-Fri"><span class="toc-text">Week 6：5&#x2F;4 Mon - 5&#x2F;8 Fri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Goal-6"><span class="toc-text">Goal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Plan-6"><span class="toc-text">Plan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#End-of-Week-Check-5"><span class="toc-text">End-of-Week Check</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Week-7%EF%BC%9A5-11-Mon-5-15-Fri"><span class="toc-text">Week 7：5&#x2F;11 Mon - 5&#x2F;15 Fri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Goal-7"><span class="toc-text">Goal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Plan-7"><span class="toc-text">Plan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#End-of-Week-Check-6"><span class="toc-text">End-of-Week Check</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Week-8%EF%BC%9A5-18-Mon-5-22-Fri"><span class="toc-text">Week 8：5&#x2F;18 Mon - 5&#x2F;22 Fri</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Goal-8"><span class="toc-text">Goal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Plan-8"><span class="toc-text">Plan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Exam-Eve-Rules"><span class="toc-text">Exam-Eve Rules</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%8A%8A%E7%9F%A5%E8%AF%86%E4%B8%B2%E8%B5%B7%E6%9D%A5%EF%BC%9A%E4%B8%80%E5%BC%A0%E7%B4%A7%E5%87%91%E7%9A%84%E7%9F%A5%E8%AF%86%E5%9C%B0%E5%9B%BE"><span class="toc-text">六、把知识串起来：一张紧凑的知识地图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Layer-2-Layer-3"><span class="toc-text">Layer 2 &#x2F; Layer 3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Addressing"><span class="toc-text">Addressing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Routing"><span class="toc-text">Routing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Security"><span class="toc-text">Security</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Services"><span class="toc-text">Services</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Design-Ops"><span class="toc-text">Design &#x2F; Ops</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%BA%9B%E4%B8%9C%E8%A5%BF%E8%A6%81%E6%98%8E%E7%A1%AE%E8%83%8C%EF%BC%8C%E4%B8%8D%E8%A6%81%E5%8F%AA%E9%9D%A0%E2%80%9C%E7%90%86%E8%A7%A3%E8%BF%87%E2%80%9D"><span class="toc-text">这些东西要明确背，不要只靠“理解过”</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E9%AB%98%E9%A2%91%E7%9F%A5%E8%AF%86%E9%80%9F%E8%AE%B0%E8%A1%A8%EF%BC%9A%E6%8A%8A%E6%9C%80%E5%B8%B8%E8%80%83%E7%9A%84%E5%9C%B0%E6%96%B9%E5%85%88%E5%8E%8B%E7%BC%A9%E5%88%B0%E8%84%91%E5%AD%90%E9%87%8C"><span class="toc-text">七、高频知识速记表：把最常考的地方先压缩到脑子里</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-IPv4-%E5%92%8C-Subnetting"><span class="toc-text">1. IPv4 和 Subnetting</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Core-Formulas"><span class="toc-text">Core Formulas</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fast-Memory-Table"><span class="toc-text">Fast Memory Table</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Workflow-for-Subnetting-Questions"><span class="toc-text">Workflow for Subnetting Questions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#High-Frequency-Traps"><span class="toc-text">High-Frequency Traps</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-VLAN%E3%80%81Trunk%E3%80%81STP"><span class="toc-text">2. VLAN、Trunk、STP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VLAN"><span class="toc-text">VLAN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Trunk"><span class="toc-text">Trunk</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#STP"><span class="toc-text">STP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Common-Traps"><span class="toc-text">Common Traps</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Routing-Cheat-Sheet"><span class="toc-text">3. Routing Cheat Sheet</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Static-Route"><span class="toc-text">Static Route</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RIP"><span class="toc-text">RIP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#OSPF"><span class="toc-text">OSPF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BGP"><span class="toc-text">BGP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fast-Comparison-Table"><span class="toc-text">Fast Comparison Table</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#High-Frequency-Traps-1"><span class="toc-text">High-Frequency Traps</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-ACL%E3%80%81NAT%E3%80%81Firewall%E3%80%81VPN"><span class="toc-text">4. ACL、NAT、Firewall、VPN</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ACL"><span class="toc-text">ACL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NAT-PAT"><span class="toc-text">NAT &#x2F; PAT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Firewall"><span class="toc-text">Firewall</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VPN"><span class="toc-text">VPN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#High-Frequency-Traps-2"><span class="toc-text">High-Frequency Traps</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Services-and-Servers"><span class="toc-text">5. Services and Servers</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS"><span class="toc-text">DNS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DHCP"><span class="toc-text">DHCP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP-HTTPS"><span class="toc-text">HTTP &#x2F; HTTPS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mail"><span class="toc-text">Mail</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SNMP-Syslog"><span class="toc-text">SNMP &#x2F; Syslog</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RAID-Basics"><span class="toc-text">RAID Basics</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Design-and-Troubleshooting"><span class="toc-text">6. Design and Troubleshooting</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Design-Keywords"><span class="toc-text">Design Keywords</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Typical-Topology-Terms"><span class="toc-text">Typical Topology Terms</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Troubleshooting-Method"><span class="toc-text">Troubleshooting Method</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Common-Fault-Paths"><span class="toc-text">Common Fault Paths</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-Cabling-and-Media"><span class="toc-text">7. Cabling and Media</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E7%AB%AF%E5%8F%A3%E4%B8%8E%E5%8D%8F%E8%AE%AE%E6%B8%85%E5%8D%95%EF%BC%9A%E8%BF%99%E4%B8%80%E5%9D%97%E6%9C%80%E9%80%82%E5%90%88%E8%80%83%E5%89%8D%E5%8F%8D%E5%A4%8D%E9%BB%98%E5%86%99"><span class="toc-text">八、端口与协议清单：这一块最适合考前反复默写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Must-Memorize-Ports"><span class="toc-text">1. Must-Memorize Ports</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Very-Common-Exam-Traps"><span class="toc-text">2. Very Common Exam Traps</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS-1"><span class="toc-text">DNS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FTP"><span class="toc-text">FTP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mail-1"><span class="toc-text">Mail</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Remote-Management"><span class="toc-text">Remote Management</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Protocols-Without-a-Classic-Port-Number"><span class="toc-text">3. Protocols Without a Classic Port Number</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Transport-and-Core-Internet-Protocols"><span class="toc-text">4. Transport and Core Internet Protocols</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP-vs-UDP"><span class="toc-text">TCP vs UDP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Layer-2-and-Switching-Protocols"><span class="toc-text">5. Layer 2 and Switching Protocols</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Routing-Protocol-Comparison"><span class="toc-text">6. Routing Protocol Comparison</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Quick-Notes"><span class="toc-text">Quick Notes</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-Security-Protocols-and-Concepts"><span class="toc-text">7. Security Protocols and Concepts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-Network-Services"><span class="toc-text">8. Network Services</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-Easy-Confusion-Pairs"><span class="toc-text">9. Easy Confusion Pairs</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP-vs-HTTPS"><span class="toc-text">HTTP vs HTTPS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#POP3-vs-IMAP"><span class="toc-text">POP3 vs IMAP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RIP-vs-OSPF"><span class="toc-text">RIP vs OSPF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#OSPF-vs-BGP"><span class="toc-text">OSPF vs BGP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ACL-vs-NAT"><span class="toc-text">ACL vs NAT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Telnet-vs-SSH"><span class="toc-text">Telnet vs SSH</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-What-To-Recite-Before-Exam-Day"><span class="toc-text">10. What To Recite Before Exam Day</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E4%B8%8B%E5%8D%88%E9%A2%98%E6%80%8E%E4%B9%88%E5%86%99%EF%BC%9A%E4%B8%8D%E8%A6%81%E5%86%99%E6%88%90%E2%80%9C%E6%88%91%E8%A7%89%E5%BE%97%E5%A4%A7%E6%A6%82%E6%98%AF%E8%BF%99%E6%A0%B7%E2%80%9D"><span class="toc-text">九、下午题怎么写：不要写成“我觉得大概是这样”</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Example-Skeleton"><span class="toc-text">Example Skeleton</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Afternoon-Keywords-You-Should-Reuse"><span class="toc-text">Afternoon Keywords You Should Reuse</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E6%9C%80%E5%90%8E%E4%B8%A4%E4%B8%89%E5%91%A8%E6%80%8E%E4%B9%88%E5%A4%8D%E4%B9%A0%EF%BC%9A%E6%8A%8A%E7%9F%A5%E8%AF%86%E5%8E%8B%E5%88%B0%E2%80%9C%E5%8F%AF%E8%B0%83%E7%94%A8%E2%80%9D%E7%8A%B6%E6%80%81"><span class="toc-text">十、最后两三周怎么复习：把知识压到“可调用”状态</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Last-Week-Review-Checklist"><span class="toc-text">Last-Week Review Checklist</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#If-You-Fall-Behind"><span class="toc-text">If You Fall Behind</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Never-Drop"><span class="toc-text">Never Drop</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Can-Be-Simplified"><span class="toc-text">Can Be Simplified</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Recovery-Strategy"><span class="toc-text">Recovery Strategy</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Exam-Eve-Rules-1"><span class="toc-text">Exam-Eve Rules</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E4%B8%B4%E9%97%A8%E4%B8%80%E8%84%9A%EF%BC%9A6-%E4%B8%AA%E8%87%AA%E6%B5%8B%E9%97%AE%E9%A2%98"><span class="toc-text">十一、临门一脚：6 个自测问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E6%9C%80%E5%90%8E%E7%9A%84%E5%BB%BA%E8%AE%AE"><span class="toc-text">十二、最后的建议</span></a></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
+</div></aside><div class='float-panel'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+
+
+<script type="text/javascript">
+  window.canonical = {"closeEnable":true,"closeText":"关闭提示","originalHost":null,"officialHosts":["localhost"],"encoded":""};
+  window.canonical["param"] = {"permalink":"https://minniexcode.github.io/memoirs/20260325/learning/ruankao-network-engineer-study-guide/","checklink":"/js/plugins/video.js"};
+  // Fix: Ensure page is at the correct top position on data load
+  if (history.scrollRestoration) {
+    history.scrollRestoration = 'auto';
+  }
+  (function() {
+    const scrollHandler = () => {
+      const wikiCover = document.querySelector('#l_cover .l_cover.wiki');
+      const startEl = document.getElementById('start');
+      if (wikiCover && startEl) {
+        window.scrollTo(0, startEl.offsetTop);
+      } else {
+        window.scrollTo(0, 0);
+      }
+    };
+    if (document.readyState !== 'loading') scrollHandler();
+    else document.addEventListener('DOMContentLoaded', scrollHandler);
+  })();
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/memoirs/`,
+    tag_plugins: {
+      chat: Object.assign({"api":"https://siteinfo.listentothewind.cn/api/v1"}),
+    }
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"skip_search":null,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+    loading: `https://api.iconify.design/eos-icons:three-dots-loading.svg?color=%231cd0fd`,
+  };
+  const deps = {
+    jquery: `https://gcore.jsdelivr.net/npm/jquery@3.7/dist/jquery.min.js`,
+    marked: `https://gcore.jsdelivr.net/npm/marked@13.0/lib/marked.umd.min.js`,
+    lazyload: `/memoirs/%5Bobject%20Object%5D`
+  }
+</script>
+
+<script type="text/javascript">
+  
+  function RunItem() {
+    this.list = []; // 存放回调函数
+    this.start = () => {
+      for (var i = 0; i < this.list.length; i++) {
+        this.list[i].run();
+      }
+    };
+    this.push = (fn, name, setRequestAnimationFrame = true) => {
+      let myfn = fn
+      if (setRequestAnimationFrame) {
+        myfn = () => {
+          utils.requestAnimationFrame(fn)
+        }
+      }
+      var f = new Item(myfn, name);
+      this.list.push(f);
+    };
+    this.remove = (name) => {
+      // 倒序遍历避免 splice 后的索引问题
+      for (let index = this.list.length - 1; index >= 0; index--) {
+        const e = this.list[index];
+        if (e.name === name) {
+          this.list.splice(index, 1);
+        }
+      }
+    }
+    // 构造一个可以run的对象
+    function Item(fn, name) {
+      // 函数名称
+      this.name = name || fn.name;
+      // run方法
+      this.run = () => {
+        try {
+          fn()
+        } catch (error) {
+          console.log(error);
+        }
+      };
+    }
+  }
+
+  const utils = {
+    // 已加载样式缓存
+    _loadedStyles: new Set(),
+
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      // 如果样式已加载，直接返回 null
+      if (utils._loadedStyles.has(href)) {
+        return null;
+      }
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      // 标记样式为已加载 (在创建元素后立即标记，防止重复创建)
+      utils._loadedStyles.add(href);
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 已加载脚本缓存
+    _loadedScripts: new Set(),
+
+    // 已加载元素缓存 (使用 WeakSet 追踪元素实例,避免 PJAX 导航时的状态混淆)
+    _loadedElements: new WeakSet(),
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      if (src.startsWith('/')) {
+        src = ctx.root + src.substring(1);
+      }
+      // 如果脚本已加载，直接返回
+      if (utils._loadedScripts.has(src)) {
+        resolve();
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function () {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        utils._loadedScripts.add(src);
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // PJAX 事件监听器管理
+    _pjaxListeners: new Set(),
+    
+    jq: (fn, pjax = true) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+      if (pjax && !fn._pjax_registered) {
+        document.addEventListener('pjax:complete', fn);
+        fn._pjax_registered = true;
+        utils._pjaxListeners.add(fn); // 追踪监听器以便清理
+      }
+    },
+    
+    // 清理所有 PJAX 事件监听器
+    cleanupPjaxListeners: () => {
+      utils._pjaxListeners.forEach(fn => {
+        document.removeEventListener('pjax:complete', fn);
+        fn._pjax_registered = false;
+      });
+      utils._pjaxListeners.clear();
+    },
+
+    onLoading: (el) => {
+      if (el) {
+        if ($(el).find('.loading-wrap').length === 0){
+          $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+        }
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      // 检查元素实例是否已加载 (而不是检查属性)
+      if (el && utils._loadedElements.has(el)) {
+        return;
+      }
+      const maxRetry = 3;
+      let retryCount = 0;
+
+      return new Promise((resolve, reject) => {
+        const load = () => {
+          utils.onLoading?.(el);
+
+          let timedOut = false;
+          const timeout = setTimeout(() => {
+            timedOut = true;
+            console.warn('[request] 超时:', url);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject('请求超时');
+            } else {
+              setTimeout(load, 1000);
+            }
+          }, 5000);
+
+          fetch(url).then(resp => {
+            if (timedOut) return;
+            clearTimeout(timeout);
+
+            if (!resp.ok) throw new Error('响应失败');
+            return resp;
+          }).then(data => {
+            if (timedOut) return;
+            // 标记元素实例为已加载
+            if (el) utils._loadedElements.add(el);
+            utils.onLoadSuccess?.(el);
+            callback(data);
+            resolve(data);
+          }).catch(err => {
+            clearTimeout(timeout);
+            console.warn('[request] 错误:', err);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject(err);
+            } else {
+              setTimeout(load, 1000);
+            }
+          });
+        };
+
+        load();
+      });
+    },
+    requestWithoutLoading: (url, options = {}, maxRetry = 2, timeout = 5000) => {
+      return new Promise((resolve, reject) => {
+        let retryCount = 0;
+
+        const tryRequest = () => {
+          let timedOut = false;
+          const timer = setTimeout(() => {
+            timedOut = true;
+            if (++retryCount > maxRetry) reject('timeout');
+            else tryRequest();
+          }, timeout);
+
+          fetch(url, options)
+            .then(resp => {
+              clearTimeout(timer);
+              if (!resp.ok) throw new Error('bad response');
+              resolve(resp);
+            })
+            .catch(err => {
+              clearTimeout(timer);
+              if (++retryCount > maxRetry) reject(err);
+              else setTimeout(tryRequest, 500);
+            });
+        };
+
+        tryRequest();
+      });
+    },
+    /********************** requestAnimationFrame ********************************/
+    // 1、requestAnimationFrame 会把每一帧中的所有 DOM 操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率，一般来说，这个频率为每秒60帧。
+    // 2、在隐藏或不可见的元素中，requestAnimationFrame 将不会进行重绘或回流，这当然就意味着更少的的 cpu，gpu 和内存使用量。
+    requestAnimationFrame: (fn) => {
+      if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame;
+      }
+      window.requestAnimationFrame(fn)
+    },
+    dark: {},
+
+    // 插件初始化管理器 - 统一处理 DOMContentLoaded 和 pjax:complete 事件
+    _pluginInitializers: [],
+    _pluginCleanups: new Map(), // 存储每个插件的清理函数
+    
+    initPlugin: (initFn, name, options = {}) => {
+      if (!initFn || typeof initFn !== 'function') return;
+      
+      // 避免重复注册
+      const pluginName = name || initFn.name;
+      if (utils._pluginInitializers.some(p => p.name === pluginName)) return;
+      
+      // 包装初始化函数，添加防重复执行的保护
+      const wrappedInit = () => {
+        try {
+          // 在执行前先清理旧的资源
+          if (utils._pluginCleanups.has(pluginName)) {
+            const cleanup = utils._pluginCleanups.get(pluginName);
+            if (typeof cleanup === 'function') {
+              cleanup();
+            }
+          }
+          
+          // 执行初始化，可能返回清理函数
+          const cleanup = initFn();
+          
+          // 如果初始化函数返回了清理函数，保存它
+          if (typeof cleanup === 'function') {
+            utils._pluginCleanups.set(pluginName, cleanup);
+          }
+        } catch (error) {
+          console.error(`[Plugin ${pluginName}] 初始化失败:`, error);
+        }
+      };
+      
+      utils._pluginInitializers.push({ 
+        fn: wrappedInit, 
+        name: pluginName,
+        options: options 
+      });
+      
+      // 如果 DOM 已经加载完成，立即执行
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        wrappedInit();
+      } else {
+        // 否则等待 DOMContentLoaded
+        window.addEventListener('DOMContentLoaded', wrappedInit, { once: true });
+      }
+    },
+
+    // 重新初始化所有插件（用于 PJAX 等场景）
+    reinitPlugins: () => {
+      utils._pluginInitializers.forEach(plugin => {
+        // 跳过标记为不需要重新初始化的插件
+        if (plugin.options.skipReinit) return;
+        
+        try {
+          plugin.fn();
+        } catch (error) {
+          console.error(`[Plugin ${plugin.name}] 重新初始化失败:`, error);
+        }
+      });
+    },
+    
+    // 清理所有插件资源
+    cleanupPlugins: () => {
+      utils._pluginCleanups.forEach((cleanup, name) => {
+        try {
+          cleanup();
+        } catch (error) {
+          console.error(`[Plugin ${name}] 清理失败:`, error);
+        }
+      });
+      utils._pluginCleanups.clear();
+    },
+    
+    // 清理所有资源（用于页面卸载或重置）
+    cleanupAll: () => {
+      utils.cleanupPlugins();
+      utils.cleanupPjaxListeners();
+    },
+  };
+
+  // 自动处理 PJAX 事件
+  document.addEventListener('pjax:before', () => {
+    // 在导航前清理旧的 PJAX 监听器（如果需要重新注册）
+    // 注意：这里不清理，因为监听器应该是持久的
+    // utils.cleanupPjaxListeners();
+  });
+  
+  document.addEventListener('pjax:complete', () => {
+    utils.reinitPlugins();
+  });
+
+  // utils.dark.mode 当前模式 dark or light
+  // utils.dark.toggle() 暗黑模式触发器
+  // utils.dark.push(callBack[,"callBackName"]) 传入触发器回调函数
+  utils.dark.method = {
+    toggle: new RunItem(),
+  };
+  utils.dark = Object.assign(utils.dark, {
+    push: utils.dark.method.toggle.push,
+  });
+</script>
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+<script async src="https://gcore.jsdelivr.net/npm/vanilla-lazyload@19.1/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+    callback_loaded: (el) => {
+      el.classList.add('loaded');
+      const wrapper = el.closest('.lazy-box');
+      const icon = wrapper?.querySelector('.lazy-icon');
+      if (icon) icon.remove();
+    }
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+
+  window.wrapLazyloadImages = (container) => {
+    if (typeof container === 'string') {
+      container = document.querySelector(container);
+    }
+    if (!container) return;
+
+    const images = container.querySelectorAll('img');
+    images.forEach((img) => {
+      if (img.classList.contains('lazy')) return;
+
+      const src = img.getAttribute('src');
+      if (!src) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'lazy-box';
+
+      const newImg = img.cloneNode();
+      newImg.removeAttribute('src');
+      newImg.setAttribute('data-src', src);
+      newImg.classList.add('lazy');
+
+      const icon = document.createElement('div');
+      icon.className = 'lazy-icon';
+      if (def.loading) {
+        icon.style.backgroundImage = `url("${def.loading}")`;
+      }
+
+      wrapper.appendChild(newImg);
+      wrapper.appendChild(icon);
+
+      img.replaceWith(wrapper);
+    });
+
+    // 通知 LazyLoad 更新
+    if (window.lazyLoadInstance?.update) {
+      window.lazyLoadInstance.update();
+    }
+  }
+
+</script>
+
+<!-- required -->
+<script src="/memoirs/js/main.js?v=1.33.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    // applyThemeToGiscus(theme)
+  }
+
+  // FIXME: 这会导致无法使用 preferred_color_scheme 以外的主题
+  const applyThemeToGiscus = (theme) => {
+    // theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+    utils.dark.mode = newTheme === 'auto' ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : newTheme;
+    utils.dark.method.toggle.start();
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    } else {
+      utils.dark.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    utils.dark.method.toggle.start();
+  })()
+</script>
+
+
+<!-- optional -->
+
+  <script>
+  (function() {
+    const lazyload = false;
+    
+    function initBeaudar() {
+      const el = document.querySelector('#comments #beaudar');
+      if (!el) return;
+      
+      function load_beaudar() {
+        try {
+          el.innerHTML = '';
+        } catch (error) {
+          console.error(error);
+        }
+        const script = document.createElement('script');
+        script.src = 'https://beaudar.lipk.org/client.js';
+        script.async = true;
+        for (const key of Object.keys(el.attributes)) {
+          const attr = el.attributes[key];
+          if (['class', 'id'].includes(attr.name) === false) {
+            script.setAttribute(attr.name, attr.value);
+          }
+        }
+        el.appendChild(script);
+      }
+      
+      util.viewportLazyload(el, load_beaudar, lazyload);
+    }
+    
+    // Store in global stellar namespace for PJAX reinitialization
+    window.stellar = window.stellar || {};
+    window.stellar.initComments = window.stellar.initComments || {};
+    window.stellar.initComments.beaudar = initBeaudar;
+    
+    // Initialize on page load
+    initBeaudar();
+  })();
+</script>
+
+
+
+
+<script defer>
+  const initServices = () => {
+    // 用于存储需要清理的资源
+    let timers = [];
+    
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"rating":{"js":"/js/services/rating.js","api":"https://star-vote.xaox.cc/api/rating"},"vote":{"js":"/js/services/vote.js","api":"https://star-vote.xaox.cc/api/vote"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"friends_and_posts":{"js":"/js/services/friends_and_posts.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"},"voice":{"js":"/js/plugins/voice.js"},"video":{"js":"/js/plugins/video.js"},"download-file":{"js":"/js/plugins/download-file.js"},"twikoo":{"js":"/js/services/twikoo_latest_comment.js"},"waline":{"js":"/js/services/waline_latest_comment.js"},"artalk":{"js":"/js/services/artalk_latest_comment.js"},"giscus":{"js":"/js/services/giscus_latest_comment.js"},"contributors":{"edit_this_page":{"_posts/":null,"wiki/stellar/":"https://github.com/xaoxuu/hexo-theme-stellar-docs/blob/main/"},"js":"/js/services/contributors.js"},"rss":{"js":"/js/services/rss.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        const cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(cardlinks);
+          });
+        }
+      } else if (id == 'ghinfo') {
+        const els = document.querySelectorAll('.ds-ghinfo');
+        if (els.length > 0) {
+          utils.js(js, { defer: true });
+        }
+      } else if (id == 'voice') {
+        const voiceAudios = document.querySelectorAll('.voice>audio');
+        if (voiceAudios?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            createVoiceDom(voiceAudios);
+          });
+        }
+      } else if (id == 'video') {
+        const videos = document.querySelectorAll('.video>video');
+        if (videos?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            videoEvents(videos);
+          });
+        }
+      } else if (id == 'download-file') {
+        const files = document.querySelectorAll('.chat-file');
+        if (files?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            downloadFileEvent(files);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || id == 'memos' || id == 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          }, false);
+        }
+      }
+    }
+
+    // search
+    if (ctx.search && typeof searchFunc === 'function') {
+      const $inputArea = $("input#search-input");
+      if ($inputArea.length > 0 && !$inputArea[0]._searchInitialized) {
+        const path = ctx.search.path.startsWith('/') ? ctx.root + ctx.search.path.substring(1) : ctx.root + ctx.search.path;
+        const filter = $inputArea.attr('data-filter') || '';
+        searchFunc(path, filter, 'search-wrapper', 'search-input', 'search-result');
+        // 标记为已初始化，防止重复绑定
+        $inputArea[0]._searchInitialized = true;
+      }
+    }
+
+    // chat iphone time
+    let phoneTimes = document.querySelectorAll('.chat .status-bar .time');
+    let firstAdjustInterval = null;
+    let mainInterval = null;
+
+    if (phoneTimes.length > 0) {
+      NowTime();
+      const date = new Date();
+      const sec = date.getSeconds();
+      firstAdjustInterval = setInterval(firstAdjustTime, 1000 * (60 - sec));
+      timers.push(firstAdjustInterval);
+
+      function firstAdjustTime() {
+        NowTime();
+        if (firstAdjustInterval) {
+          clearInterval(firstAdjustInterval);
+          firstAdjustInterval = null;
+        }
+        mainInterval = setInterval(NowTime, 1000 * 60);
+        timers.push(mainInterval);
+      }
+
+      function NowTime() {
+        for (let i = 0; i < phoneTimes.length; ++i) {
+          const timeSpan = phoneTimes[i];
+          const date = new Date();
+          const hour = date.getHours();
+          const min = date.getMinutes();
+          timeSpan.innerHTML = check(hour) + ":" + check(min);
+        }
+      };
+
+      function check(val) {
+        if (val < 10) {
+          return ("0" + val);
+        }
+        return (val);
+      }
+    }
+
+    // chat quote - 存储事件监听器以便清理
+    const quoteClickHandlers = new Map();
+    const chat_quote_obverser = new IntersectionObserver((entries, observer) => {
+      entries.filter((entry) => { return entry.isIntersecting }).sort((a, b) => a.intersectionRect.y !== b.intersectionRect.y ? a.intersectionRect.y - b.intersectionRect.y : a.intersectionRect.x - b.intersectionRect.x).forEach((entry, index) => {
+          observer.unobserve(entry.target);
+          setTimeout(() => {
+            entry.target.classList.add('quote-blink');
+            setTimeout(() => {
+              entry.target.classList.remove('quote-blink');
+            }, 1000);
+          }, Math.max(100, 16) * (index + 1));
+        });
+    });
+
+    var chatQuotes = document.querySelectorAll(".chat .talk .quote");
+    chatQuotes.forEach((quote) => {
+      const handler = function () {
+        var chatCellDom = document.getElementById("quote-" + quote.getAttribute("quotedCellTag"));
+        if (chatCellDom) {
+          var chatDiv = chatCellDom.parentElement;
+          var mid = chatDiv.clientHeight / 2;
+          var offsetTop = chatCellDom.offsetTop;
+          if (offsetTop > mid - chatCellDom.clientHeight / 2) {
+            chatDiv.scrollTo({
+              top: chatCellDom.offsetTop - mid + chatCellDom.clientHeight / 2,
+              behavior: "smooth"
+            });
+          } else {
+            chatDiv.scrollTo({
+              top: 0,
+              behavior: "smooth"
+            });
+          }
+          chat_quote_obverser.observe(chatCellDom);
+        }
+      };
+      quote.addEventListener('click', handler);
+      quoteClickHandlers.set(quote, handler); // 保存处理器引用
+    });
+
+    // 返回清理函数，用于清理定时器和观察器
+    return () => {
+      // 清理所有定时器（包括可能未完成的 firstAdjustInterval）
+      timers.forEach(timer => {
+        if (timer) clearInterval(timer);
+      });
+      timers = [];
+      if (firstAdjustInterval) {
+        clearInterval(firstAdjustInterval);
+        firstAdjustInterval = null;
+      }
+      if (mainInterval) {
+        clearInterval(mainInterval);
+        mainInterval = null;
+      }
+      
+      // 断开观察器
+      if (chat_quote_obverser) {
+        chat_quote_obverser.disconnect();
+      }
+      
+      // 移除所有 click 事件监听器
+      quoteClickHandlers.forEach((handler, quote) => {
+        quote.removeEventListener('click', handler);
+      });
+      quoteClickHandlers.clear();
+    };
+  };
+
+  utils.initPlugin(initServices, 'services');
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://gcore.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error), .with-fancybox .atk-content img:not([atk-emoticon])';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const memos = document.getElementsByClassName('ds-memos');
+    if (memos != undefined && memos.length > 0) {
+      needFancybox = true;
+    }
+    const fancybox = document.getElementsByClassName('with-fancybox');
+    if (fancybox != undefined && fancybox.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  utils.initPlugin(() => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  }, 'swiper');
+</script>
+<script>
+  utils.initPlugin(() => {
+    const codeElements = document.querySelectorAll('.code');
+    if (codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js', { defer: true }).then(() => {
+        if (typeof createCopyButtons === 'function') {
+          createCopyButtons(codeElements);
+        }
+      });
+    }
+  }, 'copycode');
+</script>
+
+
+<!-- inject -->
+
+</div><div class="page-loading-bar"><img src="https://api.iconify.design/eos-icons:three-dots-loading.svg?color=%231cd0fd"></div></body></html>
