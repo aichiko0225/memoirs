@@ -1,0 +1,2212 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1" theme-name="Stellar" theme-version="1.33.1">
+  
+  
+  <meta name="generator" content="Hexo 8.1.1">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  <title>Python 并发：进程、线程、协程，从语言机制到工程选型 - ash</title>
+
+  
+    <meta name="description" content="这篇文章想解决一个很实际的问题： 很多人学 Python 并发时，会看到三套东西一起出现：multiprocessing、threading、asyncio。 然后马上就会产生几个非常真实的疑问：  既然有进程和线程，为什么还要协程？ Python 不是有 GIL 吗，那线程到底还有什么意义？ asyncio.Queue、queue.Queue、multiprocessing.Queue 名字这么">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 并发：进程、线程、协程，从语言机制到工程选型">
+<meta property="og:url" content="https://minniexcode.github.io/memoirs/20260411/learning/python-concurrency/">
+<meta property="og:site_name" content="ash">
+<meta property="og:description" content="这篇文章想解决一个很实际的问题： 很多人学 Python 并发时，会看到三套东西一起出现：multiprocessing、threading、asyncio。 然后马上就会产生几个非常真实的疑问：  既然有进程和线程，为什么还要协程？ Python 不是有 GIL 吗，那线程到底还有什么意义？ asyncio.Queue、queue.Queue、multiprocessing.Queue 名字这么">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-11T09:36:51.768Z">
+<meta property="article:author" content="ash66">
+<meta property="article:tag" content="Asyncio">
+<meta property="article:tag" content="Concurrency">
+<meta property="article:tag" content="Multiprocessing">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Threading">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="Python,Concurrency,Threading,Multiprocessing,Asyncio">
+
+  <!-- feed -->
+  
+    
+
+    
+      
+        <link rel="alternate" href="/memoirs/atom.xml" title="ash" type="application/atom+xml">
+      
+    
+  
+
+  <link rel="stylesheet" href="/memoirs/css/main.css?v=1.33.1">
+
+
+  
+    <link rel="shortcut icon" href="/memoirs/favicon.png">
+  
+
+  
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2026-04-11T00:00:00+08:00","dateModified":"2026-04-11T17:36:51+08:00","datePublished":"2026-04-11T00:00:00+08:00","description":"这篇文章想解决一个很实际的问题：\n很多人学 Python 并发时，会看到三套东西一起出现：multiprocessing、threading、asyncio。\n然后马上就会产生几个非常真实的疑问：\n\n既然有进程和线程，为什么还要协程？\nPython 不是有 GIL 吗，那线程到底还有什么意义？\nasyncio.Queue、queue.Queue、multiprocessing.Queue 名字这么像，到底差在哪里？\n这些概念到底是工程上的真实需求，还是语言设计在“强行造轮子”？\n\n我这篇文章不打算只讲 API，也不打算把协程神化成“更高级方案”。\n我会站在 Python 语言本身的角度，把三件事讲清楚：\n\n它们分别是什么\n它们分别解决什么问题\n它们在真实工程里该怎么选\n\n文中示例代码来自我的示例仓库 minniexcode/Python_review 里的两个脚本：\n\n2026-review/process-thread.py\n2026-review/async-io.py\n\n如果你想跟着跑示例，先 clone 这个仓库，然后在仓库根目录执行：\n123python 2026-review/process-thread.py processpython 2026-review/process-thread.py threadpython 2026-review/async-io.py","headline":"Python 并发：进程、线程、协程，从语言机制到工程选型","mainEntityOfPage":{"@type":"WebPage","@id":"https://minniexcode.github.io/memoirs/20260411/learning/python-concurrency/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://minniexcode.github.io/memoirs/20260411/learning/python-concurrency/","keywords":"Python, Concurrency, Threading, Multiprocessing, Asyncio","image":[]}</script>
+  <script>
+  (function () {
+    if (window.util) return;
+
+    window.util = {
+      viewportLazyload: function (el, callback, lazyload) {
+        if (!el || typeof callback !== 'function') return;
+        if (el.dataset.utilLazyloaded === '1') return;
+        var runOnce = function () {
+          if (el.dataset.utilLazyloaded === '1') return;
+          el.dataset.utilLazyloaded = '1';
+          callback();
+        };
+        if (!lazyload) {
+          runOnce();
+          return;
+        }
+        if (!('IntersectionObserver' in window)) {
+          runOnce();
+          return;
+        }
+        var loaded = false;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!loaded && entry.isIntersecting) {
+              loaded = true;
+              observer.disconnect();
+              runOnce();
+            }
+          });
+        }, { rootMargin: '100px 0px' });
+        observer.observe(el);
+      },
+      toggle: function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var hidden = el.style.height === '0px' || el.style.opacity === '0';
+        if (hidden) {
+          el.style.opacity = '1';
+          el.style.height = 'auto';
+        } else {
+          el.style.opacity = '0';
+          el.style.height = '0';
+        }
+      },
+      copy: function (id, message) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var text = el.value || el.textContent || '';
+        var done = function () {
+          if (message) console.log(message);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {});
+          return;
+        }
+        var area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(area);
+        done();
+      },
+      scrollTop: function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+  })();
+</script>
+
+</head>
+<body><div id="l_cover"></div><div class="l_body content" id="start" layout="post" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/memoirs/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/memoirs/images/image1.jpeg" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main">ash</div><div class="sub cap">我只是一个影子，虽然我发着光。。。</div></a></div></header>
+
+<div class="nav-area">
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/memoirs/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="笔记本" href="/memoirs/notes/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="AboutMe" href="/memoirs/about/me/" style="color:#F44336"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m13.629 20.472l-.542.916c-.483.816-1.69.816-2.174 0l-.542-.916c-.42-.71-.63-1.066-.968-1.262c-.338-.197-.763-.204-1.613-.219c-1.256-.021-2.043-.098-2.703-.372a5 5 0 0 1-2.706-2.706C2 14.995 2 13.83 2 11.5v-1c0-3.273 0-4.91.737-6.112a5 5 0 0 1 1.65-1.651C5.59 2 7.228 2 10.5 2h3c3.273 0 4.91 0 6.113.737a5 5 0 0 1 1.65 1.65C22 5.59 22 7.228 22 10.5v1c0 2.33 0 3.495-.38 4.413a5 5 0 0 1-2.707 2.706c-.66.274-1.447.35-2.703.372c-.85.015-1.275.022-1.613.219c-.338.196-.548.551-.968 1.262" opacity=".5"/><path fill="currentColor" d="M10.99 14.308c-1.327-.978-3.49-2.84-3.49-4.593c0-2.677 2.475-3.677 4.5-1.609c2.025-2.068 4.5-1.068 4.5 1.609c0 1.752-2.163 3.615-3.49 4.593c-.454.335-.681.502-1.01.502c-.329 0-.556-.167-1.01-.502"/></svg></a></nav>
+</div>
+<div class="widgets">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+
+<widget class="widget-wrapper recent post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/memoirs/20260411/learning/python-concurrency/"><span class="title">Python 并发：进程、线程、协程，从语言机制到工程选型</span></a><a class="item title" href="/memoirs/20200305/python/Python-100-1/"><span class="title">Python-100天(一)</span></a><a class="item title" href="/memoirs/20260325/learning/ruankao-network-engineer-study-guide/"><span class="title">软考网络工程师备考全攻略：8 周计划、速记表与端口协议清单</span></a><a class="item title" href="/memoirs/20260318/nano-config-guide/"><span class="title">Nano 配置文件编辑指南（附极简 Vim 备忘）</span></a><a class="item title" href="/memoirs/20260317/learning/wezterm-guide-windows-macos/"><span class="title">WezTerm Guide：Windows 和 macOS 的入门、配置与日常工作流</span></a><a class="item title" href="/memoirs/20200128/wuhan/wuhan1/"><span class="title">2020-01-28 武汉封城第五天</span></a><a class="item title" href="/memoirs/20200123/wuhan/wuhan/"><span class="title">2020-01-23 武汉封城第一天</span></a><a class="item title" href="/memoirs/20241212/running/guangzhou/"><span class="title">广州马拉松</span></a><a class="item title" href="/memoirs/20200217/reverse-progression/"><span class="title">逆向工程进阶</span></a><a class="item title" href="/memoirs/20200212/reverse-basics/"><span class="title">逆向工程基础</span></a></div></widget>
+</div>
+<footer class="footer dis-select"><div class="social-wrap"><a class="social" href="https://github.com/minniexcode" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/08a41b181ce68.svg"/></a></div></footer>
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/memoirs/memoirs/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/memoirs/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/memoirs/categories/%E6%8A%80%E6%9C%AF/">技术</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2026-04-10T16:00:00.000Z">2026-04-11</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2026-04-11T09:36:51.768Z">2026-04-11</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>Python 并发：进程、线程、协程，从语言机制到工程选型</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>这篇文章想解决一个很实际的问题：</p>
+<p>很多人学 Python 并发时，会看到三套东西一起出现：<code>multiprocessing</code>、<code>threading</code>、<code>asyncio</code>。</p>
+<p>然后马上就会产生几个非常真实的疑问：</p>
+<ul>
+<li>既然有进程和线程，为什么还要协程？</li>
+<li>Python 不是有 GIL 吗，那线程到底还有什么意义？</li>
+<li><code>asyncio.Queue</code>、<code>queue.Queue</code>、<code>multiprocessing.Queue</code> 名字这么像，到底差在哪里？</li>
+<li>这些概念到底是工程上的真实需求，还是语言设计在“强行造轮子”？</li>
+</ul>
+<p>我这篇文章不打算只讲 API，也不打算把协程神化成“更高级方案”。</p>
+<p>我会站在 Python 语言本身的角度，把三件事讲清楚：</p>
+<ol>
+<li>它们分别是什么</li>
+<li>它们分别解决什么问题</li>
+<li>它们在真实工程里该怎么选</li>
+</ol>
+<p>文中示例代码来自我的示例仓库 <a target="_blank" rel="noopener" href="https://github.com/minniexcode/Python_review"><code>minniexcode/Python_review</code></a> 里的两个脚本：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/minniexcode/Python_review/blob/master/2026-review/process-thread.py"><code>2026-review/process-thread.py</code></a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minniexcode/Python_review/blob/master/2026-review/async-io.py"><code>2026-review/async-io.py</code></a></li>
+</ul>
+<p>如果你想跟着跑示例，先 clone 这个仓库，然后在仓库根目录执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python 2026-review/process-thread.py process</span><br><span class="line">python 2026-review/process-thread.py thread</span><br><span class="line">python 2026-review/async-io.py</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h2 id="先给结论"><a href="#先给结论" class="headerlink" title="先给结论"></a>先给结论</h2><p>先把结论摆在最前面，避免读完整篇还抓不到主线。</p>
+<ul>
+<li>进程不是线程的升级版</li>
+<li>线程不是协程的过时版</li>
+<li>协程不是进程和线程的终极替代品</li>
+</ul>
+<p>它们只是三种不同的并发模型，各自优化不同的问题。</p>
+<p>最短的理解方式是：</p>
+<ul>
+<li>进程：把任务分给不同的操作系统进程，各自独立，适合 CPU 密集和隔离需求</li>
+<li>线程：把任务分给同一进程内的多个线程，适合阻塞 IO 和现有同步库</li>
+<li>协程：把任务交给事件循环，在一个线程里协作切换，适合大量 IO 并发</li>
+</ul>
+<p>如果只记一句话，可以记成：</p>
+<blockquote>
+<p>进程解决“并行”和“隔离”，线程解决“共享内存下的并发”，协程解决“高并发 IO 下的调度成本”。</p>
+</blockquote>
+<h2 id="一张总览表"><a href="#一张总览表" class="headerlink" title="一张总览表"></a>一张总览表</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>进程</th>
+<th>线程</th>
+<th>协程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>调度者</td>
+<td>操作系统</td>
+<td>操作系统</td>
+<td>事件循环</td>
+</tr>
+<tr>
+<td>是否是 OS 原生执行单元</td>
+<td>是</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td>默认是否共享内存</td>
+<td>否</td>
+<td>是</td>
+<td>同线程内共享对象</td>
+</tr>
+<tr>
+<td>切换成本</td>
+<td>高</td>
+<td>中</td>
+<td>低</td>
+</tr>
+<tr>
+<td>通信方式</td>
+<td>IPC、Queue、Pipe、Value</td>
+<td>共享对象、Lock、Queue</td>
+<td>await、Task、asyncio.Queue</td>
+</tr>
+<tr>
+<td>CPU 多核利用</td>
+<td>强</td>
+<td>在 CPython 中受 GIL 影响</td>
+<td>单独不能利用多核</td>
+</tr>
+<tr>
+<td>IO 高并发能力</td>
+<td>一般</td>
+<td>中等</td>
+<td>很强</td>
+</tr>
+<tr>
+<td>典型代价</td>
+<td>启动慢、通信重、序列化成本</td>
+<td>锁、竞态、死锁、GIL</td>
+<td>需要 async 生态、必须显式 await</td>
+</tr>
+<tr>
+<td>典型场景</td>
+<td>CPU 密集、隔离任务、并行计算</td>
+<td>阻塞 IO、传统库、少量并发</td>
+<td>高并发网络服务、爬虫、网关、异步任务编排</td>
+</tr>
+</tbody></table>
+<h2 id="从-Python-语言本身先看两个事实"><a href="#从-Python-语言本身先看两个事实" class="headerlink" title="从 Python 语言本身先看两个事实"></a>从 Python 语言本身先看两个事实</h2><p>很多文章一上来就讲 API，但如果不先理解 Python 自己的约束，很容易把三者看成“谁更先进”。</p>
+<p>实际上，Python 并发先天有两个事实必须先接受。</p>
+<h2 id="事实一：操作系统只认识进程和线程，不认识协程"><a href="#事实一：操作系统只认识进程和线程，不认识协程" class="headerlink" title="事实一：操作系统只认识进程和线程，不认识协程"></a>事实一：操作系统只认识进程和线程，不认识协程</h2><p>操作系统原生调度的是：</p>
+<ul>
+<li>进程</li>
+<li>线程</li>
+</ul>
+<p>协程不是操作系统内核里的执行单位。</p>
+<p>协程是语言运行时层面的抽象。对 Python 来说，这个运行时就是：</p>
+<ul>
+<li><code>async def</code> &#x2F; <code>await</code></li>
+<li><code>asyncio</code> 事件循环</li>
+<li><code>Task</code> 对象</li>
+</ul>
+<p>所以协程的“便宜”，不是无代价得来的。</p>
+<p>它之所以便宜，是因为它放弃了一些东西：</p>
+<ul>
+<li>不由操作系统抢占调度</li>
+<li>只能在 <code>await</code> 这类协作点切换</li>
+<li>依赖整个生态都遵守 async 规则</li>
+</ul>
+<p>也就是说，协程是把一部分运行时成本，换成了一部分编程模型成本。</p>
+<p>这不是白嫖性能，而是换了一种付费方式。</p>
+<h2 id="事实二：CPython-有-GIL"><a href="#事实二：CPython-有-GIL" class="headerlink" title="事实二：CPython 有 GIL"></a>事实二：CPython 有 GIL</h2><p>绝大多数人用的 Python 都是 CPython。</p>
+<p>而 CPython 里有一个非常关键的机制：GIL，Global Interpreter Lock，全局解释器锁。</p>
+<p>它的直接影响是：</p>
+<ul>
+<li>同一时刻，一个 CPython 进程里只能有一个线程执行 Python 字节码</li>
+</ul>
+<p>这句话经常被误解成“线程没用”。</p>
+<p>这不对。</p>
+<p>更准确的理解是：</p>
+<ul>
+<li>对 CPU 密集型纯 Python 代码，线程通常不能线性吃满多核</li>
+<li>对 IO 密集型任务，线程仍然很有价值，因为线程在等待系统调用时会释放 GIL</li>
+<li>对调用 C 扩展的场景，如果扩展内部释放 GIL，线程也可能有不错效果</li>
+</ul>
+<p>所以 GIL 改变的是“线程擅长什么”，不是“线程还有没有意义”。</p>
+<h2 id="没有免费午餐：三种模型各自把代价放在哪儿"><a href="#没有免费午餐：三种模型各自把代价放在哪儿" class="headerlink" title="没有免费午餐：三种模型各自把代价放在哪儿"></a>没有免费午餐：三种模型各自把代价放在哪儿</h2><p>如果你对协程天然不信任，这个直觉其实是对的。</p>
+<p>因为世界上本来就没有又快、又省、又简单、又通用、还完全兼容旧生态的方案。</p>
+<p>三种模型都在付成本，只是成本位置不同。</p>
+<ul>
+<li>进程把成本放在创建、内存隔离、IPC、序列化</li>
+<li>线程把成本放在共享状态、锁、竞态条件、死锁、GIL</li>
+<li>协程把成本放在 async API、事件循环纪律、阻塞调用兼容性、取消语义</li>
+</ul>
+<p>这也是为什么“协程不是线程的升级版”。</p>
+<p>协程只是把原来由操作系统帮你做的一部分调度，挪到了语言运行时和程序员自己手里。</p>
+<h2 id="一：进程，Python-里最接近“真并行”的方案"><a href="#一：进程，Python-里最接近“真并行”的方案" class="headerlink" title="一：进程，Python 里最接近“真并行”的方案"></a>一：进程，Python 里最接近“真并行”的方案</h2><h2 id="进程是什么"><a href="#进程是什么" class="headerlink" title="进程是什么"></a>进程是什么</h2><p>进程是操作系统里的资源隔离单位。</p>
+<p>每个进程有自己的：</p>
+<ul>
+<li>地址空间</li>
+<li>文件描述符状态</li>
+<li>Python 解释器实例</li>
+<li>GIL</li>
+</ul>
+<p>这意味着多个 Python 进程之间，彼此不会直接共享普通对象。</p>
+<p>这也意味着：</p>
+<ul>
+<li>一个进程崩了，不一定拖死别的进程</li>
+<li>多个进程可以真正同时跑在多个 CPU 核心上</li>
+<li>进程之间通信必须明确使用 IPC 机制</li>
+</ul>
+<p>这就是 <code>multiprocessing</code> 存在的核心原因。</p>
+<h2 id="Python-为什么需要-multiprocessing"><a href="#Python-为什么需要-multiprocessing" class="headerlink" title="Python 为什么需要 multiprocessing"></a>Python 为什么需要 <code>multiprocessing</code></h2><p>在 CPython 世界里，CPU 密集型任务如果想绕开 GIL，最直接的办法就是：</p>
+<p>不要让这些任务待在同一个进程里。</p>
+<p>于是 Python 标准库给了你 <code>multiprocessing</code>。</p>
+<p>这套库本质上是：</p>
+<ul>
+<li>用和 <code>threading</code> 类似的编程体验</li>
+<li>让底层变成多个独立进程</li>
+</ul>
+<p>你可以把它理解成：</p>
+<blockquote>
+<p>Python 没有让线程在 CPU 场景里自然变强，于是给了你一套“用进程模拟线程式开发体验”的标准解法。</p>
+</blockquote>
+<h2 id="Process-的基础用法"><a href="#Process-的基础用法" class="headerlink" title="Process 的基础用法"></a><code>Process</code> 的基础用法</h2><p>在 <code>2026-review/process-thread.py</code> 里，我把最基础的 <code>Process</code> 示例整理成了这样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">run_proc</span>(<span class="params">name: <span class="built_in">str</span>, delay: <span class="built_in">float</span> = <span class="number">0.4</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;[child:<span class="subst">&#123;name&#125;</span>] pid=<span class="subst">&#123;os.getpid()&#125;</span>, ppid=<span class="subst">&#123;os.getppid()&#125;</span> start&quot;</span>)</span><br><span class="line">    time.sleep(delay)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;[child:<span class="subst">&#123;name&#125;</span>] pid=<span class="subst">&#123;os.getpid()&#125;</span> done&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_process_test</span>() -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\n=== 1) Process Basics ===&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;parent pid=<span class="subst">&#123;os.getpid()&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    p = Process(target=run_proc, args=(<span class="string">&quot;basic-demo&quot;</span>, <span class="number">0.5</span>), name=<span class="string">&quot;PROC-BASIC&quot;</span>)</span><br><span class="line">    p.start()</span><br><span class="line">    p.join()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;child exitcode=<span class="subst">&#123;p.exitcode&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这个例子最重要的不是 API 本身，而是它说明了三件事：</p>
+<ul>
+<li><code>Process(...)</code> 只是创建对象，不代表子进程已经开始执行</li>
+<li><code>start()</code> 才真正向操作系统申请创建子进程</li>
+<li><code>join()</code> 会让父进程等待子进程结束</li>
+</ul>
+<p>如果你刚接触进程，这里一定要注意一个 Python 特性。</p>
+<p>在 Windows 上，<code>multiprocessing</code> 默认使用 <code>spawn</code>。</p>
+<p>这会带来两个重要约束：</p>
+<ul>
+<li>多进程启动代码必须放在 <code>if __name__ == &quot;__main__&quot;:</code> 下</li>
+<li>作为 <code>target</code> 的函数通常必须定义在模块顶层</li>
+</ul>
+<p>否则你经常会遇到子进程反复导入自己、或者对象无法 pickle 的问题。</p>
+<h2 id="Pool：真正常用的多进程入口"><a href="#Pool：真正常用的多进程入口" class="headerlink" title="Pool：真正常用的多进程入口"></a><code>Pool</code>：真正常用的多进程入口</h2><p>单个 <code>Process</code> 更像教学 API。</p>
+<p>真正业务里更常用的是：</p>
+<ul>
+<li><code>multiprocessing.Pool</code></li>
+<li><code>concurrent.futures.ProcessPoolExecutor</code></li>
+</ul>
+<p>因为现实里的 CPU 任务通常不是“启动一个子进程跑一次”，而是：</p>
+<ul>
+<li>有一批相似任务</li>
+<li>想复用固定数量的工作进程</li>
+<li>让任务自动分发给空闲 worker</li>
+</ul>
+<p>我在 <code>process-thread.py</code> 里用了一个简单的质数统计任务来模拟 CPU 型工作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">count_primes</span>(<span class="params">limit: <span class="built_in">int</span></span>) -&gt; <span class="built_in">tuple</span>[<span class="built_in">int</span>, <span class="built_in">int</span>, <span class="built_in">int</span>]:</span><br><span class="line">    total = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> number <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>, limit + <span class="number">1</span>):</span><br><span class="line">        is_prime = <span class="literal">True</span></span><br><span class="line">        factor = <span class="number">2</span></span><br><span class="line">        <span class="keyword">while</span> factor * factor &lt;= number:</span><br><span class="line">            <span class="keyword">if</span> number % factor == <span class="number">0</span>:</span><br><span class="line">                is_prime = <span class="literal">False</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            factor += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> is_prime:</span><br><span class="line">            total += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> os.getpid(), limit, total</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_pool_test</span>() -&gt; <span class="literal">None</span>:</span><br><span class="line">    workloads = [<span class="number">4000</span>, <span class="number">5000</span>, <span class="number">6000</span>, <span class="number">7000</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> Pool(processes=<span class="number">2</span>) <span class="keyword">as</span> pool:</span><br><span class="line">        ordered_results = pool.<span class="built_in">map</span>(count_primes, workloads)</span><br></pre></td></tr></table></figure>
+
+<p>这里可以顺便理解两个常用接口：</p>
+<ul>
+<li><code>pool.map(func, iterable)</code></li>
+<li><code>pool.apply_async(func, args=...)</code></li>
+</ul>
+<p>区别是：</p>
+<ul>
+<li><code>map</code> 更像批处理，一次性扔进去，结果按输入顺序回来</li>
+<li><code>apply_async</code> 更像手动提交任务，拿回 <code>AsyncResult</code> 句柄，控制更细</li>
+</ul>
+<h2 id="进程通信为什么总是显得“麻烦”"><a href="#进程通信为什么总是显得“麻烦”" class="headerlink" title="进程通信为什么总是显得“麻烦”"></a>进程通信为什么总是显得“麻烦”</h2><p>因为进程天然就不是共享内存模型。</p>
+<p>这恰好是它的优点，也是它的麻烦来源。</p>
+<p>优点是：</p>
+<ul>
+<li>隔离好</li>
+<li>少很多意外共享状态</li>
+<li>宕一个不一定全挂</li>
+</ul>
+<p>麻烦是：</p>
+<ul>
+<li>你不能直接把普通 <code>list</code>、<code>dict</code> 当共享容器来随便改</li>
+<li>数据要通过 IPC 显式传输</li>
+<li>很多对象传输时要 pickle，带来序列化成本</li>
+</ul>
+<h2 id="multiprocessing-Queue"><a href="#multiprocessing-Queue" class="headerlink" title="multiprocessing.Queue"></a><code>multiprocessing.Queue</code></h2><p>我把你原先“强制 terminate 消费者”的示例，改成了更适合教学和工程实践的版本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">queue_writer</span>(<span class="params">q, items: <span class="built_in">list</span>[<span class="built_in">str</span>]</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">for</span> value <span class="keyword">in</span> items:</span><br><span class="line">        q.put(value)</span><br><span class="line">    q.put(PROCESS_SENTINEL)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">queue_reader</span>(<span class="params">q</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        value = q.get()</span><br><span class="line">        <span class="keyword">if</span> value <span class="keyword">is</span> PROCESS_SENTINEL:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;reader &lt;- <span class="subst">&#123;value&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这里最重要的不是 <code>put()</code> &#x2F; <code>get()</code> 本身，而是“哨兵值退出”这个习惯。</p>
+<p>原因很简单：</p>
+<ul>
+<li>强制 <code>terminate()</code> 常常会中断资源清理</li>
+<li>子进程可能正持有锁、正在写文件、正在写 socket</li>
+<li>用哨兵值让消费者自然收尾，才更接近真实可维护代码</li>
+</ul>
+<h2 id="Pipe"><a href="#Pipe" class="headerlink" title="Pipe"></a><code>Pipe</code></h2><p>如果 <code>Queue</code> 更像“多人排队取活”，那 <code>Pipe</code> 更像“一根直连电话线”。</p>
+<p><code>process-thread.py</code> 里的示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">parent_conn, child_conn = Pipe()</span><br><span class="line">parent_conn.send(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">reply = parent_conn.recv()</span><br></pre></td></tr></table></figure>
+
+<p><code>Pipe</code> 的特点是：</p>
+<ul>
+<li>更适合点对点</li>
+<li>双向通信自然</li>
+<li>模型简单</li>
+</ul>
+<p>但如果你是多个生产者、多个消费者，<code>Queue</code> 往往更顺手。</p>
+<h2 id="Value：进程也能共享状态，但要显式说明"><a href="#Value：进程也能共享状态，但要显式说明" class="headerlink" title="Value：进程也能共享状态，但要显式说明"></a><code>Value</code>：进程也能共享状态，但要显式说明</h2><p>进程默认不共享普通 Python 对象。</p>
+<p>所以如果你确实需要共享少量基础数据，可以用：</p>
+<ul>
+<li><code>Value</code></li>
+<li><code>Array</code></li>
+<li><code>Manager</code></li>
+</ul>
+<p>我在脚本里补了一个 <code>Value</code> 例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">shared_counter = Value(<span class="string">&quot;i&quot;</span>, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add_to_shared_counter</span>(<span class="params">shared_counter, loops: <span class="built_in">int</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(loops):</span><br><span class="line">        <span class="keyword">with</span> shared_counter.get_lock():</span><br><span class="line">            shared_counter.value += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>这个例子有两个意义：</p>
+<ul>
+<li>它说明进程默认并不共享普通状态</li>
+<li>它也说明就算是进程，共享状态时依然可能需要锁</li>
+</ul>
+<p>很多人以为“多进程就完全没有并发同步问题”，这也不对。</p>
+<p>只是问题位置变了，不是问题消失了。</p>
+<h2 id="进程适合什么场景"><a href="#进程适合什么场景" class="headerlink" title="进程适合什么场景"></a>进程适合什么场景</h2><ul>
+<li>CPU 密集计算</li>
+<li>图像处理、视频转码、批量压缩</li>
+<li>数据分析中可拆分的大计算任务</li>
+<li>需要进程隔离的爬虫 worker、任务 worker</li>
+<li>需要真正利用多核的场景</li>
+</ul>
+<h2 id="进程不太适合什么场景"><a href="#进程不太适合什么场景" class="headerlink" title="进程不太适合什么场景"></a>进程不太适合什么场景</h2><ul>
+<li>轻量、短小、极高频的小任务</li>
+<li>需要频繁共享大量复杂对象的场景</li>
+<li>大量网络连接的高并发 IO 服务</li>
+</ul>
+<p>原因不是进程不能做，而是成本通常不划算。</p>
+<h2 id="二：线程，Python-里最容易落地的并发方案"><a href="#二：线程，Python-里最容易落地的并发方案" class="headerlink" title="二：线程，Python 里最容易落地的并发方案"></a>二：线程，Python 里最容易落地的并发方案</h2><h2 id="线程是什么"><a href="#线程是什么" class="headerlink" title="线程是什么"></a>线程是什么</h2><p>线程是同一进程内部的执行流。</p>
+<p>同一进程里的线程：</p>
+<ul>
+<li>共享内存空间</li>
+<li>共享大部分进程资源</li>
+<li>创建成本通常低于进程</li>
+<li>通信比进程方便得多</li>
+</ul>
+<p>线程的魅力就在这里。</p>
+<p>你不需要 IPC，就能直接共享：</p>
+<ul>
+<li><code>list</code></li>
+<li><code>dict</code></li>
+<li>类实例</li>
+<li>缓存对象</li>
+</ul>
+<p>但共享越方便，踩坑也越容易。</p>
+<h2 id="Thread-的基础用法"><a href="#Thread-的基础用法" class="headerlink" title="Thread 的基础用法"></a><code>Thread</code> 的基础用法</h2><p><code>process-thread.py</code> 里保留并整理了最基础的线程示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">thread_worker</span>(<span class="params">name: <span class="built_in">str</span>, delay: <span class="built_in">float</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;[<span class="subst">&#123;name&#125;</span>] start, pid=<span class="subst">&#123;os.getpid()&#125;</span>&quot;</span>)</span><br><span class="line">    time.sleep(delay)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;[<span class="subst">&#123;name&#125;</span>] done&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">threads = [</span><br><span class="line">    Thread(target=thread_worker, args=(<span class="string">&quot;T-1&quot;</span>, <span class="number">0.8</span>), name=<span class="string">&quot;T-1&quot;</span>),</span><br><span class="line">    Thread(target=thread_worker, args=(<span class="string">&quot;T-2&quot;</span>, <span class="number">0.4</span>), name=<span class="string">&quot;T-2&quot;</span>),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> threads:</span><br><span class="line">    t.start()</span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> threads:</span><br><span class="line">    t.join()</span><br></pre></td></tr></table></figure>
+
+<p>这里最值得观察的一点是：</p>
+<ul>
+<li>线程和线程之间没有独立的 PID</li>
+<li>它们共享同一个进程</li>
+<li>所以日志里 <code>pid</code> 一样，但执行顺序会交错</li>
+</ul>
+<h2 id="线程为什么在-Python-里仍然重要"><a href="#线程为什么在-Python-里仍然重要" class="headerlink" title="线程为什么在 Python 里仍然重要"></a>线程为什么在 Python 里仍然重要</h2><p>即便有 GIL，线程依然非常实用。</p>
+<p>原因主要有四个：</p>
+<ul>
+<li>大量传统库就是阻塞式 API</li>
+<li>阻塞 IO 时线程模型非常自然</li>
+<li>改造旧代码成本比全量 async 低得多</li>
+<li>并发量不大时，线程往往是性价比最高的方案</li>
+</ul>
+<p>你完全可以把线程理解成：</p>
+<blockquote>
+<p>Python 里最符合直觉、最兼容现有同步世界、最容易渐进落地的并发模型。</p>
+</blockquote>
+<h2 id="queue-Queue：线程间安全传递任务"><a href="#queue-Queue：线程间安全传递任务" class="headerlink" title="queue.Queue：线程间安全传递任务"></a><code>queue.Queue</code>：线程间安全传递任务</h2><p>你的旧文件里其实没有真正的线程队列示例，只有 <code>multiprocessing.Queue</code>。</p>
+<p>我这次专门补了一个 <code>queue.Queue</code> 版本，方便和 <code>asyncio.Queue</code>、<code>multiprocessing.Queue</code> 对照。</p>
+<p>核心结构是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">work_queue = ThreadQueue()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">producer</span>() -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(total_items):</span><br><span class="line">        work_queue.put(<span class="string">f&quot;thread-job-<span class="subst">&#123;i&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(consumer_count):</span><br><span class="line">        work_queue.put(THREAD_SENTINEL)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">consumer</span>(<span class="params">name: <span class="built_in">str</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        item = work_queue.get()</span><br><span class="line">        <span class="keyword">if</span> item <span class="keyword">is</span> THREAD_SENTINEL:</span><br><span class="line">            work_queue.task_done()</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        work_queue.task_done()</span><br></pre></td></tr></table></figure>
+
+<p>线程 <code>Queue</code> 很重要的两个方法是：</p>
+<ul>
+<li><code>task_done()</code></li>
+<li><code>join()</code></li>
+</ul>
+<p>这里的语义是：</p>
+<ul>
+<li><code>put()</code> 只是“任务入队了”</li>
+<li><code>task_done()</code> 才表示“这个任务真的处理完了”</li>
+<li><code>join()</code> 会等到所有入队任务都被标记完成</li>
+</ul>
+<p>这和 <code>asyncio.Queue</code> 很像，但它们的等待语义不同，后面会详细讲。</p>
+<h2 id="线程同步原语：为什么-Python-的-threading-内容这么多"><a href="#线程同步原语：为什么-Python-的-threading-内容这么多" class="headerlink" title="线程同步原语：为什么 Python 的 threading 内容这么多"></a>线程同步原语：为什么 Python 的 <code>threading</code> 内容这么多</h2><p>因为线程共享内存，所以同步问题一定会跟着来。</p>
+<p>你一旦共享可变状态，就绕不开这些原语：</p>
+<ul>
+<li><code>Lock</code></li>
+<li><code>RLock</code></li>
+<li><code>Condition</code></li>
+<li><code>Event</code></li>
+<li><code>Semaphore</code></li>
+<li><code>BoundedSemaphore</code></li>
+<li><code>Barrier</code></li>
+</ul>
+<p>我在 <code>process-thread.py</code> 里把这些都整理成了可独立运行的小例子。</p>
+<p>下面分别讲一下它们真正解决的问题。</p>
+<h2 id="Lock"><a href="#Lock" class="headerlink" title="Lock"></a><code>Lock</code></h2><p><code>Lock</code> 解决的是最基础的竞争条件。</p>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">counter = &#123;<span class="string">&quot;value&quot;</span>: <span class="number">0</span>&#125;</span><br><span class="line">lock = Lock()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add_many</span>(<span class="params">n: <span class="built_in">int</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        <span class="keyword">with</span> lock:</span><br><span class="line">            counter[<span class="string">&quot;value&quot;</span>] += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>这里的重点不是“加锁会变慢”，而是：</p>
+<p>如果不加锁，<code>counter += 1</code> 并不是逻辑上的原子操作。</p>
+<p>它背后可能包含：</p>
+<ul>
+<li>读取旧值</li>
+<li>计算新值</li>
+<li>写回结果</li>
+</ul>
+<p>多线程交错时就会丢更新。</p>
+<h2 id="RLock"><a href="#RLock" class="headerlink" title="RLock"></a><code>RLock</code></h2><p><code>RLock</code> 是可重入锁。</p>
+<p>它解决的不是普通并发，而是“同一线程重复进入同一把锁”的问题。</p>
+<p>典型场景是：</p>
+<ul>
+<li>外层函数已经持有锁</li>
+<li>内层函数也要持有同一把锁</li>
+</ul>
+<p>普通 <code>Lock</code> 在这种情况下可能自锁死。</p>
+<h2 id="Condition"><a href="#Condition" class="headerlink" title="Condition"></a><code>Condition</code></h2><p><code>Condition</code> 最适合讲“协作”，而不是“互斥”。</p>
+<p>你在脚本里看到的是生产者-消费者：</p>
+<ul>
+<li>缓冲区为空，消费者等待</li>
+<li>生产者放入数据后 <code>notify()</code> 唤醒消费者</li>
+</ul>
+<p>这类问题的本质不是“抢资源”，而是“等某个条件成立”。</p>
+<h2 id="Event"><a href="#Event" class="headerlink" title="Event"></a><code>Event</code></h2><p><code>Event</code> 像一个简单的开关信号。</p>
+<p>脚本里的模式是：</p>
+<ul>
+<li>所有 worker 先 <code>wait()</code></li>
+<li>主线程 <code>set()</code></li>
+<li>所有等待线程一起继续</li>
+</ul>
+<p>这在工程里很常见：</p>
+<ul>
+<li>统一启动</li>
+<li>就绪通知</li>
+<li>停机信号</li>
+</ul>
+<h2 id="Semaphore"><a href="#Semaphore" class="headerlink" title="Semaphore"></a><code>Semaphore</code></h2><p><code>Semaphore</code> 用来限制同时进入临界区的人数。</p>
+<p>它非常适合：</p>
+<ul>
+<li>连接池</li>
+<li>接口限流</li>
+<li>固定槽位资源</li>
+</ul>
+<p>和 <code>Lock</code> 的区别是：</p>
+<ul>
+<li><code>Lock</code> 通常是 1 个名额</li>
+<li><code>Semaphore</code> 可以是 N 个名额</li>
+</ul>
+<h2 id="Barrier"><a href="#Barrier" class="headerlink" title="Barrier"></a><code>Barrier</code></h2><p><code>Barrier</code> 是阶段同步工具。</p>
+<p>几个线程先各自准备，到了某个阶段点，必须等大家都到齐，才能一起进入下一阶段。</p>
+<p>这对分阶段处理任务特别有用。</p>
+<h2 id="线程适合什么场景"><a href="#线程适合什么场景" class="headerlink" title="线程适合什么场景"></a>线程适合什么场景</h2><ul>
+<li>阻塞 IO</li>
+<li>少量到中量并发任务</li>
+<li>需要复用同步库的程序</li>
+<li>网络请求、磁盘 IO、日志、消费队列</li>
+<li>不想把整个系统 async 化的项目</li>
+</ul>
+<h2 id="线程不太适合什么场景"><a href="#线程不太适合什么场景" class="headerlink" title="线程不太适合什么场景"></a>线程不太适合什么场景</h2><ul>
+<li>大量 CPU 密集型纯 Python 计算</li>
+<li>极高数量级的并发连接</li>
+<li>对共享状态错误非常敏感、但团队又不擅长并发同步的场景</li>
+</ul>
+<h2 id="三：协程，Python-里为高并发-IO-标准化出来的模型"><a href="#三：协程，Python-里为高并发-IO-标准化出来的模型" class="headerlink" title="三：协程，Python 里为高并发 IO 标准化出来的模型"></a>三：协程，Python 里为高并发 IO 标准化出来的模型</h2><h2 id="asyncio-到底解决了什么问题"><a href="#asyncio-到底解决了什么问题" class="headerlink" title="asyncio 到底解决了什么问题"></a><code>asyncio</code> 到底解决了什么问题</h2><p>先说最容易说错的一句话。</p>
+<p><code>asyncio</code> 不是为了替代进程和线程。</p>
+<p>它最核心的目标是：</p>
+<blockquote>
+<p>为 Python 提供一套标准化的异步 IO 事件循环模型，让大量“正在等待”的任务不必各占一个线程。</p>
+</blockquote>
+<p>这背后解决的是两个老问题：</p>
+<ul>
+<li>回调地狱</li>
+<li>高并发 IO 下线程模型的资源成本</li>
+</ul>
+<p>在 <code>asyncio</code> 之前，Python 不是不能做异步，而是没有统一标准。</p>
+<p>后来：</p>
+<ul>
+<li>Python 3.4 引入 <code>asyncio</code></li>
+<li>Python 3.5 引入 <code>async</code> &#x2F; <code>await</code></li>
+</ul>
+<p>这两步结合起来，才让 Python 协程真正可读、可维护、可推广。</p>
+<p>所以如果你看到“<code>asyncio</code> 是 3.4 引入的”这句话，它是对的。</p>
+<p>但也别忘了：</p>
+<ul>
+<li>真正让协程代码变得像现代 Python 的，是 3.5 的 <code>async def</code> &#x2F; <code>await</code></li>
+</ul>
+<h2 id="协程到底是什么"><a href="#协程到底是什么" class="headerlink" title="协程到底是什么"></a>协程到底是什么</h2><p>在 Python 里，最核心的几层关系是：</p>
+<ul>
+<li><code>async def</code> 定义协程函数</li>
+<li>调用协程函数，会得到协程对象，但不会立刻执行</li>
+<li>把协程对象交给事件循环，或 <code>await</code> 它，它才会运行</li>
+<li><code>asyncio.create_task()</code> 会把协程包装成事件循环管理的任务</li>
+</ul>
+<p>所以协程不是“神秘线程”，它本质上更像：</p>
+<ul>
+<li>一个可暂停、可恢复的函数</li>
+<li>在约定好的 <code>await</code> 点把控制权交出去</li>
+</ul>
+<h2 id="一个最小例子"><a href="#一个最小例子" class="headerlink" title="一个最小例子"></a>一个最小例子</h2><p><code>2026-review/async-io.py</code> 里最基础的例子是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">basic_coroutine</span>(<span class="params">name: <span class="built_in">str</span>, delay: <span class="built_in">float</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;[<span class="subst">&#123;name&#125;</span>] start&quot;</span>)</span><br><span class="line">    <span class="keyword">await</span> asyncio.sleep(delay)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;[<span class="subst">&#123;name&#125;</span>] done&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;result-<span class="subst">&#123;name&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这段代码最重要的一行是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> asyncio.sleep(delay)</span><br></pre></td></tr></table></figure>
+
+<p>它表达的不是“睡一下”这么简单，而是：</p>
+<ul>
+<li>当前协程先挂起</li>
+<li>把执行权还给事件循环</li>
+<li>事件循环可以去调度别的协程</li>
+<li>时间到了再回来继续执行</li>
+</ul>
+<p>这就是协程“轻量”的根本。</p>
+<p>线程在阻塞等待时，是线程被挂住。</p>
+<p>协程在 <code>await</code> 时，是协程把控制权主动交回事件循环。</p>
+<h2 id="gather：我需要全部结果"><a href="#gather：我需要全部结果" class="headerlink" title="gather：我需要全部结果"></a><code>gather</code>：我需要全部结果</h2><p><code>asyncio.gather()</code> 非常常见：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">results = <span class="keyword">await</span> asyncio.gather(</span><br><span class="line">    basic_coroutine(<span class="string">&quot;G-1&quot;</span>, <span class="number">0.7</span>),</span><br><span class="line">    basic_coroutine(<span class="string">&quot;G-2&quot;</span>, <span class="number">0.3</span>),</span><br><span class="line">    basic_coroutine(<span class="string">&quot;G-3&quot;</span>, <span class="number">0.5</span>),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>它的特点是：</p>
+<ul>
+<li>并发执行多个协程</li>
+<li>等所有任务都结束</li>
+<li>返回值顺序按传入顺序排列</li>
+</ul>
+<p>适合场景是：</p>
+<ul>
+<li>你确实要等所有结果回来再继续下一步</li>
+</ul>
+<h2 id="create-task-as-completed：谁先回来先处理谁"><a href="#create-task-as-completed：谁先回来先处理谁" class="headerlink" title="create_task + as_completed：谁先回来先处理谁"></a><code>create_task</code> + <code>as_completed</code>：谁先回来先处理谁</h2><p>如果你不想等最慢的那个任务，可以用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tasks = [</span><br><span class="line">    asyncio.create_task(basic_coroutine(<span class="string">&quot;C-1&quot;</span>, random.uniform(<span class="number">0.2</span>, <span class="number">0.8</span>))),</span><br><span class="line">    asyncio.create_task(basic_coroutine(<span class="string">&quot;C-2&quot;</span>, random.uniform(<span class="number">0.2</span>, <span class="number">0.8</span>))),</span><br><span class="line">    asyncio.create_task(basic_coroutine(<span class="string">&quot;C-3&quot;</span>, random.uniform(<span class="number">0.2</span>, <span class="number">0.8</span>))),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> done_task <span class="keyword">in</span> asyncio.as_completed(tasks):</span><br><span class="line">    result = <span class="keyword">await</span> done_task</span><br><span class="line">    <span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+<p>这类写法适合：</p>
+<ul>
+<li>搜索多个来源</li>
+<li>调多个接口</li>
+<li>谁先返回谁先处理</li>
+</ul>
+<p>它的价值不在“更炫”，而在于吞吐和响应体验更好。</p>
+<h2 id="wait-for：超时是协程世界的一等公民"><a href="#wait-for：超时是协程世界的一等公民" class="headerlink" title="wait_for：超时是协程世界的一等公民"></a><code>wait_for</code>：超时是协程世界的一等公民</h2><p>在同步代码里，超时控制往往分散在各个库自己的参数里。</p>
+<p>在 <code>asyncio</code> 里，超时控制是事件循环层面的常规能力：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> asyncio.wait_for(basic_coroutine(<span class="string">&quot;TIMEOUT&quot;</span>, <span class="number">1.2</span>), timeout=<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这很重要，因为高并发系统里，最怕的不是任务慢，而是任务永远挂着不收尾。</p>
+<h2 id="asyncio-Queue"><a href="#asyncio-Queue" class="headerlink" title="asyncio.Queue"></a><code>asyncio.Queue</code></h2><p>我在 <code>async-io.py</code> 里保留了一个标准的异步生产者-消费者模型：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">queue: asyncio.Queue[<span class="built_in">str</span>] = asyncio.Queue()</span><br><span class="line">producer = asyncio.create_task(queue_producer(queue, count=<span class="number">6</span>))</span><br><span class="line">consumers = [</span><br><span class="line">    asyncio.create_task(queue_consumer(queue, <span class="string">&quot;worker-A&quot;</span>)),</span><br><span class="line">    asyncio.create_task(queue_consumer(queue, <span class="string">&quot;worker-B&quot;</span>)),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">await</span> producer</span><br><span class="line"><span class="keyword">await</span> queue.join()</span><br></pre></td></tr></table></figure>
+
+<p>这段代码和线程版 <code>queue.Queue</code> 看起来很像，但语义上有一个根本区别：</p>
+<ul>
+<li><code>await queue.get()</code> 挂起的是协程，不是线程</li>
+</ul>
+<p>这就是为什么 <code>asyncio.Queue</code> 能在一个线程里管理大量等待中的任务。</p>
+<h2 id="Semaphore-1"><a href="#Semaphore-1" class="headerlink" title="Semaphore"></a><code>Semaphore</code></h2><p>异步系统非常常见的一种需求是“并发很多，但别一下子全冲出去”。</p>
+<p>比如：</p>
+<ul>
+<li>一次性调 1000 个接口</li>
+<li>但下游服务只允许同时 50 个请求</li>
+</ul>
+<p>所以 <code>asyncio.Semaphore</code> 很常见：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sem = asyncio.Semaphore(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">limited_worker</span>(<span class="params">sem: asyncio.Semaphore, idx: <span class="built_in">int</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> sem:</span><br><span class="line">        <span class="keyword">await</span> asyncio.sleep(<span class="number">0.25</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;ok-<span class="subst">&#123;idx&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这类限流在协程里特别自然，因为调度本来就集中在事件循环里。</p>
+<h2 id="to-thread：协程世界不是纯洁世界"><a href="#to-thread：协程世界不是纯洁世界" class="headerlink" title="to_thread：协程世界不是纯洁世界"></a><code>to_thread</code>：协程世界不是纯洁世界</h2><p>很多人一学协程，就容易走向一个极端：</p>
+<ul>
+<li>认为只要用了 <code>asyncio</code>，以后整个世界都该 async</li>
+</ul>
+<p>现实完全不是这样。</p>
+<p>现实是：</p>
+<ul>
+<li>你会碰到旧库</li>
+<li>你会碰到阻塞 API</li>
+<li>你会碰到无法立刻改造的同步代码</li>
+</ul>
+<p>所以 <code>asyncio.to_thread()</code> 非常重要：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">blocking_io_work</span>(<span class="params">seconds: <span class="built_in">float</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    time.sleep(seconds)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;blocking-done-<span class="subst">&#123;seconds&#125;</span>s&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = <span class="keyword">await</span> asyncio.to_thread(blocking_io_work, <span class="number">0.6</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这段代码表达了一个非常成熟的工程态度：</p>
+<ul>
+<li>协程负责高层调度</li>
+<li>遇到同步阻塞函数，就扔到线程里执行</li>
+</ul>
+<p>这也说明：</p>
+<blockquote>
+<p>Python 并发在真实项目里，常常不是三选一，而是混合使用。</p>
+</blockquote>
+<h2 id="现代协程里还应知道-TaskGroup"><a href="#现代协程里还应知道-TaskGroup" class="headerlink" title="现代协程里还应知道 TaskGroup"></a>现代协程里还应知道 <code>TaskGroup</code></h2><p>如果你用的是 Python 3.11+，那除了 <code>gather()</code>，还应该知道 <code>TaskGroup</code>。</p>
+<p>它属于更现代的“结构化并发”风格：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">with</span> asyncio.TaskGroup() <span class="keyword">as</span> tg:</span><br><span class="line">    tg.create_task(fetch_a())</span><br><span class="line">    tg.create_task(fetch_b())</span><br><span class="line">    tg.create_task(fetch_c())</span><br></pre></td></tr></table></figure>
+
+<p>它的好处是：</p>
+<ul>
+<li>任务生命周期更清晰</li>
+<li>异常传播更规整</li>
+<li>不容易遗留“后台悬空任务”</li>
+</ul>
+<p>本文示例脚本主要用 <code>gather()</code> 和 <code>create_task()</code>，是为了把基础概念讲得更直接。</p>
+<p>但在现代业务代码里，<code>TaskGroup</code> 很值得优先考虑。</p>
+<h2 id="协程适合什么场景"><a href="#协程适合什么场景" class="headerlink" title="协程适合什么场景"></a>协程适合什么场景</h2><ul>
+<li>高并发网络服务</li>
+<li>大量 HTTP 请求聚合</li>
+<li>WebSocket、长连接、网关层</li>
+<li>高并发爬虫</li>
+<li>异步消息系统客户端</li>
+<li>需要大量 timeout、cancel、批量调度控制的 IO 系统</li>
+</ul>
+<h2 id="协程不太适合什么场景"><a href="#协程不太适合什么场景" class="headerlink" title="协程不太适合什么场景"></a>协程不太适合什么场景</h2><ul>
+<li>纯 CPU 密集计算</li>
+<li>团队大量依赖同步阻塞库，且短期内不打算改造</li>
+<li>并发规模其实很小，线程已经足够简单</li>
+</ul>
+<h2 id="四：三个-Queue，到底差在哪儿"><a href="#四：三个-Queue，到底差在哪儿" class="headerlink" title="四：三个 Queue，到底差在哪儿"></a>四：三个 Queue，到底差在哪儿</h2><p>这是最容易“看起来一样，实际上完全不一样”的一组 API。</p>
+<h2 id="一张对比表"><a href="#一张对比表" class="headerlink" title="一张对比表"></a>一张对比表</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>所属模块</th>
+<th>主要服务对象</th>
+<th>等待方式</th>
+<th>是否跨进程</th>
+<th>常见搭档</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>queue.Queue</code></td>
+<td><code>queue</code></td>
+<td>线程</td>
+<td><code>get()</code> 阻塞线程</td>
+<td>否</td>
+<td><code>threading.Thread</code></td>
+</tr>
+<tr>
+<td><code>multiprocessing.Queue</code></td>
+<td><code>multiprocessing</code></td>
+<td>进程</td>
+<td><code>get()</code> 阻塞进程</td>
+<td>是</td>
+<td><code>Process</code> &#x2F; <code>Pool</code></td>
+</tr>
+<tr>
+<td><code>asyncio.Queue</code></td>
+<td><code>asyncio</code></td>
+<td>协程</td>
+<td><code>await get()</code> 挂起协程</td>
+<td>否</td>
+<td><code>Task</code> &#x2F; 事件循环</td>
+</tr>
+</tbody></table>
+<h2 id="最关键的区别：谁在等"><a href="#最关键的区别：谁在等" class="headerlink" title="最关键的区别：谁在等"></a>最关键的区别：谁在等</h2><p>你可以把这三个 Queue 的区别压缩成一句话：</p>
+<blockquote>
+<p>它们最本质的差异，不是名字，不是方法名，而是“谁在等待”。</p>
+</blockquote>
+<p>具体来说：</p>
+<ul>
+<li><code>queue.Queue.get()</code> 时，等待的是线程</li>
+<li><code>multiprocessing.Queue.get()</code> 时，等待的是进程</li>
+<li><code>await asyncio.Queue.get()</code> 时，等待的是协程</li>
+</ul>
+<p>这个区别会直接影响：</p>
+<ul>
+<li>系统资源消耗</li>
+<li>调度方式</li>
+<li>与其它代码的兼容性</li>
+</ul>
+<h2 id="queue-Queue"><a href="#queue-Queue" class="headerlink" title="queue.Queue"></a><code>queue.Queue</code></h2><p>线程版 Queue 的特征是：</p>
+<ul>
+<li>共享内存模型</li>
+<li>自带线程安全</li>
+<li>典型配合 <code>task_done()</code> 和 <code>join()</code></li>
+</ul>
+<p>它适合的心智模型是：</p>
+<ul>
+<li>一个进程里有多个线程</li>
+<li>大家共享对象</li>
+<li>队列只负责安全传递任务</li>
+</ul>
+<h2 id="multiprocessing-Queue-1"><a href="#multiprocessing-Queue-1" class="headerlink" title="multiprocessing.Queue"></a><code>multiprocessing.Queue</code></h2><p>进程版 Queue 的特征是：</p>
+<ul>
+<li>跨进程通信</li>
+<li>底层涉及 IPC</li>
+<li>传输对象通常要 pickle</li>
+</ul>
+<p>它适合的心智模型是：</p>
+<ul>
+<li>多个独立进程之间不能直接共享普通对象</li>
+<li>所以要用队列作为消息通道</li>
+</ul>
+<h2 id="asyncio-Queue-1"><a href="#asyncio-Queue-1" class="headerlink" title="asyncio.Queue"></a><code>asyncio.Queue</code></h2><p>协程版 Queue 的特征是：</p>
+<ul>
+<li>不跨进程</li>
+<li>通常也不跨线程</li>
+<li>只服务于同一事件循环里的协程任务</li>
+</ul>
+<p>它最大的意义不是“多一个队列类”，而是：</p>
+<ul>
+<li>它把等待语义变成了 <code>await</code></li>
+<li>从而让一个线程里可以管理大量等待中的消费者和生产者</li>
+</ul>
+<h2 id="五：进程、线程、协程的具体差异，按-12-个维度拆开讲"><a href="#五：进程、线程、协程的具体差异，按-12-个维度拆开讲" class="headerlink" title="五：进程、线程、协程的具体差异，按 12 个维度拆开讲"></a>五：进程、线程、协程的具体差异，按 12 个维度拆开讲</h2><p>这部分是整篇文章最核心的比较。</p>
+<h2 id="1-调度权在谁手里"><a href="#1-调度权在谁手里" class="headerlink" title="1. 调度权在谁手里"></a>1. 调度权在谁手里</h2><ul>
+<li>进程：操作系统调度</li>
+<li>线程：操作系统调度</li>
+<li>协程：事件循环调度</li>
+</ul>
+<p>这意味着：</p>
+<ul>
+<li>进程和线程更“抢占式”</li>
+<li>协程更“协作式”</li>
+</ul>
+<p>协程只有在 <code>await</code> 等切换点才会让出执行权。</p>
+<h2 id="2-是否天然支持多核并行"><a href="#2-是否天然支持多核并行" class="headerlink" title="2. 是否天然支持多核并行"></a>2. 是否天然支持多核并行</h2><ul>
+<li>进程：支持</li>
+<li>线程：在 CPython 纯 Python CPU 代码里受 GIL 影响</li>
+<li>协程：单独不支持</li>
+</ul>
+<p>这点非常重要。</p>
+<p>协程能提高并发，但协程本身不等于多核并行。</p>
+<h2 id="3-内存模型"><a href="#3-内存模型" class="headerlink" title="3. 内存模型"></a>3. 内存模型</h2><ul>
+<li>进程：隔离内存</li>
+<li>线程：共享内存</li>
+<li>协程：通常共享同一线程中的对象</li>
+</ul>
+<p>这带来的直接后果是：</p>
+<ul>
+<li>进程最不容易出现“意外共享”</li>
+<li>线程最容易出现共享状态问题</li>
+<li>协程虽然通常单线程，但在 <code>await</code> 边界上仍可能发生逻辑层面的状态交错</li>
+</ul>
+<h2 id="4-通信方式"><a href="#4-通信方式" class="headerlink" title="4. 通信方式"></a>4. 通信方式</h2><ul>
+<li>进程：Queue、Pipe、Value、Manager、socket、共享内存</li>
+<li>线程：共享对象、锁、条件变量、线程队列</li>
+<li>协程：<code>await</code>、<code>Task</code>、<code>asyncio.Queue</code>、事件循环状态机</li>
+</ul>
+<p>进程通信最重，但边界最清晰。</p>
+<p>线程通信最直接，但最容易出并发 bug。</p>
+<p>协程通信在同一个事件循环里最轻，但只能在 async 生态内自然工作。</p>
+<h2 id="5-创建与切换成本"><a href="#5-创建与切换成本" class="headerlink" title="5. 创建与切换成本"></a>5. 创建与切换成本</h2><ul>
+<li>进程最高</li>
+<li>线程次之</li>
+<li>协程最低</li>
+</ul>
+<p>但“协程最低”不是平白得来的。</p>
+<p>它的代价是：</p>
+<ul>
+<li>你必须接受 async 编程范式</li>
+<li>你必须保证协程里别乱写阻塞调用</li>
+<li>你必须让下游库也支持 async 或做桥接</li>
+</ul>
+<h2 id="6-错误隔离"><a href="#6-错误隔离" class="headerlink" title="6. 错误隔离"></a>6. 错误隔离</h2><ul>
+<li>进程最好</li>
+<li>线程一般</li>
+<li>协程取决于任务组织方式</li>
+</ul>
+<p>为什么说进程最好？</p>
+<p>因为进程天生隔离。</p>
+<p>线程和协程都在同一个进程里，错误处理更依赖代码组织和资源清理策略。</p>
+<h2 id="7-取消和停止能力"><a href="#7-取消和停止能力" class="headerlink" title="7. 取消和停止能力"></a>7. 取消和停止能力</h2><p>这是很多文章容易漏讲的点。</p>
+<ul>
+<li>进程：可以 <code>terminate()</code>，但代价大，清理不一定优雅</li>
+<li>线程：Python 没有官方安全的“强杀线程”方式，通常只能协作退出</li>
+<li>协程：原生支持 <code>cancel()</code>，但要正确处理 <code>CancelledError</code></li>
+</ul>
+<p>这其实是协程很大的一个工程优势。</p>
+<p>因为在高并发 IO 系统里，超时和取消是高频需求。</p>
+<h2 id="8-超时控制能力"><a href="#8-超时控制能力" class="headerlink" title="8. 超时控制能力"></a>8. 超时控制能力</h2><ul>
+<li>进程：更多靠 API 层的 timeout、join(timeout)</li>
+<li>线程：类似，更多是外围控制</li>
+<li>协程：<code>asyncio.wait_for()</code> 等一等公民 API 更自然</li>
+</ul>
+<p>这也是为什么协程很适合网关、聚合服务、爬虫。</p>
+<h2 id="9-对阻塞旧库的兼容性"><a href="#9-对阻塞旧库的兼容性" class="headerlink" title="9. 对阻塞旧库的兼容性"></a>9. 对阻塞旧库的兼容性</h2><ul>
+<li>进程：很好</li>
+<li>线程：很好</li>
+<li>协程：不好，除非桥接</li>
+</ul>
+<p>协程最大的问题之一，就是它对生态要求更高。</p>
+<p>如果你系统里到处都是阻塞库，那线程往往是更现实的方案。</p>
+<h2 id="10-调试复杂度"><a href="#10-调试复杂度" class="headerlink" title="10. 调试复杂度"></a>10. 调试复杂度</h2><ul>
+<li>进程：跨进程调试、日志收集、IPC 排查较复杂</li>
+<li>线程：竞态、死锁、共享状态问题最难查</li>
+<li>协程：单线程竞争少一些，但容易有“忘记 await”“阻塞事件循环”“悬空任务”之类问题</li>
+</ul>
+<p>没有哪一种是天然简单，只是哪种坑你更熟。</p>
+<h2 id="11-工程可读性"><a href="#11-工程可读性" class="headerlink" title="11. 工程可读性"></a>11. 工程可读性</h2><ul>
+<li>进程：边界明确，数据流相对清晰，但工程胶水较多</li>
+<li>线程：直觉上容易懂，但锁一多就变复杂</li>
+<li>协程：基础概念多，但一旦系统是 IO 主导，整体结构可以非常整洁</li>
+</ul>
+<p>所以“协程代码看着绕”这个感受并不假。</p>
+<p>只是当 IO 并发规模很大时，线程代码往往会更乱。</p>
+<h2 id="12-最适合的问题类型"><a href="#12-最适合的问题类型" class="headerlink" title="12. 最适合的问题类型"></a>12. 最适合的问题类型</h2><ul>
+<li>进程：CPU 密集、并行计算、隔离 worker</li>
+<li>线程：阻塞 IO、同步库、少量到中量并发</li>
+<li>协程：高并发 IO、超时取消控制、事件驱动系统</li>
+</ul>
+<h2 id="六：concurrent-futures-在-Python-并发版图里的位置"><a href="#六：concurrent-futures-在-Python-并发版图里的位置" class="headerlink" title="六：concurrent.futures 在 Python 并发版图里的位置"></a>六：<code>concurrent.futures</code> 在 Python 并发版图里的位置</h2><p>很多教程把 <code>threading</code>、<code>multiprocessing</code>、<code>asyncio</code> 分开讲，但真实项目里还有一块经常出现的拼图：</p>
+<ul>
+<li><code>concurrent.futures</code></li>
+</ul>
+<p>它的价值在于：</p>
+<ul>
+<li>提供统一的 Future 抽象</li>
+<li>把线程池和进程池包装成更现代的接口</li>
+</ul>
+<p>最常见的是：</p>
+<ul>
+<li><code>ThreadPoolExecutor</code></li>
+<li><code>ProcessPoolExecutor</code></li>
+</ul>
+<h2 id="为什么它很重要"><a href="#为什么它很重要" class="headerlink" title="为什么它很重要"></a>为什么它很重要</h2><p>因为很多时候你并不需要直接操作：</p>
+<ul>
+<li><code>Thread</code></li>
+<li><code>Process</code></li>
+<li><code>Pool</code></li>
+</ul>
+<p>你真正需要的是：</p>
+<ul>
+<li>提交一批任务</li>
+<li>拿回 Future</li>
+<li>等结果</li>
+<li>统一处理异常</li>
+</ul>
+<p>示意代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor, ProcessPoolExecutor</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> ThreadPoolExecutor(max_workers=<span class="number">8</span>) <span class="keyword">as</span> pool:</span><br><span class="line">    futures = [pool.submit(io_task, item) <span class="keyword">for</span> item <span class="keyword">in</span> items]</span><br><span class="line">    <span class="keyword">for</span> future <span class="keyword">in</span> futures:</span><br><span class="line">        <span class="built_in">print</span>(future.result())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> ProcessPoolExecutor(max_workers=<span class="number">4</span>) <span class="keyword">as</span> pool:</span><br><span class="line">    futures = [pool.submit(cpu_task, item) <span class="keyword">for</span> item <span class="keyword">in</span> items]</span><br><span class="line">    <span class="keyword">for</span> future <span class="keyword">in</span> futures:</span><br><span class="line">        <span class="built_in">print</span>(future.result())</span><br></pre></td></tr></table></figure>
+
+<p>这套接口的好处是：</p>
+<ul>
+<li>更统一</li>
+<li>更适合任务提交式编程</li>
+<li>容易和上层框架整合</li>
+</ul>
+<h2 id="它和-asyncio-的关系"><a href="#它和-asyncio-的关系" class="headerlink" title="它和 asyncio 的关系"></a>它和 <code>asyncio</code> 的关系</h2><p><code>asyncio</code> 不是孤岛，它可以把阻塞代码外包给线程池或进程池。</p>
+<p>最常见的桥接方式有两种：</p>
+<ul>
+<li><code>asyncio.to_thread()</code></li>
+<li><code>loop.run_in_executor(...)</code></li>
+</ul>
+<p>这说明什么？</p>
+<p>说明 Python 的真实并发实践，经常是：</p>
+<ul>
+<li><code>asyncio</code> 负责调度 IO</li>
+<li><code>ThreadPoolExecutor</code> 处理阻塞 IO 旧库</li>
+<li><code>ProcessPoolExecutor</code> 处理 CPU 重活</li>
+</ul>
+<p>这不是妥协，这是成熟。</p>
+<h2 id="七：Python-并发的发展脉络"><a href="#七：Python-并发的发展脉络" class="headerlink" title="七：Python 并发的发展脉络"></a>七：Python 并发的发展脉络</h2><p>如果不看历史，很容易以为这三套东西是互相竞争的。</p>
+<p>其实它们更像是 Python 在不同阶段补不同短板的结果。</p>
+<h2 id="1-早期：线程是最直接的并发手段"><a href="#1-早期：线程是最直接的并发手段" class="headerlink" title="1. 早期：线程是最直接的并发手段"></a>1. 早期：线程是最直接的并发手段</h2><p>Python 很早就有线程能力。</p>
+<p>因为：</p>
+<ul>
+<li>操作系统有线程</li>
+<li>程序员也天然容易理解“开几个线程同时干活”</li>
+</ul>
+<p>这阶段的问题是：</p>
+<ul>
+<li>CPU 场景受 GIL 影响</li>
+<li>共享状态同步复杂</li>
+</ul>
+<h2 id="2-multiprocessing：给-CPU-并行和隔离一个官方答案"><a href="#2-multiprocessing：给-CPU-并行和隔离一个官方答案" class="headerlink" title="2. multiprocessing：给 CPU 并行和隔离一个官方答案"></a>2. <code>multiprocessing</code>：给 CPU 并行和隔离一个官方答案</h2><p>后来 Python 标准库提供了 <code>multiprocessing</code>。</p>
+<p>这基本是在回答一个现实问题：</p>
+<ul>
+<li>既然线程在 CPython 下不适合纯 Python CPU 并行</li>
+<li>那就把任务拆去多个进程里跑</li>
+</ul>
+<p>于是 Python 有了官方的多进程模型。</p>
+<h2 id="3-concurrent-futures：统一线程池和进程池抽象"><a href="#3-concurrent-futures：统一线程池和进程池抽象" class="headerlink" title="3. concurrent.futures：统一线程池和进程池抽象"></a>3. <code>concurrent.futures</code>：统一线程池和进程池抽象</h2><p>再往后，标准库继续往“更统一、更现代的抽象”走，于是有了 <code>Future</code> 和 executor。</p>
+<p>这一步非常工程化。</p>
+<p>它不是发明新并发模型，而是把现有模型用得更顺手。</p>
+<h2 id="4-asyncio：标准化异步-IO"><a href="#4-asyncio：标准化异步-IO" class="headerlink" title="4. asyncio：标准化异步 IO"></a>4. <code>asyncio</code>：标准化异步 IO</h2><p>Python 3.4 引入 <code>asyncio</code>，这是异步 IO 在标准库层面的里程碑。</p>
+<p>它统一了：</p>
+<ul>
+<li>事件循环</li>
+<li>Future</li>
+<li>Task</li>
+<li>网络 IO 抽象</li>
+</ul>
+<p>但 3.4 时期的协程写法还是基于：</p>
+<ul>
+<li><code>yield from</code></li>
+<li><code>@asyncio.coroutine</code></li>
+</ul>
+<p>这在工程可读性上不够理想。</p>
+<h2 id="5-async-await：协程真正变成人能长期维护的代码"><a href="#5-async-await：协程真正变成人能长期维护的代码" class="headerlink" title="5. async &#x2F; await：协程真正变成人能长期维护的代码"></a>5. <code>async</code> &#x2F; <code>await</code>：协程真正变成人能长期维护的代码</h2><p>Python 3.5 引入：</p>
+<ul>
+<li><code>async def</code></li>
+<li><code>await</code></li>
+</ul>
+<p>这一步的重要性非常大。</p>
+<p>因为从这一步开始，Python 协程不再只是“能写”，而是“可以作为主流工程风格推广”。</p>
+<h2 id="6-3-7-之后：asyncio-run-让入口更清晰"><a href="#6-3-7-之后：asyncio-run-让入口更清晰" class="headerlink" title="6. 3.7 之后：asyncio.run() 让入口更清晰"></a>6. 3.7 之后：<code>asyncio.run()</code> 让入口更清晰</h2><p>随着版本发展，<code>asyncio</code> 的入口和常用 API 也在逐步变得更清晰。</p>
+<p>例如：</p>
+<ul>
+<li><code>asyncio.run()</code></li>
+<li>更稳定的 task 管理习惯</li>
+</ul>
+<h2 id="7-3-9：to-thread-让协程和阻塞世界更好相处"><a href="#7-3-9：to-thread-让协程和阻塞世界更好相处" class="headerlink" title="7. 3.9：to_thread() 让协程和阻塞世界更好相处"></a>7. 3.9：<code>to_thread()</code> 让协程和阻塞世界更好相处</h2><p>这一步很务实。</p>
+<p>它等于官方承认了一件事：</p>
+<ul>
+<li>async 世界不可能完全脱离同步阻塞库</li>
+</ul>
+<p>所以干脆给出简单好用的桥接能力。</p>
+<h2 id="8-3-11：TaskGroup-和结构化并发"><a href="#8-3-11：TaskGroup-和结构化并发" class="headerlink" title="8. 3.11：TaskGroup 和结构化并发"></a>8. 3.11：<code>TaskGroup</code> 和结构化并发</h2><p>Python 3.11 引入 <code>TaskGroup</code>、<code>ExceptionGroup</code> 等能力。</p>
+<p>这代表协程生态在往更强工程可维护性上继续走。</p>
+<h2 id="9-3-13-及以后：free-threaded-是方向，但不会让其它模型消失"><a href="#9-3-13-及以后：free-threaded-是方向，但不会让其它模型消失" class="headerlink" title="9. 3.13 及以后：free-threaded 是方向，但不会让其它模型消失"></a>9. 3.13 及以后：free-threaded 是方向，但不会让其它模型消失</h2><p>Python 3.13 开始，官方在推进 free-threaded CPython 的方向，但它目前仍不是默认主流形态，生态也还在适配中。</p>
+<p>即使未来这条路成熟，也不代表：</p>
+<ul>
+<li>进程会消失</li>
+<li>协程会失去意义</li>
+</ul>
+<p>因为：</p>
+<ul>
+<li>进程解决的不只是 GIL，还有隔离和故障边界</li>
+<li>协程解决的不只是“线程不够强”，还有海量 IO 等待下的调度成本和超时取消管理</li>
+</ul>
+<h2 id="八：常见误区"><a href="#八：常见误区" class="headerlink" title="八：常见误区"></a>八：常见误区</h2><h2 id="误区一：有-GIL，所以线程没用"><a href="#误区一：有-GIL，所以线程没用" class="headerlink" title="误区一：有 GIL，所以线程没用"></a>误区一：有 GIL，所以线程没用</h2><p>不对。</p>
+<p>更准确的说法是：</p>
+<ul>
+<li>线程在 CPython 的纯 Python CPU 场景下不适合做重并行计算</li>
+<li>但在线程等待 IO 时，它依然非常有用</li>
+</ul>
+<h2 id="误区二：协程更先进，所以以后都该用协程"><a href="#误区二：协程更先进，所以以后都该用协程" class="headerlink" title="误区二：协程更先进，所以以后都该用协程"></a>误区二：协程更先进，所以以后都该用协程</h2><p>不对。</p>
+<p>协程不是“更先进”，只是“在高并发 IO 场景更合适”。</p>
+<p>如果你的项目：</p>
+<ul>
+<li>并发不大</li>
+<li>大量同步库</li>
+<li>团队对 async 不熟</li>
+</ul>
+<p>那线程很可能更合理。</p>
+<h2 id="误区三：进程最清晰，所以能用进程就都用进程"><a href="#误区三：进程最清晰，所以能用进程就都用进程" class="headerlink" title="误区三：进程最清晰，所以能用进程就都用进程"></a>误区三：进程最清晰，所以能用进程就都用进程</h2><p>也不对。</p>
+<p>进程边界确实清晰，但代价也很真实：</p>
+<ul>
+<li>启动成本</li>
+<li>内存成本</li>
+<li>序列化成本</li>
+<li>IPC 复杂度</li>
+</ul>
+<p>这在大量小任务里很可能不划算。</p>
+<h2 id="误区四：协程没有锁，所以不会有并发问题"><a href="#误区四：协程没有锁，所以不会有并发问题" class="headerlink" title="误区四：协程没有锁，所以不会有并发问题"></a>误区四：协程没有锁，所以不会有并发问题</h2><p>不对。</p>
+<p>协程减少了操作系统线程层面的抢占式竞争，但不代表不会有逻辑竞态。</p>
+<p>如果你在两个 <code>await</code> 之间读写共享状态，仍然可能出现时序问题。</p>
+<h2 id="误区五：三个-Queue-都差不多"><a href="#误区五：三个-Queue-都差不多" class="headerlink" title="误区五：三个 Queue 都差不多"></a>误区五：三个 Queue 都差不多</h2><p>不对。</p>
+<p>名字像，不代表模型像。</p>
+<p>真正的关键是：</p>
+<ul>
+<li>它服务谁</li>
+<li>它让谁等待</li>
+<li>它能不能跨进程</li>
+</ul>
+<h2 id="九：真实工程里怎么选"><a href="#九：真实工程里怎么选" class="headerlink" title="九：真实工程里怎么选"></a>九：真实工程里怎么选</h2><p>这部分给一个非常务实的决策流程。</p>
+<h2 id="如果你的任务是-CPU-密集型"><a href="#如果你的任务是-CPU-密集型" class="headerlink" title="如果你的任务是 CPU 密集型"></a>如果你的任务是 CPU 密集型</h2><p>优先考虑：</p>
+<ul>
+<li><code>multiprocessing</code></li>
+<li><code>ProcessPoolExecutor</code></li>
+</ul>
+<p>比如：</p>
+<ul>
+<li>图像处理</li>
+<li>编码转码</li>
+<li>批量计算</li>
+<li>可并行的数据处理</li>
+</ul>
+<h2 id="如果你的任务是阻塞-IO，而且并发量不大到中等"><a href="#如果你的任务是阻塞-IO，而且并发量不大到中等" class="headerlink" title="如果你的任务是阻塞 IO，而且并发量不大到中等"></a>如果你的任务是阻塞 IO，而且并发量不大到中等</h2><p>优先考虑：</p>
+<ul>
+<li><code>threading</code></li>
+<li><code>ThreadPoolExecutor</code></li>
+</ul>
+<p>比如：</p>
+<ul>
+<li>同时读写文件</li>
+<li>调多个阻塞 HTTP 接口</li>
+<li>调数据库驱动</li>
+<li>跑一些同步库包装的任务</li>
+</ul>
+<h2 id="如果你的任务是高并发-IO"><a href="#如果你的任务是高并发-IO" class="headerlink" title="如果你的任务是高并发 IO"></a>如果你的任务是高并发 IO</h2><p>优先考虑：</p>
+<ul>
+<li><code>asyncio</code></li>
+</ul>
+<p>比如：</p>
+<ul>
+<li>API 网关</li>
+<li>高并发爬虫</li>
+<li>WebSocket 服务</li>
+<li>大量短连接或长连接管理</li>
+</ul>
+<h2 id="如果你的系统是混合场景"><a href="#如果你的系统是混合场景" class="headerlink" title="如果你的系统是混合场景"></a>如果你的系统是混合场景</h2><p>最常见、也最成熟的组合往往是：</p>
+<ul>
+<li><code>asyncio</code> 负责整体调度</li>
+<li><code>to_thread()</code> 或线程池负责阻塞 IO</li>
+<li>进程池负责 CPU 重活</li>
+</ul>
+<p>这类系统不是“不纯”，而是最接近现实。</p>
+<h2 id="一个简单的选型口诀"><a href="#一个简单的选型口诀" class="headerlink" title="一个简单的选型口诀"></a>一个简单的选型口诀</h2><p>可以把选型先粗暴记成：</p>
+<ul>
+<li>要多核算力，用进程</li>
+<li>要兼容同步阻塞世界，用线程</li>
+<li>要高并发网络 IO，用协程</li>
+</ul>
+<p>如果还拿不准，再看两件事：</p>
+<ul>
+<li>任务到底是在算，还是在等</li>
+<li>你的依赖库到底是同步世界，还是 async 世界</li>
+</ul>
+<h2 id="十：为什么协程不是“强行造概念”"><a href="#十：为什么协程不是“强行造概念”" class="headerlink" title="十：为什么协程不是“强行造概念”"></a>十：为什么协程不是“强行造概念”</h2><p>我最后专门回答一个很常见、也很合理的质疑：</p>
+<p>既然线程已经能并发，为什么还要专门造协程？</p>
+<p>答案不是“因为协程更高级”，而是：</p>
+<p>线程模型在海量 IO 等待场景下，成本真的会变高。</p>
+<p>具体表现是：</p>
+<ul>
+<li>每个线程都要系统级调度</li>
+<li>每个线程都有栈和上下文成本</li>
+<li>大量线程下调度和内存占用都会明显上去</li>
+<li>锁、上下文切换、线程管理复杂度也会增加</li>
+</ul>
+<p>而协程说白了就是：</p>
+<ul>
+<li>这些任务大多数时间都在等</li>
+<li>既然都在等，不如别给每个等待都配一个线程</li>
+<li>用一个事件循环管理它们，在 <code>await</code> 点协作切换</li>
+</ul>
+<p>所以协程不是“发明一个更酷的线程”。</p>
+<p>协程是：</p>
+<ul>
+<li>承认高并发 IO 的主矛盾是等待</li>
+<li>然后专门为“等待型任务”设计了一种更省资源的调度方式</li>
+</ul>
+<p>但它当然也付出了自己的代价。</p>
+<p>所以更公平的说法应该是：</p>
+<blockquote>
+<p>协程不是想把所有便宜都占了，而是把操作系统层的成本，换成了编程模型层的成本。</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>把整篇文章压缩成最后几句话，就是：</p>
+<ul>
+<li>进程、线程、协程不是替代关系，而是分工关系</li>
+<li>进程解决多核并行和隔离</li>
+<li>线程解决共享内存下的阻塞并发与同步库兼容</li>
+<li>协程解决高并发 IO 下的资源占用和调度成本</li>
+<li>GIL 让 Python 线程的定位更偏向 IO，而不是纯 Python CPU 并行</li>
+<li><code>asyncio</code> 的意义不是“比线程更先进”，而是“为异步 IO 提供标准化模型”</li>
+<li>真实工程往往不是三选一，而是组合使用</li>
+</ul>
+<p>如果你看完这篇文章，只留下一个最重要的判断标准，那应该是：</p>
+<blockquote>
+<p>不要问哪种模型更高级，要问你的任务到底是在“算”，还是在“等”。</p>
+</blockquote>
+<p>算得多，想用多核，优先看进程。</p>
+<p>等得多，但库是同步的，优先看线程。</p>
+<p>等得多，而且并发量非常大，优先看协程。</p>
+<p>这才是 Python 并发真正值得掌握的主线。</p>
+</article>
+<div class="article-footer">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    
+
+
+    <section id="share">
+      <div class="header"><span>分享文章</span></div>
+      <div class="body">
+        <div class="link"><input class="copy-area" readonly="true" id="copy-link" value="https://minniexcode.github.io/memoirs/20260411/learning/python-concurrency/" /></div>
+        <div class="social-wrap dis-select"><a class="social share-item wechat" onclick="util.toggle(&quot;qrcode-wechat&quot;)"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/b32ef3da1162a.svg" /></a><a class="social share-item weibo" target="_blank" rel="external nofollow noopener noreferrer" href="https://service.weibo.com/share/share.php?url=https://minniexcode.github.io/memoirs/20260411/learning/python-concurrency/&title=Python 并发：进程、线程、协程，从语言机制到工程选型 - ash&summary=这篇文章想解决一个很实际的问题：
+很多人学 Python 并发时，会看到三套东西一起出现：multiprocessing、threading、asyncio。
+然后马上就会产生几个非常真实的疑问：
+
+既然有进程和线程，为什么还要协程？..."><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/80c07e4dbb303.svg" /></a><a class="social share-item email" href="mailto:?subject=Python 并发：进程、线程、协程，从语言机制到工程选型 - ash&amp;body=https://minniexcode.github.io/memoirs/20260411/learning/python-concurrency/"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/a1b00e20f425d.svg" /></a><a class="social share-item link" onclick="util.copy(&quot;copy-link&quot;, &quot;复制成功&quot;)"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/8411ed322ced6.svg" /></a></div>
+        
+        <div class="qrcode" id="qrcode-wechat" style="opacity:0;height:0">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=https://minniexcode.github.io/memoirs/20260411/learning/python-concurrency/"/>
+        </div>
+        
+      </div>
+    </section>
+    </div>
+
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">较早文章</div><a href="/memoirs/20260325/learning/ruankao-network-engineer-study-guide/">软考网络工程师备考全攻略：8 周计划、速记表与端口协议清单</a></div></section></div>
+
+
+
+
+  <div class="related-wrap md-text" id="comments">
+    <section class='header cmt-title cap theme'>
+      <p>来都来了，聊两句吧</p>
+
+    </section>
+    <section class='body cmt-body beaudar'>
+      
+
+<svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg>
+
+<div id="beaudar" repo="minniexcode/blog-comments" issue-term="pathname" theme="preferred-color-scheme" label="comments" input-position="top" comment-order="desc" loading="false" branch="main"></div>
+
+    </section>
+  </div>
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">ash66</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar 1.33.1</a> 主题创建。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right"><div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E7%BB%99%E7%BB%93%E8%AE%BA"><span class="toc-text">先给结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%BC%A0%E6%80%BB%E8%A7%88%E8%A1%A8"><span class="toc-text">一张总览表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E-Python-%E8%AF%AD%E8%A8%80%E6%9C%AC%E8%BA%AB%E5%85%88%E7%9C%8B%E4%B8%A4%E4%B8%AA%E4%BA%8B%E5%AE%9E"><span class="toc-text">从 Python 语言本身先看两个事实</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%AE%9E%E4%B8%80%EF%BC%9A%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8F%AA%E8%AE%A4%E8%AF%86%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B%EF%BC%8C%E4%B8%8D%E8%AE%A4%E8%AF%86%E5%8D%8F%E7%A8%8B"><span class="toc-text">事实一：操作系统只认识进程和线程，不认识协程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%AE%9E%E4%BA%8C%EF%BC%9ACPython-%E6%9C%89-GIL"><span class="toc-text">事实二：CPython 有 GIL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B2%A1%E6%9C%89%E5%85%8D%E8%B4%B9%E5%8D%88%E9%A4%90%EF%BC%9A%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%90%84%E8%87%AA%E6%8A%8A%E4%BB%A3%E4%BB%B7%E6%94%BE%E5%9C%A8%E5%93%AA%E5%84%BF"><span class="toc-text">没有免费午餐：三种模型各自把代价放在哪儿</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%EF%BC%9A%E8%BF%9B%E7%A8%8B%EF%BC%8CPython-%E9%87%8C%E6%9C%80%E6%8E%A5%E8%BF%91%E2%80%9C%E7%9C%9F%E5%B9%B6%E8%A1%8C%E2%80%9D%E7%9A%84%E6%96%B9%E6%A1%88"><span class="toc-text">一：进程，Python 里最接近“真并行”的方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">进程是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-multiprocessing"><span class="toc-text">Python 为什么需要 multiprocessing</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Process-%E7%9A%84%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95"><span class="toc-text">Process 的基础用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pool%EF%BC%9A%E7%9C%9F%E6%AD%A3%E5%B8%B8%E7%94%A8%E7%9A%84%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%85%A5%E5%8F%A3"><span class="toc-text">Pool：真正常用的多进程入口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1%E4%B8%BA%E4%BB%80%E4%B9%88%E6%80%BB%E6%98%AF%E6%98%BE%E5%BE%97%E2%80%9C%E9%BA%BB%E7%83%A6%E2%80%9D"><span class="toc-text">进程通信为什么总是显得“麻烦”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#multiprocessing-Queue"><span class="toc-text">multiprocessing.Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pipe"><span class="toc-text">Pipe</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Value%EF%BC%9A%E8%BF%9B%E7%A8%8B%E4%B9%9F%E8%83%BD%E5%85%B1%E4%BA%AB%E7%8A%B6%E6%80%81%EF%BC%8C%E4%BD%86%E8%A6%81%E6%98%BE%E5%BC%8F%E8%AF%B4%E6%98%8E"><span class="toc-text">Value：进程也能共享状态，但要显式说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E9%80%82%E5%90%88%E4%BB%80%E4%B9%88%E5%9C%BA%E6%99%AF"><span class="toc-text">进程适合什么场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%8D%E5%A4%AA%E9%80%82%E5%90%88%E4%BB%80%E4%B9%88%E5%9C%BA%E6%99%AF"><span class="toc-text">进程不太适合什么场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%EF%BC%9A%E7%BA%BF%E7%A8%8B%EF%BC%8CPython-%E9%87%8C%E6%9C%80%E5%AE%B9%E6%98%93%E8%90%BD%E5%9C%B0%E7%9A%84%E5%B9%B6%E5%8F%91%E6%96%B9%E6%A1%88"><span class="toc-text">二：线程，Python 里最容易落地的并发方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">线程是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thread-%E7%9A%84%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95"><span class="toc-text">Thread 的基础用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E5%9C%A8-Python-%E9%87%8C%E4%BB%8D%E7%84%B6%E9%87%8D%E8%A6%81"><span class="toc-text">线程为什么在 Python 里仍然重要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#queue-Queue%EF%BC%9A%E7%BA%BF%E7%A8%8B%E9%97%B4%E5%AE%89%E5%85%A8%E4%BC%A0%E9%80%92%E4%BB%BB%E5%8A%A1"><span class="toc-text">queue.Queue：线程间安全传递任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88-Python-%E7%9A%84-threading-%E5%86%85%E5%AE%B9%E8%BF%99%E4%B9%88%E5%A4%9A"><span class="toc-text">线程同步原语：为什么 Python 的 threading 内容这么多</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lock"><span class="toc-text">Lock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RLock"><span class="toc-text">RLock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Condition"><span class="toc-text">Condition</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Event"><span class="toc-text">Event</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Semaphore"><span class="toc-text">Semaphore</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Barrier"><span class="toc-text">Barrier</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E9%80%82%E5%90%88%E4%BB%80%E4%B9%88%E5%9C%BA%E6%99%AF"><span class="toc-text">线程适合什么场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E4%B8%8D%E5%A4%AA%E9%80%82%E5%90%88%E4%BB%80%E4%B9%88%E5%9C%BA%E6%99%AF"><span class="toc-text">线程不太适合什么场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%EF%BC%9A%E5%8D%8F%E7%A8%8B%EF%BC%8CPython-%E9%87%8C%E4%B8%BA%E9%AB%98%E5%B9%B6%E5%8F%91-IO-%E6%A0%87%E5%87%86%E5%8C%96%E5%87%BA%E6%9D%A5%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="toc-text">三：协程，Python 里为高并发 IO 标准化出来的模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#asyncio-%E5%88%B0%E5%BA%95%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="toc-text">asyncio 到底解决了什么问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%8F%E7%A8%8B%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">协程到底是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F%E4%BE%8B%E5%AD%90"><span class="toc-text">一个最小例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#gather%EF%BC%9A%E6%88%91%E9%9C%80%E8%A6%81%E5%85%A8%E9%83%A8%E7%BB%93%E6%9E%9C"><span class="toc-text">gather：我需要全部结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#create-task-as-completed%EF%BC%9A%E8%B0%81%E5%85%88%E5%9B%9E%E6%9D%A5%E5%85%88%E5%A4%84%E7%90%86%E8%B0%81"><span class="toc-text">create_task + as_completed：谁先回来先处理谁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#wait-for%EF%BC%9A%E8%B6%85%E6%97%B6%E6%98%AF%E5%8D%8F%E7%A8%8B%E4%B8%96%E7%95%8C%E7%9A%84%E4%B8%80%E7%AD%89%E5%85%AC%E6%B0%91"><span class="toc-text">wait_for：超时是协程世界的一等公民</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#asyncio-Queue"><span class="toc-text">asyncio.Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Semaphore-1"><span class="toc-text">Semaphore</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#to-thread%EF%BC%9A%E5%8D%8F%E7%A8%8B%E4%B8%96%E7%95%8C%E4%B8%8D%E6%98%AF%E7%BA%AF%E6%B4%81%E4%B8%96%E7%95%8C"><span class="toc-text">to_thread：协程世界不是纯洁世界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%B0%E4%BB%A3%E5%8D%8F%E7%A8%8B%E9%87%8C%E8%BF%98%E5%BA%94%E7%9F%A5%E9%81%93-TaskGroup"><span class="toc-text">现代协程里还应知道 TaskGroup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%8F%E7%A8%8B%E9%80%82%E5%90%88%E4%BB%80%E4%B9%88%E5%9C%BA%E6%99%AF"><span class="toc-text">协程适合什么场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%8F%E7%A8%8B%E4%B8%8D%E5%A4%AA%E9%80%82%E5%90%88%E4%BB%80%E4%B9%88%E5%9C%BA%E6%99%AF"><span class="toc-text">协程不太适合什么场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%EF%BC%9A%E4%B8%89%E4%B8%AA-Queue%EF%BC%8C%E5%88%B0%E5%BA%95%E5%B7%AE%E5%9C%A8%E5%93%AA%E5%84%BF"><span class="toc-text">四：三个 Queue，到底差在哪儿</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%BC%A0%E5%AF%B9%E6%AF%94%E8%A1%A8"><span class="toc-text">一张对比表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%85%B3%E9%94%AE%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E8%B0%81%E5%9C%A8%E7%AD%89"><span class="toc-text">最关键的区别：谁在等</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#queue-Queue"><span class="toc-text">queue.Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#multiprocessing-Queue-1"><span class="toc-text">multiprocessing.Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#asyncio-Queue-1"><span class="toc-text">asyncio.Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%EF%BC%9A%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E3%80%81%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%85%B7%E4%BD%93%E5%B7%AE%E5%BC%82%EF%BC%8C%E6%8C%89-12-%E4%B8%AA%E7%BB%B4%E5%BA%A6%E6%8B%86%E5%BC%80%E8%AE%B2"><span class="toc-text">五：进程、线程、协程的具体差异，按 12 个维度拆开讲</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%B0%83%E5%BA%A6%E6%9D%83%E5%9C%A8%E8%B0%81%E6%89%8B%E9%87%8C"><span class="toc-text">1. 调度权在谁手里</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%98%AF%E5%90%A6%E5%A4%A9%E7%84%B6%E6%94%AF%E6%8C%81%E5%A4%9A%E6%A0%B8%E5%B9%B6%E8%A1%8C"><span class="toc-text">2. 是否天然支持多核并行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="toc-text">3. 内存模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F"><span class="toc-text">4. 通信方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%88%87%E6%8D%A2%E6%88%90%E6%9C%AC"><span class="toc-text">5. 创建与切换成本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E9%94%99%E8%AF%AF%E9%9A%94%E7%A6%BB"><span class="toc-text">6. 错误隔离</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%8F%96%E6%B6%88%E5%92%8C%E5%81%9C%E6%AD%A2%E8%83%BD%E5%8A%9B"><span class="toc-text">7. 取消和停止能力</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E8%B6%85%E6%97%B6%E6%8E%A7%E5%88%B6%E8%83%BD%E5%8A%9B"><span class="toc-text">8. 超时控制能力</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%AF%B9%E9%98%BB%E5%A1%9E%E6%97%A7%E5%BA%93%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7"><span class="toc-text">9. 对阻塞旧库的兼容性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E8%B0%83%E8%AF%95%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="toc-text">10. 调试复杂度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%B7%A5%E7%A8%8B%E5%8F%AF%E8%AF%BB%E6%80%A7"><span class="toc-text">11. 工程可读性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E6%9C%80%E9%80%82%E5%90%88%E7%9A%84%E9%97%AE%E9%A2%98%E7%B1%BB%E5%9E%8B"><span class="toc-text">12. 最适合的问题类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%EF%BC%9Aconcurrent-futures-%E5%9C%A8-Python-%E5%B9%B6%E5%8F%91%E7%89%88%E5%9B%BE%E9%87%8C%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-text">六：concurrent.futures 在 Python 并发版图里的位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%83%E5%BE%88%E9%87%8D%E8%A6%81"><span class="toc-text">为什么它很重要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%92%8C-asyncio-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-text">它和 asyncio 的关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%EF%BC%9APython-%E5%B9%B6%E5%8F%91%E7%9A%84%E5%8F%91%E5%B1%95%E8%84%89%E7%BB%9C"><span class="toc-text">七：Python 并发的发展脉络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%97%A9%E6%9C%9F%EF%BC%9A%E7%BA%BF%E7%A8%8B%E6%98%AF%E6%9C%80%E7%9B%B4%E6%8E%A5%E7%9A%84%E5%B9%B6%E5%8F%91%E6%89%8B%E6%AE%B5"><span class="toc-text">1. 早期：线程是最直接的并发手段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-multiprocessing%EF%BC%9A%E7%BB%99-CPU-%E5%B9%B6%E8%A1%8C%E5%92%8C%E9%9A%94%E7%A6%BB%E4%B8%80%E4%B8%AA%E5%AE%98%E6%96%B9%E7%AD%94%E6%A1%88"><span class="toc-text">2. multiprocessing：给 CPU 并行和隔离一个官方答案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-concurrent-futures%EF%BC%9A%E7%BB%9F%E4%B8%80%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%92%8C%E8%BF%9B%E7%A8%8B%E6%B1%A0%E6%8A%BD%E8%B1%A1"><span class="toc-text">3. concurrent.futures：统一线程池和进程池抽象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-asyncio%EF%BC%9A%E6%A0%87%E5%87%86%E5%8C%96%E5%BC%82%E6%AD%A5-IO"><span class="toc-text">4. asyncio：标准化异步 IO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-async-await%EF%BC%9A%E5%8D%8F%E7%A8%8B%E7%9C%9F%E6%AD%A3%E5%8F%98%E6%88%90%E4%BA%BA%E8%83%BD%E9%95%BF%E6%9C%9F%E7%BB%B4%E6%8A%A4%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-text">5. async &#x2F; await：协程真正变成人能长期维护的代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-3-7-%E4%B9%8B%E5%90%8E%EF%BC%9Aasyncio-run-%E8%AE%A9%E5%85%A5%E5%8F%A3%E6%9B%B4%E6%B8%85%E6%99%B0"><span class="toc-text">6. 3.7 之后：asyncio.run() 让入口更清晰</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-3-9%EF%BC%9Ato-thread-%E8%AE%A9%E5%8D%8F%E7%A8%8B%E5%92%8C%E9%98%BB%E5%A1%9E%E4%B8%96%E7%95%8C%E6%9B%B4%E5%A5%BD%E7%9B%B8%E5%A4%84"><span class="toc-text">7. 3.9：to_thread() 让协程和阻塞世界更好相处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-3-11%EF%BC%9ATaskGroup-%E5%92%8C%E7%BB%93%E6%9E%84%E5%8C%96%E5%B9%B6%E5%8F%91"><span class="toc-text">8. 3.11：TaskGroup 和结构化并发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-3-13-%E5%8F%8A%E4%BB%A5%E5%90%8E%EF%BC%9Afree-threaded-%E6%98%AF%E6%96%B9%E5%90%91%EF%BC%8C%E4%BD%86%E4%B8%8D%E4%BC%9A%E8%AE%A9%E5%85%B6%E5%AE%83%E6%A8%A1%E5%9E%8B%E6%B6%88%E5%A4%B1"><span class="toc-text">9. 3.13 及以后：free-threaded 是方向，但不会让其它模型消失</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%EF%BC%9A%E5%B8%B8%E8%A7%81%E8%AF%AF%E5%8C%BA"><span class="toc-text">八：常见误区</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AF%E5%8C%BA%E4%B8%80%EF%BC%9A%E6%9C%89-GIL%EF%BC%8C%E6%89%80%E4%BB%A5%E7%BA%BF%E7%A8%8B%E6%B2%A1%E7%94%A8"><span class="toc-text">误区一：有 GIL，所以线程没用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AF%E5%8C%BA%E4%BA%8C%EF%BC%9A%E5%8D%8F%E7%A8%8B%E6%9B%B4%E5%85%88%E8%BF%9B%EF%BC%8C%E6%89%80%E4%BB%A5%E4%BB%A5%E5%90%8E%E9%83%BD%E8%AF%A5%E7%94%A8%E5%8D%8F%E7%A8%8B"><span class="toc-text">误区二：协程更先进，所以以后都该用协程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AF%E5%8C%BA%E4%B8%89%EF%BC%9A%E8%BF%9B%E7%A8%8B%E6%9C%80%E6%B8%85%E6%99%B0%EF%BC%8C%E6%89%80%E4%BB%A5%E8%83%BD%E7%94%A8%E8%BF%9B%E7%A8%8B%E5%B0%B1%E9%83%BD%E7%94%A8%E8%BF%9B%E7%A8%8B"><span class="toc-text">误区三：进程最清晰，所以能用进程就都用进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AF%E5%8C%BA%E5%9B%9B%EF%BC%9A%E5%8D%8F%E7%A8%8B%E6%B2%A1%E6%9C%89%E9%94%81%EF%BC%8C%E6%89%80%E4%BB%A5%E4%B8%8D%E4%BC%9A%E6%9C%89%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98"><span class="toc-text">误区四：协程没有锁，所以不会有并发问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AF%E5%8C%BA%E4%BA%94%EF%BC%9A%E4%B8%89%E4%B8%AA-Queue-%E9%83%BD%E5%B7%AE%E4%B8%8D%E5%A4%9A"><span class="toc-text">误区五：三个 Queue 都差不多</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%EF%BC%9A%E7%9C%9F%E5%AE%9E%E5%B7%A5%E7%A8%8B%E9%87%8C%E6%80%8E%E4%B9%88%E9%80%89"><span class="toc-text">九：真实工程里怎么选</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E4%BD%A0%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%98%AF-CPU-%E5%AF%86%E9%9B%86%E5%9E%8B"><span class="toc-text">如果你的任务是 CPU 密集型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E4%BD%A0%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%98%AF%E9%98%BB%E5%A1%9E-IO%EF%BC%8C%E8%80%8C%E4%B8%94%E5%B9%B6%E5%8F%91%E9%87%8F%E4%B8%8D%E5%A4%A7%E5%88%B0%E4%B8%AD%E7%AD%89"><span class="toc-text">如果你的任务是阻塞 IO，而且并发量不大到中等</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E4%BD%A0%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%98%AF%E9%AB%98%E5%B9%B6%E5%8F%91-IO"><span class="toc-text">如果你的任务是高并发 IO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E4%BD%A0%E7%9A%84%E7%B3%BB%E7%BB%9F%E6%98%AF%E6%B7%B7%E5%90%88%E5%9C%BA%E6%99%AF"><span class="toc-text">如果你的系统是混合场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E9%80%89%E5%9E%8B%E5%8F%A3%E8%AF%80"><span class="toc-text">一个简单的选型口诀</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8D%8F%E7%A8%8B%E4%B8%8D%E6%98%AF%E2%80%9C%E5%BC%BA%E8%A1%8C%E9%80%A0%E6%A6%82%E5%BF%B5%E2%80%9D"><span class="toc-text">十：为什么协程不是“强行造概念”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
+</div></aside><div class='float-panel'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+
+
+<script type="text/javascript">
+  window.canonical = {"closeEnable":true,"closeText":"关闭提示","originalHost":null,"officialHosts":["localhost"],"encoded":""};
+  window.canonical["param"] = {"permalink":"https://minniexcode.github.io/memoirs/20260411/learning/python-concurrency/","checklink":"/js/plugins/video.js"};
+  // Fix: Ensure page is at the correct top position on data load
+  if (history.scrollRestoration) {
+    history.scrollRestoration = 'auto';
+  }
+  (function() {
+    const scrollHandler = () => {
+      const wikiCover = document.querySelector('#l_cover .l_cover.wiki');
+      const startEl = document.getElementById('start');
+      if (wikiCover && startEl) {
+        window.scrollTo(0, startEl.offsetTop);
+      } else {
+        window.scrollTo(0, 0);
+      }
+    };
+    if (document.readyState !== 'loading') scrollHandler();
+    else document.addEventListener('DOMContentLoaded', scrollHandler);
+  })();
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/memoirs/`,
+    tag_plugins: {
+      chat: Object.assign({"api":"https://siteinfo.listentothewind.cn/api/v1"}),
+    }
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"skip_search":null,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+    loading: `https://api.iconify.design/eos-icons:three-dots-loading.svg?color=%231cd0fd`,
+  };
+  const deps = {
+    jquery: `https://gcore.jsdelivr.net/npm/jquery@3.7/dist/jquery.min.js`,
+    marked: `https://gcore.jsdelivr.net/npm/marked@13.0/lib/marked.umd.min.js`,
+    lazyload: `/memoirs/%5Bobject%20Object%5D`
+  }
+</script>
+
+<script type="text/javascript">
+  
+  function RunItem() {
+    this.list = []; // 存放回调函数
+    this.start = () => {
+      for (var i = 0; i < this.list.length; i++) {
+        this.list[i].run();
+      }
+    };
+    this.push = (fn, name, setRequestAnimationFrame = true) => {
+      let myfn = fn
+      if (setRequestAnimationFrame) {
+        myfn = () => {
+          utils.requestAnimationFrame(fn)
+        }
+      }
+      var f = new Item(myfn, name);
+      this.list.push(f);
+    };
+    this.remove = (name) => {
+      // 倒序遍历避免 splice 后的索引问题
+      for (let index = this.list.length - 1; index >= 0; index--) {
+        const e = this.list[index];
+        if (e.name === name) {
+          this.list.splice(index, 1);
+        }
+      }
+    }
+    // 构造一个可以run的对象
+    function Item(fn, name) {
+      // 函数名称
+      this.name = name || fn.name;
+      // run方法
+      this.run = () => {
+        try {
+          fn()
+        } catch (error) {
+          console.log(error);
+        }
+      };
+    }
+  }
+
+  const utils = {
+    // 已加载样式缓存
+    _loadedStyles: new Set(),
+
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      // 如果样式已加载，直接返回 null
+      if (utils._loadedStyles.has(href)) {
+        return null;
+      }
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      // 标记样式为已加载 (在创建元素后立即标记，防止重复创建)
+      utils._loadedStyles.add(href);
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 已加载脚本缓存
+    _loadedScripts: new Set(),
+
+    // 已加载元素缓存 (使用 WeakSet 追踪元素实例,避免 PJAX 导航时的状态混淆)
+    _loadedElements: new WeakSet(),
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      if (src.startsWith('/')) {
+        src = ctx.root + src.substring(1);
+      }
+      // 如果脚本已加载，直接返回
+      if (utils._loadedScripts.has(src)) {
+        resolve();
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function () {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        utils._loadedScripts.add(src);
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // PJAX 事件监听器管理
+    _pjaxListeners: new Set(),
+    
+    jq: (fn, pjax = true) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+      if (pjax && !fn._pjax_registered) {
+        document.addEventListener('pjax:complete', fn);
+        fn._pjax_registered = true;
+        utils._pjaxListeners.add(fn); // 追踪监听器以便清理
+      }
+    },
+    
+    // 清理所有 PJAX 事件监听器
+    cleanupPjaxListeners: () => {
+      utils._pjaxListeners.forEach(fn => {
+        document.removeEventListener('pjax:complete', fn);
+        fn._pjax_registered = false;
+      });
+      utils._pjaxListeners.clear();
+    },
+
+    onLoading: (el) => {
+      if (el) {
+        if ($(el).find('.loading-wrap').length === 0){
+          $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+        }
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      // 检查元素实例是否已加载 (而不是检查属性)
+      if (el && utils._loadedElements.has(el)) {
+        return;
+      }
+      const maxRetry = 3;
+      let retryCount = 0;
+
+      return new Promise((resolve, reject) => {
+        const load = () => {
+          utils.onLoading?.(el);
+
+          let timedOut = false;
+          const timeout = setTimeout(() => {
+            timedOut = true;
+            console.warn('[request] 超时:', url);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject('请求超时');
+            } else {
+              setTimeout(load, 1000);
+            }
+          }, 5000);
+
+          fetch(url).then(resp => {
+            if (timedOut) return;
+            clearTimeout(timeout);
+
+            if (!resp.ok) throw new Error('响应失败');
+            return resp;
+          }).then(data => {
+            if (timedOut) return;
+            // 标记元素实例为已加载
+            if (el) utils._loadedElements.add(el);
+            utils.onLoadSuccess?.(el);
+            callback(data);
+            resolve(data);
+          }).catch(err => {
+            clearTimeout(timeout);
+            console.warn('[request] 错误:', err);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject(err);
+            } else {
+              setTimeout(load, 1000);
+            }
+          });
+        };
+
+        load();
+      });
+    },
+    requestWithoutLoading: (url, options = {}, maxRetry = 2, timeout = 5000) => {
+      return new Promise((resolve, reject) => {
+        let retryCount = 0;
+
+        const tryRequest = () => {
+          let timedOut = false;
+          const timer = setTimeout(() => {
+            timedOut = true;
+            if (++retryCount > maxRetry) reject('timeout');
+            else tryRequest();
+          }, timeout);
+
+          fetch(url, options)
+            .then(resp => {
+              clearTimeout(timer);
+              if (!resp.ok) throw new Error('bad response');
+              resolve(resp);
+            })
+            .catch(err => {
+              clearTimeout(timer);
+              if (++retryCount > maxRetry) reject(err);
+              else setTimeout(tryRequest, 500);
+            });
+        };
+
+        tryRequest();
+      });
+    },
+    /********************** requestAnimationFrame ********************************/
+    // 1、requestAnimationFrame 会把每一帧中的所有 DOM 操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率，一般来说，这个频率为每秒60帧。
+    // 2、在隐藏或不可见的元素中，requestAnimationFrame 将不会进行重绘或回流，这当然就意味着更少的的 cpu，gpu 和内存使用量。
+    requestAnimationFrame: (fn) => {
+      if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame;
+      }
+      window.requestAnimationFrame(fn)
+    },
+    dark: {},
+
+    // 插件初始化管理器 - 统一处理 DOMContentLoaded 和 pjax:complete 事件
+    _pluginInitializers: [],
+    _pluginCleanups: new Map(), // 存储每个插件的清理函数
+    
+    initPlugin: (initFn, name, options = {}) => {
+      if (!initFn || typeof initFn !== 'function') return;
+      
+      // 避免重复注册
+      const pluginName = name || initFn.name;
+      if (utils._pluginInitializers.some(p => p.name === pluginName)) return;
+      
+      // 包装初始化函数，添加防重复执行的保护
+      const wrappedInit = () => {
+        try {
+          // 在执行前先清理旧的资源
+          if (utils._pluginCleanups.has(pluginName)) {
+            const cleanup = utils._pluginCleanups.get(pluginName);
+            if (typeof cleanup === 'function') {
+              cleanup();
+            }
+          }
+          
+          // 执行初始化，可能返回清理函数
+          const cleanup = initFn();
+          
+          // 如果初始化函数返回了清理函数，保存它
+          if (typeof cleanup === 'function') {
+            utils._pluginCleanups.set(pluginName, cleanup);
+          }
+        } catch (error) {
+          console.error(`[Plugin ${pluginName}] 初始化失败:`, error);
+        }
+      };
+      
+      utils._pluginInitializers.push({ 
+        fn: wrappedInit, 
+        name: pluginName,
+        options: options 
+      });
+      
+      // 如果 DOM 已经加载完成，立即执行
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        wrappedInit();
+      } else {
+        // 否则等待 DOMContentLoaded
+        window.addEventListener('DOMContentLoaded', wrappedInit, { once: true });
+      }
+    },
+
+    // 重新初始化所有插件（用于 PJAX 等场景）
+    reinitPlugins: () => {
+      utils._pluginInitializers.forEach(plugin => {
+        // 跳过标记为不需要重新初始化的插件
+        if (plugin.options.skipReinit) return;
+        
+        try {
+          plugin.fn();
+        } catch (error) {
+          console.error(`[Plugin ${plugin.name}] 重新初始化失败:`, error);
+        }
+      });
+    },
+    
+    // 清理所有插件资源
+    cleanupPlugins: () => {
+      utils._pluginCleanups.forEach((cleanup, name) => {
+        try {
+          cleanup();
+        } catch (error) {
+          console.error(`[Plugin ${name}] 清理失败:`, error);
+        }
+      });
+      utils._pluginCleanups.clear();
+    },
+    
+    // 清理所有资源（用于页面卸载或重置）
+    cleanupAll: () => {
+      utils.cleanupPlugins();
+      utils.cleanupPjaxListeners();
+    },
+  };
+
+  // 自动处理 PJAX 事件
+  document.addEventListener('pjax:before', () => {
+    // 在导航前清理旧的 PJAX 监听器（如果需要重新注册）
+    // 注意：这里不清理，因为监听器应该是持久的
+    // utils.cleanupPjaxListeners();
+  });
+  
+  document.addEventListener('pjax:complete', () => {
+    utils.reinitPlugins();
+  });
+
+  // utils.dark.mode 当前模式 dark or light
+  // utils.dark.toggle() 暗黑模式触发器
+  // utils.dark.push(callBack[,"callBackName"]) 传入触发器回调函数
+  utils.dark.method = {
+    toggle: new RunItem(),
+  };
+  utils.dark = Object.assign(utils.dark, {
+    push: utils.dark.method.toggle.push,
+  });
+</script>
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+<script async src="https://gcore.jsdelivr.net/npm/vanilla-lazyload@19.1/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+    callback_loaded: (el) => {
+      el.classList.add('loaded');
+      const wrapper = el.closest('.lazy-box');
+      const icon = wrapper?.querySelector('.lazy-icon');
+      if (icon) icon.remove();
+    }
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+
+  window.wrapLazyloadImages = (container) => {
+    if (typeof container === 'string') {
+      container = document.querySelector(container);
+    }
+    if (!container) return;
+
+    const images = container.querySelectorAll('img');
+    images.forEach((img) => {
+      if (img.classList.contains('lazy')) return;
+
+      const src = img.getAttribute('src');
+      if (!src) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'lazy-box';
+
+      const newImg = img.cloneNode();
+      newImg.removeAttribute('src');
+      newImg.setAttribute('data-src', src);
+      newImg.classList.add('lazy');
+
+      const icon = document.createElement('div');
+      icon.className = 'lazy-icon';
+      if (def.loading) {
+        icon.style.backgroundImage = `url("${def.loading}")`;
+      }
+
+      wrapper.appendChild(newImg);
+      wrapper.appendChild(icon);
+
+      img.replaceWith(wrapper);
+    });
+
+    // 通知 LazyLoad 更新
+    if (window.lazyLoadInstance?.update) {
+      window.lazyLoadInstance.update();
+    }
+  }
+
+</script>
+
+<!-- required -->
+<script src="/memoirs/js/main.js?v=1.33.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    // applyThemeToGiscus(theme)
+  }
+
+  // FIXME: 这会导致无法使用 preferred_color_scheme 以外的主题
+  const applyThemeToGiscus = (theme) => {
+    // theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+    utils.dark.mode = newTheme === 'auto' ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : newTheme;
+    utils.dark.method.toggle.start();
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    } else {
+      utils.dark.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    utils.dark.method.toggle.start();
+  })()
+</script>
+
+
+<!-- optional -->
+
+  <script>
+  (function() {
+    const lazyload = false;
+    
+    function initBeaudar() {
+      const el = document.querySelector('#comments #beaudar');
+      if (!el) return;
+      
+      function load_beaudar() {
+        try {
+          el.innerHTML = '';
+        } catch (error) {
+          console.error(error);
+        }
+        const script = document.createElement('script');
+        script.src = 'https://beaudar.lipk.org/client.js';
+        script.async = true;
+        for (const key of Object.keys(el.attributes)) {
+          const attr = el.attributes[key];
+          if (['class', 'id'].includes(attr.name) === false) {
+            script.setAttribute(attr.name, attr.value);
+          }
+        }
+        el.appendChild(script);
+      }
+      
+      util.viewportLazyload(el, load_beaudar, lazyload);
+    }
+    
+    // Store in global stellar namespace for PJAX reinitialization
+    window.stellar = window.stellar || {};
+    window.stellar.initComments = window.stellar.initComments || {};
+    window.stellar.initComments.beaudar = initBeaudar;
+    
+    // Initialize on page load
+    initBeaudar();
+  })();
+</script>
+
+
+
+
+<script defer>
+  const initServices = () => {
+    // 用于存储需要清理的资源
+    let timers = [];
+    
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"rating":{"js":"/js/services/rating.js","api":"https://star-vote.xaox.cc/api/rating"},"vote":{"js":"/js/services/vote.js","api":"https://star-vote.xaox.cc/api/vote"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"friends_and_posts":{"js":"/js/services/friends_and_posts.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"},"voice":{"js":"/js/plugins/voice.js"},"video":{"js":"/js/plugins/video.js"},"download-file":{"js":"/js/plugins/download-file.js"},"twikoo":{"js":"/js/services/twikoo_latest_comment.js"},"waline":{"js":"/js/services/waline_latest_comment.js"},"artalk":{"js":"/js/services/artalk_latest_comment.js"},"giscus":{"js":"/js/services/giscus_latest_comment.js"},"contributors":{"edit_this_page":{"_posts/":null,"wiki/stellar/":"https://github.com/xaoxuu/hexo-theme-stellar-docs/blob/main/"},"js":"/js/services/contributors.js"},"rss":{"js":"/js/services/rss.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        const cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(cardlinks);
+          });
+        }
+      } else if (id == 'ghinfo') {
+        const els = document.querySelectorAll('.ds-ghinfo');
+        if (els.length > 0) {
+          utils.js(js, { defer: true });
+        }
+      } else if (id == 'voice') {
+        const voiceAudios = document.querySelectorAll('.voice>audio');
+        if (voiceAudios?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            createVoiceDom(voiceAudios);
+          });
+        }
+      } else if (id == 'video') {
+        const videos = document.querySelectorAll('.video>video');
+        if (videos?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            videoEvents(videos);
+          });
+        }
+      } else if (id == 'download-file') {
+        const files = document.querySelectorAll('.chat-file');
+        if (files?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            downloadFileEvent(files);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || id == 'memos' || id == 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          }, false);
+        }
+      }
+    }
+
+    // search
+    if (ctx.search && typeof searchFunc === 'function') {
+      const $inputArea = $("input#search-input");
+      if ($inputArea.length > 0 && !$inputArea[0]._searchInitialized) {
+        const path = ctx.search.path.startsWith('/') ? ctx.root + ctx.search.path.substring(1) : ctx.root + ctx.search.path;
+        const filter = $inputArea.attr('data-filter') || '';
+        searchFunc(path, filter, 'search-wrapper', 'search-input', 'search-result');
+        // 标记为已初始化，防止重复绑定
+        $inputArea[0]._searchInitialized = true;
+      }
+    }
+
+    // chat iphone time
+    let phoneTimes = document.querySelectorAll('.chat .status-bar .time');
+    let firstAdjustInterval = null;
+    let mainInterval = null;
+
+    if (phoneTimes.length > 0) {
+      NowTime();
+      const date = new Date();
+      const sec = date.getSeconds();
+      firstAdjustInterval = setInterval(firstAdjustTime, 1000 * (60 - sec));
+      timers.push(firstAdjustInterval);
+
+      function firstAdjustTime() {
+        NowTime();
+        if (firstAdjustInterval) {
+          clearInterval(firstAdjustInterval);
+          firstAdjustInterval = null;
+        }
+        mainInterval = setInterval(NowTime, 1000 * 60);
+        timers.push(mainInterval);
+      }
+
+      function NowTime() {
+        for (let i = 0; i < phoneTimes.length; ++i) {
+          const timeSpan = phoneTimes[i];
+          const date = new Date();
+          const hour = date.getHours();
+          const min = date.getMinutes();
+          timeSpan.innerHTML = check(hour) + ":" + check(min);
+        }
+      };
+
+      function check(val) {
+        if (val < 10) {
+          return ("0" + val);
+        }
+        return (val);
+      }
+    }
+
+    // chat quote - 存储事件监听器以便清理
+    const quoteClickHandlers = new Map();
+    const chat_quote_obverser = new IntersectionObserver((entries, observer) => {
+      entries.filter((entry) => { return entry.isIntersecting }).sort((a, b) => a.intersectionRect.y !== b.intersectionRect.y ? a.intersectionRect.y - b.intersectionRect.y : a.intersectionRect.x - b.intersectionRect.x).forEach((entry, index) => {
+          observer.unobserve(entry.target);
+          setTimeout(() => {
+            entry.target.classList.add('quote-blink');
+            setTimeout(() => {
+              entry.target.classList.remove('quote-blink');
+            }, 1000);
+          }, Math.max(100, 16) * (index + 1));
+        });
+    });
+
+    var chatQuotes = document.querySelectorAll(".chat .talk .quote");
+    chatQuotes.forEach((quote) => {
+      const handler = function () {
+        var chatCellDom = document.getElementById("quote-" + quote.getAttribute("quotedCellTag"));
+        if (chatCellDom) {
+          var chatDiv = chatCellDom.parentElement;
+          var mid = chatDiv.clientHeight / 2;
+          var offsetTop = chatCellDom.offsetTop;
+          if (offsetTop > mid - chatCellDom.clientHeight / 2) {
+            chatDiv.scrollTo({
+              top: chatCellDom.offsetTop - mid + chatCellDom.clientHeight / 2,
+              behavior: "smooth"
+            });
+          } else {
+            chatDiv.scrollTo({
+              top: 0,
+              behavior: "smooth"
+            });
+          }
+          chat_quote_obverser.observe(chatCellDom);
+        }
+      };
+      quote.addEventListener('click', handler);
+      quoteClickHandlers.set(quote, handler); // 保存处理器引用
+    });
+
+    // 返回清理函数，用于清理定时器和观察器
+    return () => {
+      // 清理所有定时器（包括可能未完成的 firstAdjustInterval）
+      timers.forEach(timer => {
+        if (timer) clearInterval(timer);
+      });
+      timers = [];
+      if (firstAdjustInterval) {
+        clearInterval(firstAdjustInterval);
+        firstAdjustInterval = null;
+      }
+      if (mainInterval) {
+        clearInterval(mainInterval);
+        mainInterval = null;
+      }
+      
+      // 断开观察器
+      if (chat_quote_obverser) {
+        chat_quote_obverser.disconnect();
+      }
+      
+      // 移除所有 click 事件监听器
+      quoteClickHandlers.forEach((handler, quote) => {
+        quote.removeEventListener('click', handler);
+      });
+      quoteClickHandlers.clear();
+    };
+  };
+
+  utils.initPlugin(initServices, 'services');
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://gcore.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error), .with-fancybox .atk-content img:not([atk-emoticon])';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const memos = document.getElementsByClassName('ds-memos');
+    if (memos != undefined && memos.length > 0) {
+      needFancybox = true;
+    }
+    const fancybox = document.getElementsByClassName('with-fancybox');
+    if (fancybox != undefined && fancybox.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  utils.initPlugin(() => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  }, 'swiper');
+</script>
+<script>
+  utils.initPlugin(() => {
+    const codeElements = document.querySelectorAll('.code');
+    if (codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js', { defer: true }).then(() => {
+        if (typeof createCopyButtons === 'function') {
+          createCopyButtons(codeElements);
+        }
+      });
+    }
+  }, 'copycode');
+</script>
+
+
+<!-- inject -->
+
+</div><div class="page-loading-bar"><img src="https://api.iconify.design/eos-icons:three-dots-loading.svg?color=%231cd0fd"></div></body></html>

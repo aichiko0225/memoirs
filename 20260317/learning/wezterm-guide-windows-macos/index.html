@@ -1,0 +1,1491 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1" theme-name="Stellar" theme-version="1.33.1">
+  
+  
+  <meta name="generator" content="Hexo 8.1.1">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  <title>WezTerm Guide：Windows 和 macOS 的入门、配置与日常工作流 - ash</title>
+
+  
+    <meta name="description" content="WezTerm 这两年基本成了我最愿意推荐给开发者的终端之一：配置文件化、标签页和分屏能力强、跨平台一致性也不错。 但很多教程有两个问题：要么只讲“怎么装”，要么一上来就把配置堆得很满。对大多数人来说，真正需要的不是一份炫技配置，而是一套稳定可落地的起步方案。 这篇文章把 Windows 和 macOS 放在一起写，目标很直接：先让你用起来，再决定要不要继续折腾。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WezTerm Guide：Windows 和 macOS 的入门、配置与日常工作流">
+<meta property="og:url" content="https://minniexcode.github.io/memoirs/20260317/learning/wezterm-guide-windows-macos/">
+<meta property="og:site_name" content="ash">
+<meta property="og:description" content="WezTerm 这两年基本成了我最愿意推荐给开发者的终端之一：配置文件化、标签页和分屏能力强、跨平台一致性也不错。 但很多教程有两个问题：要么只讲“怎么装”，要么一上来就把配置堆得很满。对大多数人来说，真正需要的不是一份炫技配置，而是一套稳定可落地的起步方案。 这篇文章把 Windows 和 macOS 放在一起写，目标很直接：先让你用起来，再决定要不要继续折腾。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-17T11:22:16.593Z">
+<meta property="article:author" content="ash66">
+<meta property="article:tag" content="Productivity">
+<meta property="article:tag" content="Terminal">
+<meta property="article:tag" content="Tooling">
+<meta property="article:tag" content="WezTerm">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="Tooling,WezTerm,Terminal,Productivity">
+
+  <!-- feed -->
+  
+    
+
+    
+      
+        <link rel="alternate" href="/memoirs/atom.xml" title="ash" type="application/atom+xml">
+      
+    
+  
+
+  <link rel="stylesheet" href="/memoirs/css/main.css?v=1.33.1">
+
+
+  
+    <link rel="shortcut icon" href="/memoirs/favicon.png">
+  
+
+  
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2026-03-17T00:00:00+08:00","dateModified":"2026-03-17T19:22:16+08:00","datePublished":"2026-03-17T00:00:00+08:00","description":"WezTerm 这两年基本成了我最愿意推荐给开发者的终端之一：配置文件化、标签页和分屏能力强、跨平台一致性也不错。\n但很多教程有两个问题：要么只讲“怎么装”，要么一上来就把配置堆得很满。对大多数人来说，真正需要的不是一份炫技配置，而是一套稳定可落地的起步方案。\n这篇文章把 Windows 和 macOS 放在一起写，目标很直接：先让你用起来，再决定要不要继续折腾。","headline":"WezTerm Guide：Windows 和 macOS 的入门、配置与日常工作流","mainEntityOfPage":{"@type":"WebPage","@id":"https://minniexcode.github.io/memoirs/20260317/learning/wezterm-guide-windows-macos/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://minniexcode.github.io/memoirs/20260317/learning/wezterm-guide-windows-macos/","keywords":"Tooling, WezTerm, Terminal, Productivity","image":[]}</script>
+  <script>
+  (function () {
+    if (window.util) return;
+
+    window.util = {
+      viewportLazyload: function (el, callback, lazyload) {
+        if (!el || typeof callback !== 'function') return;
+        if (el.dataset.utilLazyloaded === '1') return;
+        var runOnce = function () {
+          if (el.dataset.utilLazyloaded === '1') return;
+          el.dataset.utilLazyloaded = '1';
+          callback();
+        };
+        if (!lazyload) {
+          runOnce();
+          return;
+        }
+        if (!('IntersectionObserver' in window)) {
+          runOnce();
+          return;
+        }
+        var loaded = false;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!loaded && entry.isIntersecting) {
+              loaded = true;
+              observer.disconnect();
+              runOnce();
+            }
+          });
+        }, { rootMargin: '100px 0px' });
+        observer.observe(el);
+      },
+      toggle: function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var hidden = el.style.height === '0px' || el.style.opacity === '0';
+        if (hidden) {
+          el.style.opacity = '1';
+          el.style.height = 'auto';
+        } else {
+          el.style.opacity = '0';
+          el.style.height = '0';
+        }
+      },
+      copy: function (id, message) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var text = el.value || el.textContent || '';
+        var done = function () {
+          if (message) console.log(message);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {});
+          return;
+        }
+        var area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(area);
+        done();
+      },
+      scrollTop: function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+  })();
+</script>
+
+</head>
+<body><div id="l_cover"></div><div class="l_body content" id="start" layout="post" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/memoirs/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/memoirs/images/image1.jpeg" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main">ash</div><div class="sub cap">我只是一个影子，虽然我发着光。。。</div></a></div></header>
+
+<div class="nav-area">
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/memoirs/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="笔记本" href="/memoirs/notes/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="AboutMe" href="/memoirs/about/me/" style="color:#F44336"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m13.629 20.472l-.542.916c-.483.816-1.69.816-2.174 0l-.542-.916c-.42-.71-.63-1.066-.968-1.262c-.338-.197-.763-.204-1.613-.219c-1.256-.021-2.043-.098-2.703-.372a5 5 0 0 1-2.706-2.706C2 14.995 2 13.83 2 11.5v-1c0-3.273 0-4.91.737-6.112a5 5 0 0 1 1.65-1.651C5.59 2 7.228 2 10.5 2h3c3.273 0 4.91 0 6.113.737a5 5 0 0 1 1.65 1.65C22 5.59 22 7.228 22 10.5v1c0 2.33 0 3.495-.38 4.413a5 5 0 0 1-2.707 2.706c-.66.274-1.447.35-2.703.372c-.85.015-1.275.022-1.613.219c-.338.196-.548.551-.968 1.262" opacity=".5"/><path fill="currentColor" d="M10.99 14.308c-1.327-.978-3.49-2.84-3.49-4.593c0-2.677 2.475-3.677 4.5-1.609c2.025-2.068 4.5-1.068 4.5 1.609c0 1.752-2.163 3.615-3.49 4.593c-.454.335-.681.502-1.01.502c-.329 0-.556-.167-1.01-.502"/></svg></a></nav>
+</div>
+<div class="widgets">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+
+<widget class="widget-wrapper recent post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/memoirs/20260411/learning/python-concurrency/"><span class="title">Python 并发：进程、线程、协程，从语言机制到工程选型</span></a><a class="item title" href="/memoirs/20200305/python/Python-100-1/"><span class="title">Python-100天(一)</span></a><a class="item title" href="/memoirs/20260325/learning/ruankao-network-engineer-study-guide/"><span class="title">软考网络工程师备考全攻略：8 周计划、速记表与端口协议清单</span></a><a class="item title" href="/memoirs/20260318/nano-config-guide/"><span class="title">Nano 配置文件编辑指南（附极简 Vim 备忘）</span></a><a class="item title" href="/memoirs/20260317/learning/wezterm-guide-windows-macos/"><span class="title">WezTerm Guide：Windows 和 macOS 的入门、配置与日常工作流</span></a><a class="item title" href="/memoirs/20200128/wuhan/wuhan1/"><span class="title">2020-01-28 武汉封城第五天</span></a><a class="item title" href="/memoirs/20200123/wuhan/wuhan/"><span class="title">2020-01-23 武汉封城第一天</span></a><a class="item title" href="/memoirs/20241212/running/guangzhou/"><span class="title">广州马拉松</span></a><a class="item title" href="/memoirs/20200217/reverse-progression/"><span class="title">逆向工程进阶</span></a><a class="item title" href="/memoirs/20200212/reverse-basics/"><span class="title">逆向工程基础</span></a></div></widget>
+</div>
+<footer class="footer dis-select"><div class="social-wrap"><a class="social" href="https://github.com/minniexcode" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/08a41b181ce68.svg"/></a></div></footer>
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/memoirs/memoirs/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/memoirs/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/memoirs/categories/AI%E4%B8%8E%E5%B7%A5%E5%85%B7/">AI与工具</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2026-03-16T16:00:00.000Z">2026-03-17</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2026-03-17T11:22:16.593Z">2026-03-17</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>WezTerm Guide：Windows 和 macOS 的入门、配置与日常工作流</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>WezTerm 这两年基本成了我最愿意推荐给开发者的终端之一：配置文件化、标签页和分屏能力强、跨平台一致性也不错。</p>
+<p>但很多教程有两个问题：要么只讲“怎么装”，要么一上来就把配置堆得很满。对大多数人来说，真正需要的不是一份炫技配置，而是一套稳定可落地的起步方案。</p>
+<p>这篇文章把 Windows 和 macOS 放在一起写，目标很直接：先让你用起来，再决定要不要继续折腾。</p>
+<span id="more"></span>
+
+<h2 id="一、先讲清楚：WezTerm-是什么，不是什么"><a href="#一、先讲清楚：WezTerm-是什么，不是什么" class="headerlink" title="一、先讲清楚：WezTerm 是什么，不是什么"></a>一、先讲清楚：WezTerm 是什么，不是什么</h2><p>WezTerm 是终端模拟器，不是 shell。</p>
+<p>你可以把它理解成两层：</p>
+<ul>
+<li><code>WezTerm</code>：窗口、标签页、分屏、渲染、快捷键、主题</li>
+<li><code>Shell</code>：真正执行命令的环境，比如 Windows 上的 <code>PowerShell</code>，macOS 上的 <code>zsh</code></li>
+</ul>
+<p>所以“我想把 WezTerm 配成 PowerShell &#x2F; zsh”这句话，更准确地说是：</p>
+<ul>
+<li>用 WezTerm 作为终端界面</li>
+<li>用 PowerShell 或 zsh 作为默认 shell</li>
+</ul>
+<p>这个区分很重要，因为后面很多配置项其实都是围绕这两层展开的。</p>
+<h2 id="二、为什么我会推荐-WezTerm"><a href="#二、为什么我会推荐-WezTerm" class="headerlink" title="二、为什么我会推荐 WezTerm"></a>二、为什么我会推荐 WezTerm</h2><p>和系统自带终端相比，WezTerm 最实用的优势有 4 个：</p>
+<ol>
+<li>配置文件就是 <code>~/.wezterm.lua</code>，适合版本管理和渐进调整。</li>
+<li>默认就有很强的标签页、分屏、搜索和复制粘贴能力。</li>
+<li>Windows &#x2F; macOS &#x2F; Linux 的整体体验比较统一，换机器成本低。</li>
+<li>改完配置可以直接重载，不需要每次去找图形设置界面。</li>
+</ol>
+<p>如果你是开发者，尤其经常需要同时跑服务、看日志、连远程机器，它会比“能用就行”的终端更顺手。</p>
+<h2 id="三、先用最稳的思路，不要一开始就过度定制"><a href="#三、先用最稳的思路，不要一开始就过度定制" class="headerlink" title="三、先用最稳的思路，不要一开始就过度定制"></a>三、先用最稳的思路，不要一开始就过度定制</h2><p>我更建议按这个顺序上手：</p>
+<ul>
+<li>第一步：先确定默认 shell</li>
+<li>第二步：先选一个稳定深色主题</li>
+<li>第三步：先用官方默认快捷键</li>
+<li>第四步：一周后再决定要不要改键位、字体和状态栏</li>
+</ul>
+<p>原因很简单：</p>
+<ul>
+<li>shell 是工作流核心，先稳定</li>
+<li>主题影响阅读舒适度，先解决</li>
+<li>快捷键属于肌肉记忆，改太早容易把自己弄乱</li>
+</ul>
+<p>如果你当前目标只是“日常开发能稳定用”，那这套路径比一上来抄一份 200 行配置更有效。</p>
+<h2 id="四、Windows：最适合大多数人的起步方案"><a href="#四、Windows：最适合大多数人的起步方案" class="headerlink" title="四、Windows：最适合大多数人的起步方案"></a>四、Windows：最适合大多数人的起步方案</h2><h3 id="1）安装与配置文件位置"><a href="#1）安装与配置文件位置" class="headerlink" title="1）安装与配置文件位置"></a>1）安装与配置文件位置</h3><p>Windows 上装好 WezTerm 后，默认配置文件通常放在：</p>
+<p><code>%USERPROFILE%\.wezterm.lua</code></p>
+<p>例如：</p>
+<p><code>C:\Users\&lt;你的用户名&gt;\.wezterm.lua</code></p>
+<p>改完配置后，推荐用 <code>Ctrl+Shift+R</code> 重载；不行再完全重启 WezTerm。</p>
+<h3 id="2）Windows-推荐默认组合"><a href="#2）Windows-推荐默认组合" class="headerlink" title="2）Windows 推荐默认组合"></a>2）Windows 推荐默认组合</h3><p>如果你不想折腾，最稳的默认组合是：</p>
+<ul>
+<li>终端：<code>WezTerm</code></li>
+<li>默认 shell：<code>powershell.exe -NoLogo</code></li>
+<li>主题：<code>Tokyo Night Storm</code></li>
+<li>快捷键：官方默认</li>
+</ul>
+<p>之所以先推荐 <code>powershell.exe</code>，不是因为它最强，而是因为它通常最稳定。<code>pwsh.exe</code> 当然更现代，但 profile、模块、环境变量一旦有历史包袱，排错成本会更高。</p>
+<h3 id="3）一份够用的-Windows-配置"><a href="#3）一份够用的-Windows-配置" class="headerlink" title="3）一份够用的 Windows 配置"></a>3）一份够用的 Windows 配置</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> wezterm = <span class="built_in">require</span>(<span class="string">&quot;wezterm&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> &#123;</span><br><span class="line">  color_scheme = <span class="string">&quot;Tokyo Night Storm&quot;</span>,</span><br><span class="line">  window_background_opacity = <span class="number">0.92</span>,</span><br><span class="line">  text_background_opacity = <span class="number">1.0</span>,</span><br><span class="line"></span><br><span class="line">  enable_tab_bar = <span class="literal">true</span>,</span><br><span class="line">  hide_tab_bar_if_only_one_tab = <span class="literal">true</span>,</span><br><span class="line">  use_fancy_tab_bar = <span class="literal">false</span>,</span><br><span class="line">  tab_max_width = <span class="number">32</span>,</span><br><span class="line">  window_padding = &#123; left = <span class="number">8</span>, right = <span class="number">8</span>, top = <span class="number">6</span>, bottom = <span class="number">6</span> &#125;,</span><br><span class="line"></span><br><span class="line">  default_prog = &#123; <span class="string">&quot;powershell.exe&quot;</span>, <span class="string">&quot;-NoLogo&quot;</span> &#125;,</span><br><span class="line">  exit_behavior = <span class="string">&quot;Close&quot;</span>,</span><br><span class="line">  scrollback_lines = <span class="number">8000</span>,</span><br><span class="line">  adjust_window_size_when_changing_font_size = <span class="literal">false</span>,</span><br><span class="line"></span><br><span class="line">  launch_menu = &#123;</span><br><span class="line">    &#123; label = <span class="string">&quot;Windows PowerShell&quot;</span>, args = &#123; <span class="string">&quot;powershell.exe&quot;</span>, <span class="string">&quot;-NoLogo&quot;</span> &#125; &#125;,</span><br><span class="line">    &#123; label = <span class="string">&quot;PowerShell 7&quot;</span>, args = &#123; <span class="string">&quot;pwsh.exe&quot;</span>, <span class="string">&quot;-NoLogo&quot;</span>, <span class="string">&quot;-NoProfile&quot;</span> &#125; &#125;,</span><br><span class="line">    &#123; label = <span class="string">&quot;Command Prompt&quot;</span>, args = &#123; <span class="string">&quot;cmd.exe&quot;</span> &#125; &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这份配置的重点不是“炫”，而是稳：</p>
+<ul>
+<li>深色主题，提升长期阅读舒适度</li>
+<li>轻微透明和边距，界面更松弛</li>
+<li>默认用 <code>powershell.exe</code></li>
+<li>保留 <code>launch_menu</code>，需要时再手动切到 <code>pwsh</code> 或 <code>cmd</code></li>
+</ul>
+<h3 id="4）Windows-日常最常用快捷键"><a href="#4）Windows-日常最常用快捷键" class="headerlink" title="4）Windows 日常最常用快捷键"></a>4）Windows 日常最常用快捷键</h3><ul>
+<li>新建标签页：<code>Ctrl+Shift+T</code></li>
+<li>关闭当前标签页：<code>Ctrl+Shift+W</code></li>
+<li>新建窗口：<code>Ctrl+Shift+N</code></li>
+<li>复制：<code>Ctrl+Shift+C</code></li>
+<li>粘贴：<code>Ctrl+Shift+V</code></li>
+<li>搜索输出：<code>Ctrl+Shift+F</code></li>
+<li>重载配置：<code>Ctrl+Shift+R</code></li>
+</ul>
+<p>分屏常见默认键位：</p>
+<ul>
+<li>水平分屏：<code>Ctrl+Shift+Alt+&quot;</code></li>
+<li>垂直分屏：<code>Ctrl+Shift+Alt+%</code></li>
+</ul>
+<p>如果你的键盘布局和这两个符号位置不一致，不用慌，这在 Windows 上很常见。</p>
+<h3 id="5）Windows-常见坑"><a href="#5）Windows-常见坑" class="headerlink" title="5）Windows 常见坑"></a>5）Windows 常见坑</h3><p>最典型的三个问题：</p>
+<ul>
+<li>配了系统里没有的字体，导致启动时报字体错误</li>
+<li>把 <code>pwsh.exe</code> 设成默认后，profile 报错直接退出</li>
+<li>改了配置但没重载，误以为配置没生效</li>
+</ul>
+<p>我的建议是：</p>
+<ul>
+<li>刚开始先不要配字体</li>
+<li>默认 shell 先用 <code>powershell.exe</code></li>
+<li>任何修改先按 <code>Ctrl+Shift+R</code> 再判断</li>
+</ul>
+<h2 id="五、macOS：更自然的组合是-WezTerm-zsh"><a href="#五、macOS：更自然的组合是-WezTerm-zsh" class="headerlink" title="五、macOS：更自然的组合是 WezTerm + zsh"></a>五、macOS：更自然的组合是 WezTerm + zsh</h2><h3 id="1）安装与配置文件位置-1"><a href="#1）安装与配置文件位置-1" class="headerlink" title="1）安装与配置文件位置"></a>1）安装与配置文件位置</h3><p>macOS 最省事的安装方式是 Homebrew：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install --cask wezterm</span><br></pre></td></tr></table></figure>
+
+<p>配置文件位置是：</p>
+<p><code>~/.wezterm.lua</code></p>
+<p>例如：</p>
+<p><code>/Users/&lt;你的用户名&gt;/.wezterm.lua</code></p>
+<p>改完配置后，推荐按 <code>Command+Shift+R</code> 重载。</p>
+<h3 id="2）macOS-推荐默认组合"><a href="#2）macOS-推荐默认组合" class="headerlink" title="2）macOS 推荐默认组合"></a>2）macOS 推荐默认组合</h3><p>Mac 上最自然的起步方案通常是：</p>
+<ul>
+<li>终端：<code>WezTerm</code></li>
+<li>默认 shell：<code>/bin/zsh -l</code></li>
+<li>主题：<code>Tokyo Night Storm</code></li>
+<li>快捷键：官方默认</li>
+</ul>
+<p>之所以推荐 <code>zsh -l</code>，是因为它更贴近 macOS 的默认行为。很多用户的 PATH、Homebrew 初始化、代理配置、别名和提示符，都是在 shell login 过程里建立起来的。</p>
+<h3 id="3）一份够用的-macOS-配置"><a href="#3）一份够用的-macOS-配置" class="headerlink" title="3）一份够用的 macOS 配置"></a>3）一份够用的 macOS 配置</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> wezterm = <span class="built_in">require</span>(<span class="string">&quot;wezterm&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> &#123;</span><br><span class="line">  color_scheme = <span class="string">&quot;Tokyo Night Storm&quot;</span>,</span><br><span class="line">  window_background_opacity = <span class="number">0.95</span>,</span><br><span class="line">  text_background_opacity = <span class="number">1.0</span>,</span><br><span class="line"></span><br><span class="line">  enable_tab_bar = <span class="literal">true</span>,</span><br><span class="line">  hide_tab_bar_if_only_one_tab = <span class="literal">true</span>,</span><br><span class="line">  use_fancy_tab_bar = <span class="literal">false</span>,</span><br><span class="line">  tab_max_width = <span class="number">32</span>,</span><br><span class="line">  window_padding = &#123; left = <span class="number">8</span>, right = <span class="number">8</span>, top = <span class="number">6</span>, bottom = <span class="number">6</span> &#125;,</span><br><span class="line"></span><br><span class="line">  default_prog = &#123; <span class="string">&quot;/bin/zsh&quot;</span>, <span class="string">&quot;-l&quot;</span> &#125;,</span><br><span class="line">  exit_behavior = <span class="string">&quot;Close&quot;</span>,</span><br><span class="line">  scrollback_lines = <span class="number">10000</span>,</span><br><span class="line">  adjust_window_size_when_changing_font_size = <span class="literal">false</span>,</span><br><span class="line"></span><br><span class="line">  launch_menu = &#123;</span><br><span class="line">    &#123; label = <span class="string">&quot;zsh&quot;</span>, args = &#123; <span class="string">&quot;/bin/zsh&quot;</span>, <span class="string">&quot;-l&quot;</span> &#125; &#125;,</span><br><span class="line">    &#123; label = <span class="string">&quot;bash&quot;</span>, args = &#123; <span class="string">&quot;/bin/bash&quot;</span>, <span class="string">&quot;-l&quot;</span> &#125; &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果你还装了 <code>fish</code>、<code>pwsh</code> 之类的 shell，再把它们补进 <code>launch_menu</code> 就行。需要注意的是，Homebrew 在 Apple Silicon 和 Intel Mac 上的安装路径不同：</p>
+<ul>
+<li>Apple Silicon 常见是 <code>/opt/homebrew/bin</code></li>
+<li>Intel Mac 常见是 <code>/usr/local/bin</code></li>
+</ul>
+<h3 id="4）macOS-日常最常用快捷键"><a href="#4）macOS-日常最常用快捷键" class="headerlink" title="4）macOS 日常最常用快捷键"></a>4）macOS 日常最常用快捷键</h3><p>macOS 下很多高频操作优先用 <code>Command</code>，也就是 WezTerm 文档里的 <code>SUPER</code>：</p>
+<ul>
+<li>新建标签页：<code>Command+T</code></li>
+<li>关闭当前标签页：<code>Command+W</code></li>
+<li>新建窗口：<code>Command+N</code></li>
+<li>复制：<code>Command+C</code></li>
+<li>粘贴：<code>Command+V</code></li>
+<li>搜索输出：<code>Command+F</code></li>
+<li>放大字体：<code>Command+=</code></li>
+<li>缩小字体：<code>Command+-</code></li>
+<li>重置字体：<code>Command+0</code></li>
+<li>重载配置：<code>Command+Shift+R</code></li>
+</ul>
+<p>要特别注意：</p>
+<ul>
+<li><code>Ctrl+C</code> 在终端里通常还是中断当前进程，不是复制</li>
+<li>分屏默认键位通常仍是 <code>Ctrl+Shift+Alt+&quot;</code> 和 <code>Ctrl+Shift+Alt+%</code></li>
+</ul>
+<h3 id="5）macOS-常见坑"><a href="#5）macOS-常见坑" class="headerlink" title="5）macOS 常见坑"></a>5）macOS 常见坑</h3><p>最常见的不是 WezTerm 本身出问题，而是 shell 路径没配对：</p>
+<ul>
+<li><code>default_prog</code> 指向了不存在的可执行文件</li>
+<li>Homebrew shell 的路径写成了另一种架构的目录</li>
+<li>你以为在跟随系统默认 shell，其实手动写死了 <code>default_prog</code></li>
+</ul>
+<p>遇到这类问题时，先用下面几个命令确认路径：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$SHELL</span></span><br><span class="line"><span class="built_in">which</span> zsh</span><br><span class="line"><span class="built_in">which</span> bash</span><br><span class="line"><span class="built_in">which</span> fish</span><br><span class="line"><span class="built_in">which</span> pwsh</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、一个很容易踩的真实问题：Windows-下图片粘贴为什么总是不稳定"><a href="#六、一个很容易踩的真实问题：Windows-下图片粘贴为什么总是不稳定" class="headerlink" title="六、一个很容易踩的真实问题：Windows 下图片粘贴为什么总是不稳定"></a>六、一个很容易踩的真实问题：Windows 下图片粘贴为什么总是不稳定</h2><p>如果你在 Windows 上用 WezTerm 跑终端类 AI 工具，比如 <code>opencode</code>，很可能会遇到一个很拧巴的问题：</p>
+<ul>
+<li>在 VSCode 插件里，截图后直接粘贴图片基本没问题</li>
+<li>但在 <code>PowerShell</code>、<code>WezTerm</code>、<code>Windows Terminal</code> 里运行同一个工具时，<code>Ctrl+V</code> 经常没反应，或者只能粘贴文本</li>
+<li>更麻烦的是，它偶尔又会成功，于是问题看起来像“随机故障”</li>
+</ul>
+<p>这个现象特别容易让人误判成：模型不支持图片、CLI 不支持图片、或者 PowerShell 有问题。实际上，这几个方向大多都不是根因。</p>
+<h3 id="1）先把责任边界分清楚"><a href="#1）先把责任边界分清楚" class="headerlink" title="1）先把责任边界分清楚"></a>1）先把责任边界分清楚</h3><p>这里至少有三层：</p>
+<ul>
+<li><code>WezTerm</code> &#x2F; <code>Windows Terminal</code>：terminal emulator，决定很多按键先由谁处理</li>
+<li><code>PowerShell</code> &#x2F; <code>cmd</code>：shell，负责命令执行环境</li>
+<li><code>opencode</code> 这类 TUI&#x2F;CLI 应用：真正实现图片附件能力的前台程序</li>
+</ul>
+<p>关键点在于：<code>Ctrl+V</code> 在终端环境里，通常优先表示普通文本粘贴；而图片粘贴往往是应用层收到某个快捷键后，再自己去读取系统剪贴板图片。</p>
+<p>所以“文本 paste”和“图片附件”不是同一种能力，它们本来就不在同一层。</p>
+<h3 id="2）为什么-VSCode-插件能行，终端里却经常不行"><a href="#2）为什么-VSCode-插件能行，终端里却经常不行" class="headerlink" title="2）为什么 VSCode 插件能行，终端里却经常不行"></a>2）为什么 VSCode 插件能行，终端里却经常不行</h3><p>因为两边拿到的根本不是同一种输入语义。</p>
+<p>VSCode 这类 GUI 环境拿到的是更高层的 paste event，里面可能直接包含：</p>
+<ul>
+<li>文本</li>
+<li>HTML</li>
+<li>图片</li>
+<li>文件</li>
+</ul>
+<p>终端前台程序拿到的通常却只是：</p>
+<ul>
+<li>某个按键被按下</li>
+<li>某段文本被 paste 进来</li>
+<li>一些控制序列</li>
+</ul>
+<p>这也是为什么 GUI 插件处理图片会显得很自然，而终端里的图片粘贴经常需要额外设计快捷键。</p>
+<h3 id="3）WezTerm-里最典型的冲突长什么样"><a href="#3）WezTerm-里最典型的冲突长什么样" class="headerlink" title="3）WezTerm 里最典型的冲突长什么样"></a>3）WezTerm 里最典型的冲突长什么样</h3><p>如果你的 WezTerm 配置里写过这种映射：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; key = <span class="string">&quot;v&quot;</span>, mods = <span class="string">&quot;CTRL&quot;</span>, action = wezterm.action.PasteFrom(<span class="string">&quot;Clipboard&quot;</span>) &#125;</span><br></pre></td></tr></table></figure>
+
+<p>它的实际含义就是：</p>
+<ul>
+<li><code>Ctrl+V</code> 先由 WezTerm 接管</li>
+<li>WezTerm 执行的是普通剪贴板文本粘贴</li>
+<li>前台应用未必还能拿到这个按键机会</li>
+</ul>
+<p>结果就是：</p>
+<ul>
+<li>文本粘贴通常没问题</li>
+<li>但依赖“应用自己读图片剪贴板”的那条链路更难触发</li>
+</ul>
+<p>这类问题最容易出现在你已经把 <code>Ctrl+V</code> 训练成高频文本粘贴键，同时又希望同一个组合键顺手承担图片附件语义的时候。</p>
+<h3 id="4）一个更稳定的做法：把文本和图片拆开"><a href="#4）一个更稳定的做法：把文本和图片拆开" class="headerlink" title="4）一个更稳定的做法：把文本和图片拆开"></a>4）一个更稳定的做法：把文本和图片拆开</h3><p>我最后更推荐的分工是：</p>
+<ul>
+<li><code>Ctrl+V</code>：保留给普通文本粘贴</li>
+<li><code>Alt+V</code>：交给应用处理图片粘贴</li>
+<li><code>Ctrl+Alt+V</code>：作为备用图片粘贴键</li>
+</ul>
+<p>验证方法也很直接：</p>
+<ol>
+<li>用 <code>Win+Shift+S</code> 截图</li>
+<li>聚焦到目标 CLI 工具的输入区</li>
+<li>按 <code>Alt+V</code></li>
+</ol>
+<p>如果输入区出现类似 <code>[Image 1]</code> 这样的占位，基本就能说明：</p>
+<ul>
+<li>模型本身支持图片</li>
+<li>应用本身支持图片</li>
+<li>真正的问题是 <code>Ctrl+V</code> 在 terminal 和 app 之间的职责冲突</li>
+</ul>
+<p>这也是我现在更认同的结论：在终端世界里，文本和图片分不同快捷键，不是 workaround，而是更符合输入模型的工程化方案。</p>
+<h3 id="5）把这件事和-WezTerm-的定位联系起来"><a href="#5）把这件事和-WezTerm-的定位联系起来" class="headerlink" title="5）把这件事和 WezTerm 的定位联系起来"></a>5）把这件事和 WezTerm 的定位联系起来</h3><p>这件事也顺手说明了一个很重要的使用原则：</p>
+<ul>
+<li>WezTerm 很强，但它首先是 terminal，不是 GUI 插件宿主</li>
+<li>它能很好地处理文本流、按键和控制序列</li>
+<li>它可以帮你透传按键、改键位、做工作流编排</li>
+<li>但它不会自动把系统剪贴板图片变成某个 TUI 应用内部的附件对象</li>
+</ul>
+<p>所以，如果你的工作流里文本粘贴远高于图片粘贴，最稳的策略通常就是：</p>
+<ul>
+<li>不要为了低频图片场景牺牲高频 <code>Ctrl+V</code></li>
+<li>单独给图片粘贴设计一个应用层快捷键</li>
+<li>对图片重度依赖时，也接受 GUI 插件在体验上天然更占优势</li>
+</ul>
+<h2 id="七、跨平台都适用的配置理解"><a href="#七、跨平台都适用的配置理解" class="headerlink" title="七、跨平台都适用的配置理解"></a>七、跨平台都适用的配置理解</h2><p>不管是 Windows 还是 macOS，真正最值得理解的是这几类配置项：</p>
+<h3 id="1）外观相关"><a href="#1）外观相关" class="headerlink" title="1）外观相关"></a>1）外观相关</h3><ul>
+<li><code>color_scheme</code>：主题名称</li>
+<li><code>window_background_opacity</code>：窗口背景透明度</li>
+<li><code>text_background_opacity</code>：文本背景透明度</li>
+<li><code>window_padding</code>：内容和边缘的留白</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>先固定一个深色主题，不要频繁切换</li>
+<li>透明度轻一点就够了，过高会影响阅读</li>
+</ul>
+<h3 id="2）标签页相关"><a href="#2）标签页相关" class="headerlink" title="2）标签页相关"></a>2）标签页相关</h3><ul>
+<li><code>enable_tab_bar</code></li>
+<li><code>hide_tab_bar_if_only_one_tab</code></li>
+<li><code>use_fancy_tab_bar</code></li>
+<li><code>tab_max_width</code></li>
+</ul>
+<p>起步阶段我更推荐：</p>
+<ul>
+<li>开启标签栏</li>
+<li>单标签时自动隐藏</li>
+<li>关闭 fancy tab bar，保持简洁</li>
+</ul>
+<h3 id="3）启动相关"><a href="#3）启动相关" class="headerlink" title="3）启动相关"></a>3）启动相关</h3><ul>
+<li><code>default_prog</code>：默认启动哪个 shell</li>
+<li><code>default_cwd</code>：默认目录（Windows 更常用）</li>
+<li><code>launch_menu</code>：新建标签或窗口时可选启动项</li>
+<li><code>exit_behavior</code>：最后进程退出时窗口怎么处理</li>
+</ul>
+<p>如果你希望配置长期稳定，<code>launch_menu</code> 很值得加。它能让“主力 shell 稳定”和“保留其他入口”同时成立。</p>
+<h3 id="4）体验相关"><a href="#4）体验相关" class="headerlink" title="4）体验相关"></a>4）体验相关</h3><ul>
+<li><code>scrollback_lines</code>：历史输出回滚行数</li>
+<li><code>adjust_window_size_when_changing_font_size</code>：调字号时是否改变窗口尺寸</li>
+</ul>
+<p>一般来说：</p>
+<ul>
+<li><code>8000-20000</code> 行足够大多数开发场景</li>
+<li>关闭字号联动改窗体尺寸，体验更稳定</li>
+</ul>
+<h2 id="八、我建议的上手路径：三阶段就够了"><a href="#八、我建议的上手路径：三阶段就够了" class="headerlink" title="八、我建议的上手路径：三阶段就够了"></a>八、我建议的上手路径：三阶段就够了</h2><h3 id="阶段-A：先稳定用起来"><a href="#阶段-A：先稳定用起来" class="headerlink" title="阶段 A：先稳定用起来"></a>阶段 A：先稳定用起来</h3><ul>
+<li>只保留默认 shell、深色主题、官方快捷键</li>
+<li>熟悉标签页、复制粘贴、搜索、分屏</li>
+</ul>
+<h3 id="阶段-B：只加少量增强"><a href="#阶段-B：只加少量增强" class="headerlink" title="阶段 B：只加少量增强"></a>阶段 B：只加少量增强</h3><ul>
+<li>增加 2-4 个高频键位</li>
+<li>增加 <code>launch_menu</code></li>
+<li>根据阅读习惯微调透明度、边距、滚动回溯行数</li>
+</ul>
+<h3 id="阶段-C：最后再做重度定制"><a href="#阶段-C：最后再做重度定制" class="headerlink" title="阶段 C：最后再做重度定制"></a>阶段 C：最后再做重度定制</h3><ul>
+<li>字体与 fallback</li>
+<li>状态栏与 workspace</li>
+<li>leader key</li>
+<li>启动时自动布局</li>
+</ul>
+<p>这一阶段当然很爽，但并不是“好用”的前提。</p>
+<h2 id="九、两套我更推荐的模板"><a href="#九、两套我更推荐的模板" class="headerlink" title="九、两套我更推荐的模板"></a>九、两套我更推荐的模板</h2><p>如果你只想抄一份能用的配置，可以直接从下面两套开始。</p>
+<h3 id="Windows-模板"><a href="#Windows-模板" class="headerlink" title="Windows 模板"></a>Windows 模板</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> wezterm = <span class="built_in">require</span>(<span class="string">&quot;wezterm&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> &#123;</span><br><span class="line">  color_scheme = <span class="string">&quot;Tokyo Night Storm&quot;</span>,</span><br><span class="line">  window_background_opacity = <span class="number">0.92</span>,</span><br><span class="line">  text_background_opacity = <span class="number">1.0</span>,</span><br><span class="line">  enable_tab_bar = <span class="literal">true</span>,</span><br><span class="line">  hide_tab_bar_if_only_one_tab = <span class="literal">true</span>,</span><br><span class="line">  use_fancy_tab_bar = <span class="literal">false</span>,</span><br><span class="line">  tab_max_width = <span class="number">32</span>,</span><br><span class="line">  window_padding = &#123; left = <span class="number">8</span>, right = <span class="number">8</span>, top = <span class="number">6</span>, bottom = <span class="number">6</span> &#125;,</span><br><span class="line">  default_prog = &#123; <span class="string">&quot;powershell.exe&quot;</span>, <span class="string">&quot;-NoLogo&quot;</span> &#125;,</span><br><span class="line">  exit_behavior = <span class="string">&quot;Close&quot;</span>,</span><br><span class="line">  scrollback_lines = <span class="number">8000</span>,</span><br><span class="line">  adjust_window_size_when_changing_font_size = <span class="literal">false</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="macOS-模板"><a href="#macOS-模板" class="headerlink" title="macOS 模板"></a>macOS 模板</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> wezterm = <span class="built_in">require</span>(<span class="string">&quot;wezterm&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> &#123;</span><br><span class="line">  color_scheme = <span class="string">&quot;Tokyo Night Storm&quot;</span>,</span><br><span class="line">  window_background_opacity = <span class="number">0.95</span>,</span><br><span class="line">  text_background_opacity = <span class="number">1.0</span>,</span><br><span class="line">  enable_tab_bar = <span class="literal">true</span>,</span><br><span class="line">  hide_tab_bar_if_only_one_tab = <span class="literal">true</span>,</span><br><span class="line">  use_fancy_tab_bar = <span class="literal">false</span>,</span><br><span class="line">  tab_max_width = <span class="number">32</span>,</span><br><span class="line">  window_padding = &#123; left = <span class="number">8</span>, right = <span class="number">8</span>, top = <span class="number">6</span>, bottom = <span class="number">6</span> &#125;,</span><br><span class="line">  default_prog = &#123; <span class="string">&quot;/bin/zsh&quot;</span>, <span class="string">&quot;-l&quot;</span> &#125;,</span><br><span class="line">  exit_behavior = <span class="string">&quot;Close&quot;</span>,</span><br><span class="line">  scrollback_lines = <span class="number">10000</span>,</span><br><span class="line">  adjust_window_size_when_changing_font_size = <span class="literal">false</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="十、最后给一个很实际的建议"><a href="#十、最后给一个很实际的建议" class="headerlink" title="十、最后给一个很实际的建议"></a>十、最后给一个很实际的建议</h2><p>很多人喜欢问：“WezTerm 最强配置是什么？”</p>
+<p>我现在更认同另一种问法：你每天最常做的 3 件终端操作是什么？</p>
+<p>如果你的答案是：</p>
+<ul>
+<li>开项目</li>
+<li>跑服务</li>
+<li>看日志</li>
+</ul>
+<p>那你真正需要的往往只有这些：</p>
+<ul>
+<li>稳定的默认 shell</li>
+<li>好读的主题</li>
+<li>够用的标签页和分屏</li>
+<li>不打架的快捷键</li>
+</ul>
+<p>先把这 4 件事配好，WezTerm 就已经足够成为主力终端了。剩下的高级玩法，等你真的需要时再加，完全不晚。</p>
+</article>
+<div class="article-footer">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    
+
+
+    <section id="share">
+      <div class="header"><span>分享文章</span></div>
+      <div class="body">
+        <div class="link"><input class="copy-area" readonly="true" id="copy-link" value="https://minniexcode.github.io/memoirs/20260317/learning/wezterm-guide-windows-macos/" /></div>
+        <div class="social-wrap dis-select"><a class="social share-item wechat" onclick="util.toggle(&quot;qrcode-wechat&quot;)"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/b32ef3da1162a.svg" /></a><a class="social share-item weibo" target="_blank" rel="external nofollow noopener noreferrer" href="https://service.weibo.com/share/share.php?url=https://minniexcode.github.io/memoirs/20260317/learning/wezterm-guide-windows-macos/&title=WezTerm Guide：Windows 和 macOS 的入门、配置与日常工作流 - ash&summary=WezTerm 这两年基本成了我最愿意推荐给开发者的终端之一：配置文件化、标签页和分屏能力强、跨平台一致性也不错。
+但很多教程有两个问题：要么只讲“怎么装”，要么一上来就把配置堆得很满。对大多数人来说，真正需要的不是一份炫技配置，而是..."><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/80c07e4dbb303.svg" /></a><a class="social share-item email" href="mailto:?subject=WezTerm Guide：Windows 和 macOS 的入门、配置与日常工作流 - ash&amp;body=https://minniexcode.github.io/memoirs/20260317/learning/wezterm-guide-windows-macos/"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/a1b00e20f425d.svg" /></a><a class="social share-item link" onclick="util.copy(&quot;copy-link&quot;, &quot;复制成功&quot;)"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/8411ed322ced6.svg" /></a></div>
+        
+        <div class="qrcode" id="qrcode-wechat" style="opacity:0;height:0">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=https://minniexcode.github.io/memoirs/20260317/learning/wezterm-guide-windows-macos/"/>
+        </div>
+        
+      </div>
+    </section>
+    </div>
+
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/memoirs/20260317/learning/react-references/">React 学习参考</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/memoirs/20260315/learning/opencode-in-action-2026/">OpenCode 实战指南（2026）：从能用到好用</a></div></section></div>
+
+
+
+
+  <div class="related-wrap md-text" id="comments">
+    <section class='header cmt-title cap theme'>
+      <p>来都来了，聊两句吧</p>
+
+    </section>
+    <section class='body cmt-body beaudar'>
+      
+
+<svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg>
+
+<div id="beaudar" repo="minniexcode/blog-comments" issue-term="pathname" theme="preferred-color-scheme" label="comments" input-position="top" comment-order="desc" loading="false" branch="main"></div>
+
+    </section>
+  </div>
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">ash66</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar 1.33.1</a> 主题创建。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right"><div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%85%88%E8%AE%B2%E6%B8%85%E6%A5%9A%EF%BC%9AWezTerm-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%8C%E4%B8%8D%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">一、先讲清楚：WezTerm 是什么，不是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BC%9A%E6%8E%A8%E8%8D%90-WezTerm"><span class="toc-text">二、为什么我会推荐 WezTerm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%85%88%E7%94%A8%E6%9C%80%E7%A8%B3%E7%9A%84%E6%80%9D%E8%B7%AF%EF%BC%8C%E4%B8%8D%E8%A6%81%E4%B8%80%E5%BC%80%E5%A7%8B%E5%B0%B1%E8%BF%87%E5%BA%A6%E5%AE%9A%E5%88%B6"><span class="toc-text">三、先用最稳的思路，不要一开始就过度定制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81Windows%EF%BC%9A%E6%9C%80%E9%80%82%E5%90%88%E5%A4%A7%E5%A4%9A%E6%95%B0%E4%BA%BA%E7%9A%84%E8%B5%B7%E6%AD%A5%E6%96%B9%E6%A1%88"><span class="toc-text">四、Windows：最适合大多数人的起步方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BD%8D%E7%BD%AE"><span class="toc-text">1）安装与配置文件位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89Windows-%E6%8E%A8%E8%8D%90%E9%BB%98%E8%AE%A4%E7%BB%84%E5%90%88"><span class="toc-text">2）Windows 推荐默认组合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E4%B8%80%E4%BB%BD%E5%A4%9F%E7%94%A8%E7%9A%84-Windows-%E9%85%8D%E7%BD%AE"><span class="toc-text">3）一份够用的 Windows 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89Windows-%E6%97%A5%E5%B8%B8%E6%9C%80%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="toc-text">4）Windows 日常最常用快捷键</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%EF%BC%89Windows-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="toc-text">5）Windows 常见坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81macOS%EF%BC%9A%E6%9B%B4%E8%87%AA%E7%84%B6%E7%9A%84%E7%BB%84%E5%90%88%E6%98%AF-WezTerm-zsh"><span class="toc-text">五、macOS：更自然的组合是 WezTerm + zsh</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BD%8D%E7%BD%AE-1"><span class="toc-text">1）安装与配置文件位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89macOS-%E6%8E%A8%E8%8D%90%E9%BB%98%E8%AE%A4%E7%BB%84%E5%90%88"><span class="toc-text">2）macOS 推荐默认组合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E4%B8%80%E4%BB%BD%E5%A4%9F%E7%94%A8%E7%9A%84-macOS-%E9%85%8D%E7%BD%AE"><span class="toc-text">3）一份够用的 macOS 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89macOS-%E6%97%A5%E5%B8%B8%E6%9C%80%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="toc-text">4）macOS 日常最常用快捷键</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%EF%BC%89macOS-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="toc-text">5）macOS 常见坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E4%B8%80%E4%B8%AA%E5%BE%88%E5%AE%B9%E6%98%93%E8%B8%A9%E7%9A%84%E7%9C%9F%E5%AE%9E%E9%97%AE%E9%A2%98%EF%BC%9AWindows-%E4%B8%8B%E5%9B%BE%E7%89%87%E7%B2%98%E8%B4%B4%E4%B8%BA%E4%BB%80%E4%B9%88%E6%80%BB%E6%98%AF%E4%B8%8D%E7%A8%B3%E5%AE%9A"><span class="toc-text">六、一个很容易踩的真实问题：Windows 下图片粘贴为什么总是不稳定</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%85%88%E6%8A%8A%E8%B4%A3%E4%BB%BB%E8%BE%B9%E7%95%8C%E5%88%86%E6%B8%85%E6%A5%9A"><span class="toc-text">1）先把责任边界分清楚</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E4%B8%BA%E4%BB%80%E4%B9%88-VSCode-%E6%8F%92%E4%BB%B6%E8%83%BD%E8%A1%8C%EF%BC%8C%E7%BB%88%E7%AB%AF%E9%87%8C%E5%8D%B4%E7%BB%8F%E5%B8%B8%E4%B8%8D%E8%A1%8C"><span class="toc-text">2）为什么 VSCode 插件能行，终端里却经常不行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89WezTerm-%E9%87%8C%E6%9C%80%E5%85%B8%E5%9E%8B%E7%9A%84%E5%86%B2%E7%AA%81%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="toc-text">3）WezTerm 里最典型的冲突长什么样</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E4%B8%80%E4%B8%AA%E6%9B%B4%E7%A8%B3%E5%AE%9A%E7%9A%84%E5%81%9A%E6%B3%95%EF%BC%9A%E6%8A%8A%E6%96%87%E6%9C%AC%E5%92%8C%E5%9B%BE%E7%89%87%E6%8B%86%E5%BC%80"><span class="toc-text">4）一个更稳定的做法：把文本和图片拆开</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%EF%BC%89%E6%8A%8A%E8%BF%99%E4%BB%B6%E4%BA%8B%E5%92%8C-WezTerm-%E7%9A%84%E5%AE%9A%E4%BD%8D%E8%81%94%E7%B3%BB%E8%B5%B7%E6%9D%A5"><span class="toc-text">5）把这件事和 WezTerm 的定位联系起来</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E8%B7%A8%E5%B9%B3%E5%8F%B0%E9%83%BD%E9%80%82%E7%94%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E7%90%86%E8%A7%A3"><span class="toc-text">七、跨平台都适用的配置理解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%A4%96%E8%A7%82%E7%9B%B8%E5%85%B3"><span class="toc-text">1）外观相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E6%A0%87%E7%AD%BE%E9%A1%B5%E7%9B%B8%E5%85%B3"><span class="toc-text">2）标签页相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E5%90%AF%E5%8A%A8%E7%9B%B8%E5%85%B3"><span class="toc-text">3）启动相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E4%BD%93%E9%AA%8C%E7%9B%B8%E5%85%B3"><span class="toc-text">4）体验相关</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E6%88%91%E5%BB%BA%E8%AE%AE%E7%9A%84%E4%B8%8A%E6%89%8B%E8%B7%AF%E5%BE%84%EF%BC%9A%E4%B8%89%E9%98%B6%E6%AE%B5%E5%B0%B1%E5%A4%9F%E4%BA%86"><span class="toc-text">八、我建议的上手路径：三阶段就够了</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-A%EF%BC%9A%E5%85%88%E7%A8%B3%E5%AE%9A%E7%94%A8%E8%B5%B7%E6%9D%A5"><span class="toc-text">阶段 A：先稳定用起来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-B%EF%BC%9A%E5%8F%AA%E5%8A%A0%E5%B0%91%E9%87%8F%E5%A2%9E%E5%BC%BA"><span class="toc-text">阶段 B：只加少量增强</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-C%EF%BC%9A%E6%9C%80%E5%90%8E%E5%86%8D%E5%81%9A%E9%87%8D%E5%BA%A6%E5%AE%9A%E5%88%B6"><span class="toc-text">阶段 C：最后再做重度定制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E4%B8%A4%E5%A5%97%E6%88%91%E6%9B%B4%E6%8E%A8%E8%8D%90%E7%9A%84%E6%A8%A1%E6%9D%BF"><span class="toc-text">九、两套我更推荐的模板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows-%E6%A8%A1%E6%9D%BF"><span class="toc-text">Windows 模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#macOS-%E6%A8%A1%E6%9D%BF"><span class="toc-text">macOS 模板</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E6%9C%80%E5%90%8E%E7%BB%99%E4%B8%80%E4%B8%AA%E5%BE%88%E5%AE%9E%E9%99%85%E7%9A%84%E5%BB%BA%E8%AE%AE"><span class="toc-text">十、最后给一个很实际的建议</span></a></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
+</div></aside><div class='float-panel'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+
+
+<script type="text/javascript">
+  window.canonical = {"closeEnable":true,"closeText":"关闭提示","originalHost":null,"officialHosts":["localhost"],"encoded":""};
+  window.canonical["param"] = {"permalink":"https://minniexcode.github.io/memoirs/20260317/learning/wezterm-guide-windows-macos/","checklink":"/js/plugins/video.js"};
+  // Fix: Ensure page is at the correct top position on data load
+  if (history.scrollRestoration) {
+    history.scrollRestoration = 'auto';
+  }
+  (function() {
+    const scrollHandler = () => {
+      const wikiCover = document.querySelector('#l_cover .l_cover.wiki');
+      const startEl = document.getElementById('start');
+      if (wikiCover && startEl) {
+        window.scrollTo(0, startEl.offsetTop);
+      } else {
+        window.scrollTo(0, 0);
+      }
+    };
+    if (document.readyState !== 'loading') scrollHandler();
+    else document.addEventListener('DOMContentLoaded', scrollHandler);
+  })();
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/memoirs/`,
+    tag_plugins: {
+      chat: Object.assign({"api":"https://siteinfo.listentothewind.cn/api/v1"}),
+    }
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"skip_search":null,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+    loading: `https://api.iconify.design/eos-icons:three-dots-loading.svg?color=%231cd0fd`,
+  };
+  const deps = {
+    jquery: `https://gcore.jsdelivr.net/npm/jquery@3.7/dist/jquery.min.js`,
+    marked: `https://gcore.jsdelivr.net/npm/marked@13.0/lib/marked.umd.min.js`,
+    lazyload: `/memoirs/%5Bobject%20Object%5D`
+  }
+</script>
+
+<script type="text/javascript">
+  
+  function RunItem() {
+    this.list = []; // 存放回调函数
+    this.start = () => {
+      for (var i = 0; i < this.list.length; i++) {
+        this.list[i].run();
+      }
+    };
+    this.push = (fn, name, setRequestAnimationFrame = true) => {
+      let myfn = fn
+      if (setRequestAnimationFrame) {
+        myfn = () => {
+          utils.requestAnimationFrame(fn)
+        }
+      }
+      var f = new Item(myfn, name);
+      this.list.push(f);
+    };
+    this.remove = (name) => {
+      // 倒序遍历避免 splice 后的索引问题
+      for (let index = this.list.length - 1; index >= 0; index--) {
+        const e = this.list[index];
+        if (e.name === name) {
+          this.list.splice(index, 1);
+        }
+      }
+    }
+    // 构造一个可以run的对象
+    function Item(fn, name) {
+      // 函数名称
+      this.name = name || fn.name;
+      // run方法
+      this.run = () => {
+        try {
+          fn()
+        } catch (error) {
+          console.log(error);
+        }
+      };
+    }
+  }
+
+  const utils = {
+    // 已加载样式缓存
+    _loadedStyles: new Set(),
+
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      // 如果样式已加载，直接返回 null
+      if (utils._loadedStyles.has(href)) {
+        return null;
+      }
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      // 标记样式为已加载 (在创建元素后立即标记，防止重复创建)
+      utils._loadedStyles.add(href);
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 已加载脚本缓存
+    _loadedScripts: new Set(),
+
+    // 已加载元素缓存 (使用 WeakSet 追踪元素实例,避免 PJAX 导航时的状态混淆)
+    _loadedElements: new WeakSet(),
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      if (src.startsWith('/')) {
+        src = ctx.root + src.substring(1);
+      }
+      // 如果脚本已加载，直接返回
+      if (utils._loadedScripts.has(src)) {
+        resolve();
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function () {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        utils._loadedScripts.add(src);
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // PJAX 事件监听器管理
+    _pjaxListeners: new Set(),
+    
+    jq: (fn, pjax = true) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+      if (pjax && !fn._pjax_registered) {
+        document.addEventListener('pjax:complete', fn);
+        fn._pjax_registered = true;
+        utils._pjaxListeners.add(fn); // 追踪监听器以便清理
+      }
+    },
+    
+    // 清理所有 PJAX 事件监听器
+    cleanupPjaxListeners: () => {
+      utils._pjaxListeners.forEach(fn => {
+        document.removeEventListener('pjax:complete', fn);
+        fn._pjax_registered = false;
+      });
+      utils._pjaxListeners.clear();
+    },
+
+    onLoading: (el) => {
+      if (el) {
+        if ($(el).find('.loading-wrap').length === 0){
+          $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+        }
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      // 检查元素实例是否已加载 (而不是检查属性)
+      if (el && utils._loadedElements.has(el)) {
+        return;
+      }
+      const maxRetry = 3;
+      let retryCount = 0;
+
+      return new Promise((resolve, reject) => {
+        const load = () => {
+          utils.onLoading?.(el);
+
+          let timedOut = false;
+          const timeout = setTimeout(() => {
+            timedOut = true;
+            console.warn('[request] 超时:', url);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject('请求超时');
+            } else {
+              setTimeout(load, 1000);
+            }
+          }, 5000);
+
+          fetch(url).then(resp => {
+            if (timedOut) return;
+            clearTimeout(timeout);
+
+            if (!resp.ok) throw new Error('响应失败');
+            return resp;
+          }).then(data => {
+            if (timedOut) return;
+            // 标记元素实例为已加载
+            if (el) utils._loadedElements.add(el);
+            utils.onLoadSuccess?.(el);
+            callback(data);
+            resolve(data);
+          }).catch(err => {
+            clearTimeout(timeout);
+            console.warn('[request] 错误:', err);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject(err);
+            } else {
+              setTimeout(load, 1000);
+            }
+          });
+        };
+
+        load();
+      });
+    },
+    requestWithoutLoading: (url, options = {}, maxRetry = 2, timeout = 5000) => {
+      return new Promise((resolve, reject) => {
+        let retryCount = 0;
+
+        const tryRequest = () => {
+          let timedOut = false;
+          const timer = setTimeout(() => {
+            timedOut = true;
+            if (++retryCount > maxRetry) reject('timeout');
+            else tryRequest();
+          }, timeout);
+
+          fetch(url, options)
+            .then(resp => {
+              clearTimeout(timer);
+              if (!resp.ok) throw new Error('bad response');
+              resolve(resp);
+            })
+            .catch(err => {
+              clearTimeout(timer);
+              if (++retryCount > maxRetry) reject(err);
+              else setTimeout(tryRequest, 500);
+            });
+        };
+
+        tryRequest();
+      });
+    },
+    /********************** requestAnimationFrame ********************************/
+    // 1、requestAnimationFrame 会把每一帧中的所有 DOM 操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率，一般来说，这个频率为每秒60帧。
+    // 2、在隐藏或不可见的元素中，requestAnimationFrame 将不会进行重绘或回流，这当然就意味着更少的的 cpu，gpu 和内存使用量。
+    requestAnimationFrame: (fn) => {
+      if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame;
+      }
+      window.requestAnimationFrame(fn)
+    },
+    dark: {},
+
+    // 插件初始化管理器 - 统一处理 DOMContentLoaded 和 pjax:complete 事件
+    _pluginInitializers: [],
+    _pluginCleanups: new Map(), // 存储每个插件的清理函数
+    
+    initPlugin: (initFn, name, options = {}) => {
+      if (!initFn || typeof initFn !== 'function') return;
+      
+      // 避免重复注册
+      const pluginName = name || initFn.name;
+      if (utils._pluginInitializers.some(p => p.name === pluginName)) return;
+      
+      // 包装初始化函数，添加防重复执行的保护
+      const wrappedInit = () => {
+        try {
+          // 在执行前先清理旧的资源
+          if (utils._pluginCleanups.has(pluginName)) {
+            const cleanup = utils._pluginCleanups.get(pluginName);
+            if (typeof cleanup === 'function') {
+              cleanup();
+            }
+          }
+          
+          // 执行初始化，可能返回清理函数
+          const cleanup = initFn();
+          
+          // 如果初始化函数返回了清理函数，保存它
+          if (typeof cleanup === 'function') {
+            utils._pluginCleanups.set(pluginName, cleanup);
+          }
+        } catch (error) {
+          console.error(`[Plugin ${pluginName}] 初始化失败:`, error);
+        }
+      };
+      
+      utils._pluginInitializers.push({ 
+        fn: wrappedInit, 
+        name: pluginName,
+        options: options 
+      });
+      
+      // 如果 DOM 已经加载完成，立即执行
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        wrappedInit();
+      } else {
+        // 否则等待 DOMContentLoaded
+        window.addEventListener('DOMContentLoaded', wrappedInit, { once: true });
+      }
+    },
+
+    // 重新初始化所有插件（用于 PJAX 等场景）
+    reinitPlugins: () => {
+      utils._pluginInitializers.forEach(plugin => {
+        // 跳过标记为不需要重新初始化的插件
+        if (plugin.options.skipReinit) return;
+        
+        try {
+          plugin.fn();
+        } catch (error) {
+          console.error(`[Plugin ${plugin.name}] 重新初始化失败:`, error);
+        }
+      });
+    },
+    
+    // 清理所有插件资源
+    cleanupPlugins: () => {
+      utils._pluginCleanups.forEach((cleanup, name) => {
+        try {
+          cleanup();
+        } catch (error) {
+          console.error(`[Plugin ${name}] 清理失败:`, error);
+        }
+      });
+      utils._pluginCleanups.clear();
+    },
+    
+    // 清理所有资源（用于页面卸载或重置）
+    cleanupAll: () => {
+      utils.cleanupPlugins();
+      utils.cleanupPjaxListeners();
+    },
+  };
+
+  // 自动处理 PJAX 事件
+  document.addEventListener('pjax:before', () => {
+    // 在导航前清理旧的 PJAX 监听器（如果需要重新注册）
+    // 注意：这里不清理，因为监听器应该是持久的
+    // utils.cleanupPjaxListeners();
+  });
+  
+  document.addEventListener('pjax:complete', () => {
+    utils.reinitPlugins();
+  });
+
+  // utils.dark.mode 当前模式 dark or light
+  // utils.dark.toggle() 暗黑模式触发器
+  // utils.dark.push(callBack[,"callBackName"]) 传入触发器回调函数
+  utils.dark.method = {
+    toggle: new RunItem(),
+  };
+  utils.dark = Object.assign(utils.dark, {
+    push: utils.dark.method.toggle.push,
+  });
+</script>
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+<script async src="https://gcore.jsdelivr.net/npm/vanilla-lazyload@19.1/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+    callback_loaded: (el) => {
+      el.classList.add('loaded');
+      const wrapper = el.closest('.lazy-box');
+      const icon = wrapper?.querySelector('.lazy-icon');
+      if (icon) icon.remove();
+    }
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+
+  window.wrapLazyloadImages = (container) => {
+    if (typeof container === 'string') {
+      container = document.querySelector(container);
+    }
+    if (!container) return;
+
+    const images = container.querySelectorAll('img');
+    images.forEach((img) => {
+      if (img.classList.contains('lazy')) return;
+
+      const src = img.getAttribute('src');
+      if (!src) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'lazy-box';
+
+      const newImg = img.cloneNode();
+      newImg.removeAttribute('src');
+      newImg.setAttribute('data-src', src);
+      newImg.classList.add('lazy');
+
+      const icon = document.createElement('div');
+      icon.className = 'lazy-icon';
+      if (def.loading) {
+        icon.style.backgroundImage = `url("${def.loading}")`;
+      }
+
+      wrapper.appendChild(newImg);
+      wrapper.appendChild(icon);
+
+      img.replaceWith(wrapper);
+    });
+
+    // 通知 LazyLoad 更新
+    if (window.lazyLoadInstance?.update) {
+      window.lazyLoadInstance.update();
+    }
+  }
+
+</script>
+
+<!-- required -->
+<script src="/memoirs/js/main.js?v=1.33.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    // applyThemeToGiscus(theme)
+  }
+
+  // FIXME: 这会导致无法使用 preferred_color_scheme 以外的主题
+  const applyThemeToGiscus = (theme) => {
+    // theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+    utils.dark.mode = newTheme === 'auto' ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : newTheme;
+    utils.dark.method.toggle.start();
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    } else {
+      utils.dark.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    utils.dark.method.toggle.start();
+  })()
+</script>
+
+
+<!-- optional -->
+
+  <script>
+  (function() {
+    const lazyload = false;
+    
+    function initBeaudar() {
+      const el = document.querySelector('#comments #beaudar');
+      if (!el) return;
+      
+      function load_beaudar() {
+        try {
+          el.innerHTML = '';
+        } catch (error) {
+          console.error(error);
+        }
+        const script = document.createElement('script');
+        script.src = 'https://beaudar.lipk.org/client.js';
+        script.async = true;
+        for (const key of Object.keys(el.attributes)) {
+          const attr = el.attributes[key];
+          if (['class', 'id'].includes(attr.name) === false) {
+            script.setAttribute(attr.name, attr.value);
+          }
+        }
+        el.appendChild(script);
+      }
+      
+      util.viewportLazyload(el, load_beaudar, lazyload);
+    }
+    
+    // Store in global stellar namespace for PJAX reinitialization
+    window.stellar = window.stellar || {};
+    window.stellar.initComments = window.stellar.initComments || {};
+    window.stellar.initComments.beaudar = initBeaudar;
+    
+    // Initialize on page load
+    initBeaudar();
+  })();
+</script>
+
+
+
+
+<script defer>
+  const initServices = () => {
+    // 用于存储需要清理的资源
+    let timers = [];
+    
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"rating":{"js":"/js/services/rating.js","api":"https://star-vote.xaox.cc/api/rating"},"vote":{"js":"/js/services/vote.js","api":"https://star-vote.xaox.cc/api/vote"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"friends_and_posts":{"js":"/js/services/friends_and_posts.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"},"voice":{"js":"/js/plugins/voice.js"},"video":{"js":"/js/plugins/video.js"},"download-file":{"js":"/js/plugins/download-file.js"},"twikoo":{"js":"/js/services/twikoo_latest_comment.js"},"waline":{"js":"/js/services/waline_latest_comment.js"},"artalk":{"js":"/js/services/artalk_latest_comment.js"},"giscus":{"js":"/js/services/giscus_latest_comment.js"},"contributors":{"edit_this_page":{"_posts/":null,"wiki/stellar/":"https://github.com/xaoxuu/hexo-theme-stellar-docs/blob/main/"},"js":"/js/services/contributors.js"},"rss":{"js":"/js/services/rss.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        const cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(cardlinks);
+          });
+        }
+      } else if (id == 'ghinfo') {
+        const els = document.querySelectorAll('.ds-ghinfo');
+        if (els.length > 0) {
+          utils.js(js, { defer: true });
+        }
+      } else if (id == 'voice') {
+        const voiceAudios = document.querySelectorAll('.voice>audio');
+        if (voiceAudios?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            createVoiceDom(voiceAudios);
+          });
+        }
+      } else if (id == 'video') {
+        const videos = document.querySelectorAll('.video>video');
+        if (videos?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            videoEvents(videos);
+          });
+        }
+      } else if (id == 'download-file') {
+        const files = document.querySelectorAll('.chat-file');
+        if (files?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            downloadFileEvent(files);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || id == 'memos' || id == 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          }, false);
+        }
+      }
+    }
+
+    // search
+    if (ctx.search && typeof searchFunc === 'function') {
+      const $inputArea = $("input#search-input");
+      if ($inputArea.length > 0 && !$inputArea[0]._searchInitialized) {
+        const path = ctx.search.path.startsWith('/') ? ctx.root + ctx.search.path.substring(1) : ctx.root + ctx.search.path;
+        const filter = $inputArea.attr('data-filter') || '';
+        searchFunc(path, filter, 'search-wrapper', 'search-input', 'search-result');
+        // 标记为已初始化，防止重复绑定
+        $inputArea[0]._searchInitialized = true;
+      }
+    }
+
+    // chat iphone time
+    let phoneTimes = document.querySelectorAll('.chat .status-bar .time');
+    let firstAdjustInterval = null;
+    let mainInterval = null;
+
+    if (phoneTimes.length > 0) {
+      NowTime();
+      const date = new Date();
+      const sec = date.getSeconds();
+      firstAdjustInterval = setInterval(firstAdjustTime, 1000 * (60 - sec));
+      timers.push(firstAdjustInterval);
+
+      function firstAdjustTime() {
+        NowTime();
+        if (firstAdjustInterval) {
+          clearInterval(firstAdjustInterval);
+          firstAdjustInterval = null;
+        }
+        mainInterval = setInterval(NowTime, 1000 * 60);
+        timers.push(mainInterval);
+      }
+
+      function NowTime() {
+        for (let i = 0; i < phoneTimes.length; ++i) {
+          const timeSpan = phoneTimes[i];
+          const date = new Date();
+          const hour = date.getHours();
+          const min = date.getMinutes();
+          timeSpan.innerHTML = check(hour) + ":" + check(min);
+        }
+      };
+
+      function check(val) {
+        if (val < 10) {
+          return ("0" + val);
+        }
+        return (val);
+      }
+    }
+
+    // chat quote - 存储事件监听器以便清理
+    const quoteClickHandlers = new Map();
+    const chat_quote_obverser = new IntersectionObserver((entries, observer) => {
+      entries.filter((entry) => { return entry.isIntersecting }).sort((a, b) => a.intersectionRect.y !== b.intersectionRect.y ? a.intersectionRect.y - b.intersectionRect.y : a.intersectionRect.x - b.intersectionRect.x).forEach((entry, index) => {
+          observer.unobserve(entry.target);
+          setTimeout(() => {
+            entry.target.classList.add('quote-blink');
+            setTimeout(() => {
+              entry.target.classList.remove('quote-blink');
+            }, 1000);
+          }, Math.max(100, 16) * (index + 1));
+        });
+    });
+
+    var chatQuotes = document.querySelectorAll(".chat .talk .quote");
+    chatQuotes.forEach((quote) => {
+      const handler = function () {
+        var chatCellDom = document.getElementById("quote-" + quote.getAttribute("quotedCellTag"));
+        if (chatCellDom) {
+          var chatDiv = chatCellDom.parentElement;
+          var mid = chatDiv.clientHeight / 2;
+          var offsetTop = chatCellDom.offsetTop;
+          if (offsetTop > mid - chatCellDom.clientHeight / 2) {
+            chatDiv.scrollTo({
+              top: chatCellDom.offsetTop - mid + chatCellDom.clientHeight / 2,
+              behavior: "smooth"
+            });
+          } else {
+            chatDiv.scrollTo({
+              top: 0,
+              behavior: "smooth"
+            });
+          }
+          chat_quote_obverser.observe(chatCellDom);
+        }
+      };
+      quote.addEventListener('click', handler);
+      quoteClickHandlers.set(quote, handler); // 保存处理器引用
+    });
+
+    // 返回清理函数，用于清理定时器和观察器
+    return () => {
+      // 清理所有定时器（包括可能未完成的 firstAdjustInterval）
+      timers.forEach(timer => {
+        if (timer) clearInterval(timer);
+      });
+      timers = [];
+      if (firstAdjustInterval) {
+        clearInterval(firstAdjustInterval);
+        firstAdjustInterval = null;
+      }
+      if (mainInterval) {
+        clearInterval(mainInterval);
+        mainInterval = null;
+      }
+      
+      // 断开观察器
+      if (chat_quote_obverser) {
+        chat_quote_obverser.disconnect();
+      }
+      
+      // 移除所有 click 事件监听器
+      quoteClickHandlers.forEach((handler, quote) => {
+        quote.removeEventListener('click', handler);
+      });
+      quoteClickHandlers.clear();
+    };
+  };
+
+  utils.initPlugin(initServices, 'services');
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://gcore.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error), .with-fancybox .atk-content img:not([atk-emoticon])';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const memos = document.getElementsByClassName('ds-memos');
+    if (memos != undefined && memos.length > 0) {
+      needFancybox = true;
+    }
+    const fancybox = document.getElementsByClassName('with-fancybox');
+    if (fancybox != undefined && fancybox.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  utils.initPlugin(() => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  }, 'swiper');
+</script>
+<script>
+  utils.initPlugin(() => {
+    const codeElements = document.querySelectorAll('.code');
+    if (codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js', { defer: true }).then(() => {
+        if (typeof createCopyButtons === 'function') {
+          createCopyButtons(codeElements);
+        }
+      });
+    }
+  }, 'copycode');
+</script>
+
+
+<!-- inject -->
+
+</div><div class="page-loading-bar"><img src="https://api.iconify.design/eos-icons:three-dots-loading.svg?color=%231cd0fd"></div></body></html>
