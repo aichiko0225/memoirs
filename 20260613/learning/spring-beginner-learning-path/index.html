@@ -1,0 +1,1939 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1" theme-name="Stellar" theme-version="1.33.1">
+  
+  
+  <meta name="generator" content="Hexo 8.1.1">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  <title>Spring 入门教程：给会 Python 后端、准备转 Java 全栈的人 - ash</title>
+
+  
+    <meta name="description" content="如果你已经写过 Flask、FastAPI 这类 Python 后端，第一次接触 Spring 时最常见的痛点不是“完全看不懂”，而是总觉得概念很多、名词很重、体系边界不清楚。 这篇文章的目标不是给你一份资料清单，而是先把 Spring 这套东西讲成一条能顺着读下去的主线：它和你熟悉的 Python Web 框架有什么映射关系，为什么现代 Java 后端几乎都从 Spring Boot 起步，以及">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring 入门教程：给会 Python 后端、准备转 Java 全栈的人">
+<meta property="og:url" content="https://minniexcode.github.io/memoirs/20260613/learning/spring-beginner-learning-path/">
+<meta property="og:site_name" content="ash">
+<meta property="og:description" content="如果你已经写过 Flask、FastAPI 这类 Python 后端，第一次接触 Spring 时最常见的痛点不是“完全看不懂”，而是总觉得概念很多、名词很重、体系边界不清楚。 这篇文章的目标不是给你一份资料清单，而是先把 Spring 这套东西讲成一条能顺着读下去的主线：它和你熟悉的 Python Web 框架有什么映射关系，为什么现代 Java 后端几乎都从 Spring Boot 起步，以及">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-13T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-13T12:00:00.000Z">
+<meta property="article:author" content="ash66">
+<meta property="article:tag" content="Fundamentals">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Maven">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="Fundamentals,Java,Spring Boot,Maven">
+
+  <!-- feed -->
+  
+    
+
+    
+      
+        <link rel="alternate" href="/memoirs/atom.xml" title="ash" type="application/atom+xml">
+      
+    
+  
+
+  <link rel="stylesheet" href="/memoirs/css/main.css?v=1.33.1">
+
+
+  
+    <link rel="shortcut icon" href="/memoirs/favicon.png">
+  
+
+  
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ash66","sameAs":[]},"dateCreated":"2026-06-13T20:00:00+08:00","dateModified":"2026-06-13T20:00:00+08:00","datePublished":"2026-06-13T20:00:00+08:00","description":"如果你已经写过 Flask、FastAPI 这类 Python 后端，第一次接触 Spring 时最常见的痛点不是“完全看不懂”，而是总觉得概念很多、名词很重、体系边界不清楚。\n这篇文章的目标不是给你一份资料清单，而是先把 Spring 这套东西讲成一条能顺着读下去的主线：它和你熟悉的 Python Web 框架有什么映射关系，为什么现代 Java 后端几乎都从 Spring Boot 起步，以及入门阶段到底该先掌握哪些东西。\n这是这组 Spring 系列的第 1 篇，适合先建立整体认知，再进入后面的项目实战。\n系列顺序如下：\n\n这篇：Spring 入门认知\n下一篇：从 0 搭一个最小 REST 服务\n然后：把最小项目升级成更像真实项目的版本\n最后：用 JPA + H2 把项目真正落库\n","headline":"Spring 入门教程：给会 Python 后端、准备转 Java 全栈的人","mainEntityOfPage":{"@type":"WebPage","@id":"https://minniexcode.github.io/memoirs/20260613/learning/spring-beginner-learning-path/"},"publisher":{"@type":"Organization","name":"ash66","sameAs":[]},"url":"https://minniexcode.github.io/memoirs/20260613/learning/spring-beginner-learning-path/","keywords":"Fundamentals, Java, Spring Boot, Maven","image":[]}</script>
+  <script>
+  (function () {
+    if (window.util) return;
+
+    window.util = {
+      viewportLazyload: function (el, callback, lazyload) {
+        if (!el || typeof callback !== 'function') return;
+        if (el.dataset.utilLazyloaded === '1') return;
+        var runOnce = function () {
+          if (el.dataset.utilLazyloaded === '1') return;
+          el.dataset.utilLazyloaded = '1';
+          callback();
+        };
+        if (!lazyload) {
+          runOnce();
+          return;
+        }
+        if (!('IntersectionObserver' in window)) {
+          runOnce();
+          return;
+        }
+        var loaded = false;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!loaded && entry.isIntersecting) {
+              loaded = true;
+              observer.disconnect();
+              runOnce();
+            }
+          });
+        }, { rootMargin: '100px 0px' });
+        observer.observe(el);
+      },
+      toggle: function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var hidden = el.style.height === '0px' || el.style.opacity === '0';
+        if (hidden) {
+          el.style.opacity = '1';
+          el.style.height = 'auto';
+        } else {
+          el.style.opacity = '0';
+          el.style.height = '0';
+        }
+      },
+      copy: function (id, message) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var text = el.value || el.textContent || '';
+        var done = function () {
+          if (message) console.log(message);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {});
+          return;
+        }
+        var area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(area);
+        done();
+      },
+      scrollTop: function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+  })();
+</script>
+
+</head>
+<body><div id="l_cover"></div><div class="l_body content" id="start" layout="post" type="tech" ><aside class="l_left"><div class="sidebg"></div><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/memoirs/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/memoirs/images/image1.jpeg" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main">ash</div><div class="sub cap">我只是一个影子，虽然我发着光。。。</div></a></div></header>
+
+<div class="nav-area">
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/memoirs/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="笔记本" href="/memoirs/notes/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="AboutMe" href="/memoirs/about/me/" style="color:#F44336"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m13.629 20.472l-.542.916c-.483.816-1.69.816-2.174 0l-.542-.916c-.42-.71-.63-1.066-.968-1.262c-.338-.197-.763-.204-1.613-.219c-1.256-.021-2.043-.098-2.703-.372a5 5 0 0 1-2.706-2.706C2 14.995 2 13.83 2 11.5v-1c0-3.273 0-4.91.737-6.112a5 5 0 0 1 1.65-1.651C5.59 2 7.228 2 10.5 2h3c3.273 0 4.91 0 6.113.737a5 5 0 0 1 1.65 1.65C22 5.59 22 7.228 22 10.5v1c0 2.33 0 3.495-.38 4.413a5 5 0 0 1-2.707 2.706c-.66.274-1.447.35-2.703.372c-.85.015-1.275.022-1.613.219c-.338.196-.548.551-.968 1.262" opacity=".5"/><path fill="currentColor" d="M10.99 14.308c-1.327-.978-3.49-2.84-3.49-4.593c0-2.677 2.475-3.677 4.5-1.609c2.025-2.068 4.5-1.068 4.5 1.609c0 1.752-2.163 3.615-3.49 4.593c-.454.335-.681.502-1.01.502c-.329 0-.556-.167-1.01-.502"/></svg></a></nav>
+</div>
+<div class="widgets">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+
+<widget class="widget-wrapper recent post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/memoirs/20260613/learning/spring-beginner-learning-path/"><span class="title">Spring 入门教程：给会 Python 后端、准备转 Java 全栈的人</span></a><a class="item title" href="/memoirs/20260613/learning/spring-first-project-guide/"><span class="title">Spring 第一个项目实战：从 0 搭一个最小 REST 服务</span></a><a class="item title" href="/memoirs/20260613/learning/spring-project-next-steps/"><span class="title">Spring 项目下一步：把最小 REST 项目升级成更像真实项目的版本</span></a><a class="item title" href="/memoirs/20260613/learning/spring-database-practice-guide/"><span class="title">Spring 数据库实战：用 Spring Boot + JPA + H2 把最小项目真正落库</span></a><a class="item title" href="/memoirs/20260527/meditation-and-zazen/"><span class="title">冥想与打坐：科学解释、传统视角与实践路径</span></a><a class="item title" href="/memoirs/20260526/other/mac-server-setup-and-cleanup-guide/"><span class="title">把一台 Mac 整理成可远程管理的小服务器：搭建、清理与实操清单</span></a><a class="item title" href="/memoirs/20260411/learning/python-concurrency/"><span class="title">Python 并发：进程、线程、协程，从语言机制到工程选型</span></a><a class="item title" href="/memoirs/20260402/git-cli-handbook/"><span class="title">Git CLI 命令操作手册与详细介绍</span></a><a class="item title" href="/memoirs/20260325/learning/ruankao-network-engineer-study-guide/"><span class="title">软考网络工程师备考全攻略：8 周计划、速记表与端口协议清单</span></a><a class="item title" href="/memoirs/20200305/python/Python-100-1/"><span class="title">Python-100天(一)</span></a></div></widget>
+</div>
+<footer class="footer dis-select"><div class="social-wrap"><a class="social" href="https://github.com/minniexcode" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/08a41b181ce68.svg"/></a></div></footer>
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/memoirs/memoirs/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/memoirs/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/memoirs/categories/%E6%8A%80%E6%9C%AF/">技术</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2026-06-13T12:00:00.000Z">2026-06-13</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2026-06-13T12:00:00.000Z">2026-06-13</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>Spring 入门教程：给会 Python 后端、准备转 Java 全栈的人</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>如果你已经写过 <code>Flask</code>、<code>FastAPI</code> 这类 Python 后端，第一次接触 Spring 时最常见的痛点不是“完全看不懂”，而是总觉得概念很多、名词很重、体系边界不清楚。</p>
+<p>这篇文章的目标不是给你一份资料清单，而是先把 Spring 这套东西讲成一条能顺着读下去的主线：它和你熟悉的 Python Web 框架有什么映射关系，为什么现代 Java 后端几乎都从 Spring Boot 起步，以及入门阶段到底该先掌握哪些东西。</p>
+<p>这是这组 Spring 系列的第 1 篇，适合先建立整体认知，再进入后面的项目实战。</p>
+<p>系列顺序如下：</p>
+<ol>
+<li>这篇：Spring 入门认知</li>
+<li>下一篇：从 0 搭一个最小 REST 服务</li>
+<li>然后：把最小项目升级成更像真实项目的版本</li>
+<li>最后：用 JPA + H2 把项目真正落库</li>
+</ol>
+<span id="more"></span>
+
+<p>这不是一份“只告诉你看什么”的目录。</p>
+<p>这是一份真正可以直接读下去的 Spring 入门教程，目标是帮你建立一套完整但不过载的入门认知。</p>
+<p>适合你的背景：</p>
+<ul>
+<li>你会 Java，但有一段时间没系统写 Java 后端</li>
+<li>你熟悉 <code>Flask</code>、<code>FastAPI</code> 或其他 Python Web 框架</li>
+<li>你不是零基础程序员，你只是对 Spring 体系不熟</li>
+<li>你想先入门单体项目，不准备先学微服务</li>
+</ul>
+<p>这份文档重点覆盖：</p>
+<ul>
+<li>Java Web 背景</li>
+<li>Spring Core</li>
+<li>Spring MVC</li>
+<li>Spring Boot</li>
+<li>数据访问与事务基础</li>
+</ul>
+<p>不覆盖：</p>
+<ul>
+<li><code>Spring Cloud</code></li>
+<li>微服务治理</li>
+<li>响应式编程</li>
+<li>大量中间件整合</li>
+</ul>
+<h2 id="1-先建立整体认知"><a href="#1-先建立整体认知" class="headerlink" title="1. 先建立整体认知"></a>1. 先建立整体认知</h2><p>如果你以前写过 <code>Flask</code> 或 <code>FastAPI</code>，那你其实已经有后端开发的核心心智了：</p>
+<ul>
+<li>请求进来</li>
+<li>路由分发</li>
+<li>业务处理</li>
+<li>调数据库</li>
+<li>返回响应</li>
+</ul>
+<p>Spring 不是重新发明这一切。</p>
+<p>Spring 更像是把 Java 后端开发里的这些能力做成了一套非常完整、非常工程化的体系。</p>
+<p>你可以先这样粗略理解：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Flask / FastAPI：轻量、直接、上手快</span><br><span class="line">Spring：体系更重，但工程能力、组织能力、扩展能力更强</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-1-Spring-家族里你现在最需要关心的三个词"><a href="#1-1-Spring-家族里你现在最需要关心的三个词" class="headerlink" title="1.1 Spring 家族里你现在最需要关心的三个词"></a>1.1 Spring 家族里你现在最需要关心的三个词</h3><p>你现在最需要先分清下面三个东西：</p>
+<ol>
+<li><code>Spring Framework</code></li>
+<li><code>Spring MVC</code></li>
+<li><code>Spring Boot</code></li>
+</ol>
+<h4 id="Spring-Framework-是什么"><a href="#Spring-Framework-是什么" class="headerlink" title="Spring Framework 是什么"></a>Spring Framework 是什么</h4><p>它是基础框架。</p>
+<p>最核心的能力是：</p>
+<ul>
+<li>IoC 容器</li>
+<li>依赖注入</li>
+<li>AOP</li>
+<li>事务</li>
+<li>Web 开发支持</li>
+</ul>
+<p>如果只说一句话：</p>
+<blockquote>
+<p>Spring Framework 是底层框架能力集合。</p>
+</blockquote>
+<h4 id="Spring-MVC-是什么"><a href="#Spring-MVC-是什么" class="headerlink" title="Spring MVC 是什么"></a>Spring MVC 是什么</h4><p>它是 Spring 体系里的 Web MVC 框架。</p>
+<p>它负责：</p>
+<ul>
+<li>接收 HTTP 请求</li>
+<li>路由分发</li>
+<li>参数绑定</li>
+<li>调用控制器</li>
+<li>返回页面或 JSON</li>
+</ul>
+<p>如果只说一句话：</p>
+<blockquote>
+<p>Spring MVC 是 Spring 的 Web 层方案。</p>
+</blockquote>
+<h4 id="Spring-Boot-是什么"><a href="#Spring-Boot-是什么" class="headerlink" title="Spring Boot 是什么"></a>Spring Boot 是什么</h4><p>它不是替代 Spring。</p>
+<p>它是基于 Spring 的快速启动和自动装配方案。</p>
+<p>它的作用是：</p>
+<ul>
+<li>帮你快速搭好项目骨架</li>
+<li>自动装配大量基础设施</li>
+<li>减少样板配置</li>
+<li>让你更快启动一个可运行项目</li>
+</ul>
+<p>如果只说一句话：</p>
+<blockquote>
+<p>Spring Boot 是现代 Spring 项目的默认起步方式。</p>
+</blockquote>
+<h3 id="1-2-你应该怎样理解它们的关系"><a href="#1-2-你应该怎样理解它们的关系" class="headerlink" title="1.2 你应该怎样理解它们的关系"></a>1.2 你应该怎样理解它们的关系</h3><p>最简单的理解方式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Spring Framework = 基础能力</span><br><span class="line">Spring MVC = Web 开发能力</span><br><span class="line">Spring Boot = 快速组装和启动能力</span><br></pre></td></tr></table></figure>
+
+<p>或者这样记：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Spring 提供零件</span><br><span class="line">Spring MVC 提供 Web 这套零件</span><br><span class="line">Spring Boot 帮你把车先装起来</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-先补一点-Java-背景，但只补-Spring-真会用到的部分"><a href="#2-先补一点-Java-背景，但只补-Spring-真会用到的部分" class="headerlink" title="2. 先补一点 Java 背景，但只补 Spring 真会用到的部分"></a>2. 先补一点 Java 背景，但只补 Spring 真会用到的部分</h2><p>你不需要重新从头学整本 Java。</p>
+<p>但 Spring 有三块 Java 基础是一定会反复碰到的：</p>
+<ul>
+<li><code>Maven</code></li>
+<li><code>注解</code></li>
+<li><code>JDBC</code></li>
+</ul>
+<h3 id="2-1-Maven：Java-世界的依赖和构建工具"><a href="#2-1-Maven：Java-世界的依赖和构建工具" class="headerlink" title="2.1 Maven：Java 世界的依赖和构建工具"></a>2.1 Maven：Java 世界的依赖和构建工具</h3><p>Python 里你对这套东西不会陌生：</p>
+<ul>
+<li><code>pip install</code></li>
+<li><code>requirements.txt</code></li>
+<li><code>pyproject.toml</code></li>
+</ul>
+<p>Java 里对应的关键角色之一就是 <code>Maven</code>。</p>
+<p>它主要做三件事：</p>
+<ul>
+<li>管依赖</li>
+<li>统一项目结构</li>
+<li>负责构建、测试、打包</li>
+</ul>
+<p>一个典型的 <code>pom.xml</code> 看起来像这样：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">project</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>demo<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里你先不用死记所有标签，只需要知道：</p>
+<ul>
+<li><code>groupId</code>：组织或公司名</li>
+<li><code>artifactId</code>：项目名</li>
+<li><code>version</code>：版本</li>
+<li><code>dependencies</code>：依赖列表</li>
+</ul>
+<h4 id="你现在要掌握到什么程度"><a href="#你现在要掌握到什么程度" class="headerlink" title="你现在要掌握到什么程度"></a>你现在要掌握到什么程度</h4><ul>
+<li>能看懂 <code>pom.xml</code> 是项目依赖配置</li>
+<li>知道 Spring Boot 项目通常用 Maven 或 Gradle</li>
+<li>知道 <code>starter</code> 是 Spring Boot 常见依赖包组织方式</li>
+</ul>
+<h3 id="2-2-注解：Spring-为什么这么依赖它"><a href="#2-2-注解：Spring-为什么这么依赖它" class="headerlink" title="2.2 注解：Spring 为什么这么依赖它"></a>2.2 注解：Spring 为什么这么依赖它</h3><p>Spring 代码里到处都是注解，比如：</p>
+<ul>
+<li><code>@RestController</code></li>
+<li><code>@Service</code></li>
+<li><code>@Autowired</code></li>
+<li><code>@Configuration</code></li>
+<li><code>@Bean</code></li>
+<li><code>@Transactional</code></li>
+</ul>
+<p>所以如果你对注解不熟，会觉得 Spring 非常像魔法。</p>
+<h4 id="注解是什么"><a href="#注解是什么" class="headerlink" title="注解是什么"></a>注解是什么</h4><p>注解是给编译器、框架、运行时工具读取的元数据。</p>
+<p>它不是普通注释。</p>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码的意思不是“给人看这是服务类”。</p>
+<p>它更重要的意思是：</p>
+<ul>
+<li>Spring 会读取这个注解</li>
+<li>Spring 会把这个类当作一个 Bean 来管理</li>
+</ul>
+<p>所以你可以先记住：</p>
+<blockquote>
+<p>在 Spring 里，很多注解都不是装饰性的，而是有实际行为影响的。</p>
+</blockquote>
+<h3 id="2-3-JDBC：为什么你即使不用原生-JDBC，也最好知道它"><a href="#2-3-JDBC：为什么你即使不用原生-JDBC，也最好知道它" class="headerlink" title="2.3 JDBC：为什么你即使不用原生 JDBC，也最好知道它"></a>2.3 JDBC：为什么你即使不用原生 JDBC，也最好知道它</h3><p>你可以把 JDBC 理解成 Java 访问关系型数据库的底层标准接口。</p>
+<p>最原始的时候，Java 代码连数据库大概会像这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Connection</span> <span class="variable">connection</span> <span class="operator">=</span> DriverManager.getConnection(url, username, password);</span><br><span class="line"><span class="type">PreparedStatement</span> <span class="variable">statement</span> <span class="operator">=</span> connection.prepareStatement(<span class="string">&quot;select * from users where id = ?&quot;</span>);</span><br><span class="line">statement.setLong(<span class="number">1</span>, <span class="number">1L</span>);</span><br><span class="line"><span class="type">ResultSet</span> <span class="variable">resultSet</span> <span class="operator">=</span> statement.executeQuery();</span><br></pre></td></tr></table></figure>
+
+<p>这类代码会很繁琐，所以后面才会出现：</p>
+<ul>
+<li><code>JdbcTemplate</code></li>
+<li><code>MyBatis</code></li>
+<li><code>JPA / Hibernate</code></li>
+</ul>
+<p>Spring 后面的数据库整合，本质上就是在这个基础上继续往上封装。</p>
+<p>所以你现在知道这件事就够了：</p>
+<ul>
+<li>Spring 的数据库能力不是凭空来的</li>
+<li>它底层仍然要和数据库驱动、连接、SQL 这些东西打交道</li>
+</ul>
+<h2 id="3-Java-Web-背景：Spring-MVC-不是从天上掉下来的"><a href="#3-Java-Web-背景：Spring-MVC-不是从天上掉下来的" class="headerlink" title="3. Java Web 背景：Spring MVC 不是从天上掉下来的"></a>3. Java Web 背景：Spring MVC 不是从天上掉下来的</h2><p>很多人直接学 Spring MVC，会把它当成“天生就该这么写”。</p>
+<p>但你稍微知道一点 Java Web 演进史，就会更容易理解它为什么长这样。</p>
+<h3 id="3-1-先看最原始的-Java-Web-思路"><a href="#3-1-先看最原始的-Java-Web-思路" class="headerlink" title="3.1 先看最原始的 Java Web 思路"></a>3.1 先看最原始的 Java Web 思路</h3><p>早期 Java Web 开发里，一个很核心的东西是 <code>Servlet</code>。</p>
+<p>它大致像这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServlet</span> <span class="keyword">extends</span> <span class="title class_">HttpServlet</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">doGet</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        resp.getWriter().write(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它的问题不是不能用。</p>
+<p>它的问题是：</p>
+<ul>
+<li>路由组织不够优雅</li>
+<li>参数绑定很原始</li>
+<li>业务代码容易和 Web 细节混在一起</li>
+<li>项目一大就很难维护</li>
+</ul>
+<p>所以后面才会逐步演进出 MVC 分层思路。</p>
+<h3 id="3-2-MVC-思想先怎么理解"><a href="#3-2-MVC-思想先怎么理解" class="headerlink" title="3.2 MVC 思想先怎么理解"></a>3.2 MVC 思想先怎么理解</h3><p>MVC 最粗略的理解：</p>
+<ul>
+<li><code>Model</code>：数据和业务对象</li>
+<li><code>View</code>：页面展示</li>
+<li><code>Controller</code>：接请求、调业务、返回结果</li>
+</ul>
+<p>在现代前后端分离接口项目里，你可以把“View”弱化成“响应结果”。</p>
+<p>也就是说，Spring MVC 在很多接口项目里更常见的落地方式是：</p>
+<ul>
+<li>Controller 接 HTTP 请求</li>
+<li>Service 处理业务</li>
+<li>Repository &#x2F; DAO 负责数据访问</li>
+<li>最后返回 JSON</li>
+</ul>
+<h2 id="4-Spring-Core：整个-Spring-体系真正的地基"><a href="#4-Spring-Core：整个-Spring-体系真正的地基" class="headerlink" title="4. Spring Core：整个 Spring 体系真正的地基"></a>4. Spring Core：整个 Spring 体系真正的地基</h2><p>很多人一提 Spring，第一反应是“写接口”。</p>
+<p>其实这不是 Spring 最核心的东西。</p>
+<p>Spring 最核心的是：</p>
+<ul>
+<li>IoC</li>
+<li>依赖注入</li>
+<li>Bean 管理</li>
+</ul>
+<h3 id="4-1-IoC-先怎么理解"><a href="#4-1-IoC-先怎么理解" class="headerlink" title="4.1 IoC 先怎么理解"></a>4.1 IoC 先怎么理解</h3><p>IoC 是 <code>Inversion of Control</code>，控制反转。</p>
+<p>你先别被名字吓到。</p>
+<p>最朴素的理解是：</p>
+<ul>
+<li>以前对象自己创建依赖</li>
+<li>现在对象依赖由容器来提供</li>
+</ul>
+<p>例如没有 Spring 时你可能会这样写：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">UserService</span> <span class="variable">userService</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserService</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Spring 的思路是反过来：</p>
+<ul>
+<li><code>UserController</code> 不自己 <code>new UserService()</code></li>
+<li>容器负责创建 <code>UserService</code></li>
+<li>容器再把它注入给 <code>UserController</code></li>
+</ul>
+<p>这就是“控制权从业务代码手里转交给容器”的核心感觉。</p>
+<h3 id="4-2-Bean-是什么"><a href="#4-2-Bean-是什么" class="headerlink" title="4.2 Bean 是什么"></a>4.2 Bean 是什么</h3><p>在 Spring 里，Bean 本质上就是：</p>
+<blockquote>
+<p>被 Spring 容器管理的对象。</p>
+</blockquote>
+<p>比如：</p>
+<ul>
+<li><code>Controller</code></li>
+<li><code>Service</code></li>
+<li><code>Repository</code></li>
+<li>配置类里声明出来的对象</li>
+</ul>
+<p>都可能是 Bean。</p>
+<p>一句话记忆：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">普通对象 + 交给 Spring 管 = Bean</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-依赖注入为什么重要"><a href="#4-3-依赖注入为什么重要" class="headerlink" title="4.3 依赖注入为什么重要"></a>4.3 依赖注入为什么重要</h3><p>依赖注入不是为了“少写几行 new”。</p>
+<p>它更重要的价值是：</p>
+<ul>
+<li>降低对象之间的耦合</li>
+<li>更容易替换实现</li>
+<li>更容易测试</li>
+<li>更适合大型项目组织</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserController</span><span class="params">(UserService userService)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userService = userService;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的意思是：</p>
+<ul>
+<li><code>UserController</code> 依赖 <code>UserService</code></li>
+<li>但它不负责自己创建 <code>UserService</code></li>
+<li>由 Spring 注入进来</li>
+</ul>
+<h3 id="4-4-Component、-Service、-Repository、-Controller-大概怎么分"><a href="#4-4-Component、-Service、-Repository、-Controller-大概怎么分" class="headerlink" title="4.4 @Component、@Service、@Repository、@Controller 大概怎么分"></a>4.4 <code>@Component</code>、<code>@Service</code>、<code>@Repository</code>、<code>@Controller</code> 大概怎么分</h3><p>它们都可以理解成“把类交给 Spring 管”的组件注解。</p>
+<p>只是语义不同：</p>
+<ul>
+<li><code>@Component</code>：通用组件</li>
+<li><code>@Service</code>：业务服务层</li>
+<li><code>@Repository</code>：数据访问层</li>
+<li><code>@Controller</code> &#x2F; <code>@RestController</code>：Web 层</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可以理解成：</p>
+<ul>
+<li>这是一个 Spring 组件</li>
+<li>Spring 可以扫描并管理它</li>
+<li>它在语义上属于业务层</li>
+</ul>
+<h3 id="4-5-Bean-又是什么"><a href="#4-5-Bean-又是什么" class="headerlink" title="4.5 @Bean 又是什么"></a>4.5 <code>@Bean</code> 又是什么</h3><p>有些类不是你自己写业务逻辑的组件，但你仍然希望把它交给 Spring 管理。</p>
+<p>这时常见写法是：</p>
+<ul>
+<li>用 <code>@Configuration</code> 声明配置类</li>
+<li>用 <code>@Bean</code> 声明要交给 Spring 容器的对象</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ObjectMapper <span class="title function_">objectMapper</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-6-Spring-为什么会让人觉得“像魔法”"><a href="#4-6-Spring-为什么会让人觉得“像魔法”" class="headerlink" title="4.6 Spring 为什么会让人觉得“像魔法”"></a>4.6 Spring 为什么会让人觉得“像魔法”</h3><p>因为你看到的是：</p>
+<ul>
+<li>好像没 <code>new</code></li>
+<li>好像没手工注册</li>
+<li>好像很多东西自动就连起来了</li>
+</ul>
+<p>但本质上只是：</p>
+<ul>
+<li>容器在启动时扫描和注册组件</li>
+<li>识别依赖关系</li>
+<li>在合适时机把对象组装起来</li>
+</ul>
+<p>所以你真正要理解的不是“记住每个魔法注解”，而是：</p>
+<blockquote>
+<p>Spring 核心是容器在管理对象和对象关系。</p>
+</blockquote>
+<h3 id="4-7-为什么不推荐到处自己-new"><a href="#4-7-为什么不推荐到处自己-new" class="headerlink" title="4.7 为什么不推荐到处自己 new"></a>4.7 为什么不推荐到处自己 <code>new</code></h3><p>如果你在 Spring 项目里到处自己 <code>new</code>，常见后果是：</p>
+<ul>
+<li>这个对象不受 Spring 管理</li>
+<li>注入、事务、AOP 等能力可能失效</li>
+<li>测试和替换实现会更麻烦</li>
+</ul>
+<p>所以 Spring 风格里一个重要思维转变就是：</p>
+<ul>
+<li>业务类尽量交给容器</li>
+<li>对象关系尽量通过依赖注入表达</li>
+</ul>
+<h2 id="5-AOP-和事务：先建立“它解决什么问题”的认知"><a href="#5-AOP-和事务：先建立“它解决什么问题”的认知" class="headerlink" title="5. AOP 和事务：先建立“它解决什么问题”的认知"></a>5. AOP 和事务：先建立“它解决什么问题”的认知</h2><p>很多入门文章会很快提到 AOP，但第一次学不一定要钻实现细节。</p>
+<p>你先知道它解决什么问题更重要。</p>
+<h3 id="5-1-AOP-是干什么的"><a href="#5-1-AOP-是干什么的" class="headerlink" title="5.1 AOP 是干什么的"></a>5.1 AOP 是干什么的</h3><p>AOP 是 <code>Aspect-Oriented Programming</code>，面向切面编程。</p>
+<p>它适合处理一些“横切关注点”，比如：</p>
+<ul>
+<li>日志</li>
+<li>权限</li>
+<li>事务</li>
+<li>监控</li>
+</ul>
+<p>所谓横切，就是：</p>
+<ul>
+<li>这些逻辑会出现在很多业务方法周围</li>
+<li>但它们本身又不属于某一个业务本体</li>
+</ul>
+<h3 id="5-2-为什么事务常和-AOP-一起出现"><a href="#5-2-为什么事务常和-AOP-一起出现" class="headerlink" title="5.2 为什么事务常和 AOP 一起出现"></a>5.2 为什么事务常和 AOP 一起出现</h3><p>例如你写一个转账方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">transfer</span><span class="params">(Long fromId, Long toId, BigDecimal amount)</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你真正写的业务逻辑只是转账流程。</p>
+<p>但 Spring 往往会通过 AOP &#x2F; 代理机制，在调用这个方法前后帮你处理事务边界。</p>
+<p>所以你先记住这件事：</p>
+<ul>
+<li><code>@Transactional</code> 背后经常和代理&#x2F;AOP 机制有关</li>
+<li>你不需要一开始就把代理细节学透</li>
+<li>但要知道它不是“普通注释”</li>
+</ul>
+<h2 id="6-Spring-MVC：现代-Java-Web-接口开发主线"><a href="#6-Spring-MVC：现代-Java-Web-接口开发主线" class="headerlink" title="6. Spring MVC：现代 Java Web 接口开发主线"></a>6. Spring MVC：现代 Java Web 接口开发主线</h2><p>如果你是做后端接口开发，Spring MVC 是你最早会高频接触的部分。</p>
+<h3 id="6-1-DispatcherServlet-先怎么理解"><a href="#6-1-DispatcherServlet-先怎么理解" class="headerlink" title="6.1 DispatcherServlet 先怎么理解"></a>6.1 <code>DispatcherServlet</code> 先怎么理解</h3><p>你可以把它理解成 Spring MVC 的总入口。</p>
+<p>请求进来后，大致流程是：</p>
+<ol>
+<li>先到 <code>DispatcherServlet</code></li>
+<li>找到匹配的处理器方法</li>
+<li>做参数绑定</li>
+<li>调用 Controller</li>
+<li>处理返回值</li>
+<li>渲染成页面或 JSON 响应</li>
+</ol>
+<p>你不需要死记所有内部组件名，但要知道：</p>
+<blockquote>
+<p>Spring MVC 是一套完整的请求分发和处理机制，不只是几个注解。</p>
+</blockquote>
+<h3 id="6-2-RestController-是什么"><a href="#6-2-RestController-是什么" class="headerlink" title="6.2 @RestController 是什么"></a>6.2 <code>@RestController</code> 是什么</h3><p>你后面会经常看到：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/users&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>@RestController</code> 可以先理解成：</p>
+<ul>
+<li>这是一个 Web 控制器</li>
+<li>返回值通常直接作为响应体</li>
+<li>常用于 JSON 接口</li>
+</ul>
+<h3 id="6-3-路由注解怎么理解"><a href="#6-3-路由注解怎么理解" class="headerlink" title="6.3 路由注解怎么理解"></a>6.3 路由注解怎么理解</h3><p>常见的有：</p>
+<ul>
+<li><code>@RequestMapping</code></li>
+<li><code>@GetMapping</code></li>
+<li><code>@PostMapping</code></li>
+<li><code>@PutMapping</code></li>
+<li><code>@DeleteMapping</code></li>
+</ul>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="keyword">public</span> UserDTO <span class="title function_">getUser</span><span class="params">(<span class="meta">@PathVariable</span> Long id)</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它表达的是：</p>
+<ul>
+<li>这是一个 GET 请求处理方法</li>
+<li>路径里有一个 <code>id</code></li>
+<li><code>id</code> 会绑定到方法参数上</li>
+</ul>
+<h3 id="6-4-参数绑定：Spring-MVC-很重要的一块体验"><a href="#6-4-参数绑定：Spring-MVC-很重要的一块体验" class="headerlink" title="6.4 参数绑定：Spring MVC 很重要的一块体验"></a>6.4 参数绑定：Spring MVC 很重要的一块体验</h3><p>Spring MVC 很强的一点就是参数绑定。</p>
+<p>你会经常看到下面几种：</p>
+<h4 id="PathVariable"><a href="#PathVariable" class="headerlink" title="@PathVariable"></a><code>@PathVariable</code></h4><p>用于接路径参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="keyword">public</span> UserDTO <span class="title function_">getUser</span><span class="params">(<span class="meta">@PathVariable</span> Long id)</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RequestParam"><a href="#RequestParam" class="headerlink" title="@RequestParam"></a><code>@RequestParam</code></h4><p>用于接查询参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span></span><br><span class="line"><span class="keyword">public</span> List&lt;UserDTO&gt; <span class="title function_">listUsers</span><span class="params">(<span class="meta">@RequestParam(defaultValue = &quot;1&quot;)</span> <span class="type">int</span> page)</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RequestBody"><a href="#RequestBody" class="headerlink" title="@RequestBody"></a><code>@RequestBody</code></h4><p>用于接 JSON 请求体：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span></span><br><span class="line"><span class="keyword">public</span> UserDTO <span class="title function_">createUser</span><span class="params">(<span class="meta">@RequestBody</span> CreateUserRequest request)</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-5-返回-JSON-是怎么发生的"><a href="#6-5-返回-JSON-是怎么发生的" class="headerlink" title="6.5 返回 JSON 是怎么发生的"></a>6.5 返回 JSON 是怎么发生的</h3><p>你返回的是一个 Java 对象，不是手工拼 JSON。</p>
+<p>Spring MVC 会结合消息转换器，把对象序列化成 JSON。</p>
+<p>所以接口开发里，你可以理解成：</p>
+<ul>
+<li>你返回 Java 对象</li>
+<li>Spring 帮你转换成 HTTP 响应内容</li>
+</ul>
+<h3 id="6-6-Filter-和-Interceptor-先怎么区分"><a href="#6-6-Filter-和-Interceptor-先怎么区分" class="headerlink" title="6.6 Filter 和 Interceptor 先怎么区分"></a>6.6 Filter 和 Interceptor 先怎么区分</h3><p>很多人刚学时会把这两个混在一起。</p>
+<p>你可以先粗略记：</p>
+<ul>
+<li><code>Filter</code> 更靠近 Servlet 层</li>
+<li><code>Interceptor</code> 更靠近 Spring MVC</li>
+</ul>
+<p>通常：</p>
+<ul>
+<li><code>Filter</code> 适合做更通用、更底层的请求处理</li>
+<li><code>Interceptor</code> 更适合做和 Controller 调用链相关的逻辑</li>
+</ul>
+<p>例如：</p>
+<ul>
+<li>非 Spring MVC 专属的通用过滤逻辑</li>
+<li>编码、基础审计、跨域等更底层逻辑</li>
+</ul>
+<p>它更靠近 Spring MVC。</p>
+<p>一句话记忆：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Filter 更靠近 Servlet</span><br><span class="line">Interceptor 更贴近 Spring MVC</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-Spring-Boot：为什么现代-Spring-项目几乎都从它开始"><a href="#7-Spring-Boot：为什么现代-Spring-项目几乎都从它开始" class="headerlink" title="7. Spring Boot：为什么现代 Spring 项目几乎都从它开始"></a>7. Spring Boot：为什么现代 Spring 项目几乎都从它开始</h2><p>学完前面的 Spring Core 和 Spring MVC，再看 Spring Boot 就容易多了。</p>
+<h3 id="7-1-Spring-Boot-到底解决了什么问题"><a href="#7-1-Spring-Boot-到底解决了什么问题" class="headerlink" title="7.1 Spring Boot 到底解决了什么问题"></a>7.1 Spring Boot 到底解决了什么问题</h3><p>Spring Framework 很强，但过去自己搭一个项目会比较重：</p>
+<ul>
+<li>XML 配置很多</li>
+<li>基础设施要自己配</li>
+<li>起项目成本高</li>
+<li>新人很难快速跑起来</li>
+</ul>
+<p>Spring Boot 主要解决的是：</p>
+<ul>
+<li>快速初始化项目</li>
+<li>自动配置常见基础设施</li>
+<li>提供统一的 starter 依赖组织方式</li>
+<li>降低启动和工程化门槛</li>
+</ul>
+<h3 id="7-2-为什么它不是“只是更省事”"><a href="#7-2-为什么它不是“只是更省事”" class="headerlink" title="7.2 为什么它不是“只是更省事”"></a>7.2 为什么它不是“只是更省事”</h3><p>它不只是“帮你少写几行配置”。</p>
+<p>而是“现代 Spring 项目的默认工程化入口”。</p>
+<h3 id="7-3-SpringBootApplication-是什么"><a href="#7-3-SpringBootApplication-是什么" class="headerlink" title="7.3 @SpringBootApplication 是什么"></a>7.3 <code>@SpringBootApplication</code> 是什么</h3><p>一个最小 Spring Boot 应用通常长这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DemoApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(DemoApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="SpringBootApplication"><a href="#SpringBootApplication" class="headerlink" title="@SpringBootApplication"></a><code>@SpringBootApplication</code></h4><p>你现在先记住它的实际作用：</p>
+<ul>
+<li>它告诉 Spring Boot：这是应用主入口配置类</li>
+<li>它会触发自动配置、组件扫描等关键机制</li>
+</ul>
+<h4 id="SpringApplication-run"><a href="#SpringApplication-run" class="headerlink" title="SpringApplication.run(...)"></a><code>SpringApplication.run(...)</code></h4><p>它会：</p>
+<ul>
+<li>创建 Spring 容器</li>
+<li>处理配置</li>
+<li>启动内嵌服务器</li>
+</ul>
+<p>这是 Spring Boot 最关键的概念之一。</p>
+<h3 id="7-4-自动配置到底在做什么"><a href="#7-4-自动配置到底在做什么" class="headerlink" title="7.4 自动配置到底在做什么"></a>7.4 自动配置到底在做什么</h3><p>Spring Boot 会根据你引入的依赖，推断你想做什么，然后自动帮你配好很多基础设施。</p>
+<p>例如你加了：</p>
+<ul>
+<li><code>spring-boot-starter-web</code></li>
+</ul>
+<p>它就会倾向于帮你准备：</p>
+<ul>
+<li>Spring MVC</li>
+<li>JSON 处理</li>
+<li>内嵌 Tomcat</li>
+</ul>
+<p>所以最简单的理解是：</p>
+<blockquote>
+<p>你声明意图，Spring Boot 帮你补齐常见基础配置。</p>
+</blockquote>
+<h3 id="7-5-starter-是什么"><a href="#7-5-starter-是什么" class="headerlink" title="7.5 starter 是什么"></a>7.5 <code>starter</code> 是什么</h3><p>Spring Boot 常见依赖名里经常有 <code>starter</code>。</p>
+<p>你可以把它理解成：</p>
+<ul>
+<li>按场景打包好的一组常用依赖</li>
+</ul>
+<p>例如：</p>
+<ul>
+<li>想做 Web，就加 <code>starter-web</code></li>
+<li>想做 JPA，就加 <code>starter-data-jpa</code></li>
+</ul>
+<p>这会让项目起步非常快。</p>
+<h3 id="7-6-配置文件怎么理解"><a href="#7-6-配置文件怎么理解" class="headerlink" title="7.6 配置文件怎么理解"></a>7.6 配置文件怎么理解</h3><p>Spring Boot 项目里很常见的配置方式是：</p>
+<ul>
+<li><code>application.properties</code></li>
+<li><code>application.yml</code></li>
+</ul>
+<p>例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8080</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">demo</span></span><br></pre></td></tr></table></figure>
+
+<p>这些配置会影响：</p>
+<ul>
+<li>端口</li>
+<li>数据源</li>
+<li>日志</li>
+<li>profile</li>
+<li>第三方中间件</li>
+</ul>
+<h3 id="7-7-profile-是做什么的"><a href="#7-7-profile-是做什么的" class="headerlink" title="7.7 profile 是做什么的"></a>7.7 <code>profile</code> 是做什么的</h3><p>很多项目会区分：</p>
+<ul>
+<li>开发环境</li>
+<li>测试环境</li>
+<li>生产环境</li>
+</ul>
+<p>Spring Boot 常用 <code>profile</code> 来区分这些环境。</p>
+<p>你现在只要知道：</p>
+<ul>
+<li>不同环境可以有不同配置</li>
+<li>这是工程化里非常重要的一块</li>
+</ul>
+<h3 id="7-8-为什么官方脚手架很重要"><a href="#7-8-为什么官方脚手架很重要" class="headerlink" title="7.8 为什么官方脚手架很重要"></a>7.8 为什么官方脚手架很重要</h3><p>如果你刚入门，最推荐的起步方式是 <code>start.spring.io</code>。</p>
+<p>因为它会直接帮你生成一个标准 Spring Boot 项目骨架。</p>
+<p>这能帮你避开很多“项目还没开始，环境和结构就先乱了”的问题。</p>
+<h2 id="8-一个最小-Spring-Boot-REST-项目应该长什么样"><a href="#8-一个最小-Spring-Boot-REST-项目应该长什么样" class="headerlink" title="8. 一个最小 Spring Boot REST 项目应该长什么样"></a>8. 一个最小 Spring Boot REST 项目应该长什么样</h2><p>现在把前面的认知拼起来，你会更容易看懂一个最小项目。</p>
+<p>项目结构大概会像这样：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">src/main/java/com/example/demo</span><br><span class="line">├── DemoApplication.java</span><br><span class="line">├── controller</span><br><span class="line">│   └── UserController.java</span><br><span class="line">├── service</span><br><span class="line">│   └── UserService.java</span><br><span class="line">└── dto</span><br><span class="line">    ├── CreateUserRequest.java</span><br><span class="line">    └── UserDTO.java</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-1-启动类"><a href="#8-1-启动类" class="headerlink" title="8.1 启动类"></a>8.1 启动类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DemoApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(DemoApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-Controller"><a href="#8-2-Controller" class="headerlink" title="8.2 Controller"></a>8.2 Controller</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/users&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserController</span><span class="params">(UserService userService)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userService = userService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> UserDTO <span class="title function_">getUser</span><span class="params">(<span class="meta">@PathVariable</span> Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.getUser(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-Service"><a href="#8-3-Service" class="headerlink" title="8.3 Service"></a>8.3 Service</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> UserDTO <span class="title function_">getUser</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">UserDTO</span>(id, <span class="string">&quot;ash&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-4-这已经说明了什么"><a href="#8-4-这已经说明了什么" class="headerlink" title="8.4 这已经说明了什么"></a>8.4 这已经说明了什么</h3><p>它已经体现了 Spring 入门最关键的几件事：</p>
+<ul>
+<li>容器管理组件</li>
+<li>Controller 接请求</li>
+<li>Service 承担业务逻辑</li>
+<li>参数绑定和 JSON 返回都由框架支撑</li>
+</ul>
+<h2 id="9-数据访问：你要知道-Spring-怎么碰数据库"><a href="#9-数据访问：你要知道-Spring-怎么碰数据库" class="headerlink" title="9. 数据访问：你要知道 Spring 怎么碰数据库"></a>9. 数据访问：你要知道 Spring 怎么碰数据库</h2><p>入门阶段你不一定马上实战数据库。</p>
+<p>但你必须知道 Java 项目里数据库访问大概在什么层发生。</p>
+<h3 id="9-1-最原始路线：JDBC"><a href="#9-1-最原始路线：JDBC" class="headerlink" title="9.1 最原始路线：JDBC"></a>9.1 最原始路线：JDBC</h3><p>最底层是 JDBC。</p>
+<p>它能直接连数据库、发 SQL、拿结果。</p>
+<p>但代码会比较重。</p>
+<h3 id="9-2-再往上：更高层的封装"><a href="#9-2-再往上：更高层的封装" class="headerlink" title="9.2 再往上：更高层的封装"></a>9.2 再往上：更高层的封装</h3><p>常见会看到这些路线：</p>
+<ul>
+<li><code>JdbcTemplate</code></li>
+<li><code>MyBatis</code></li>
+<li><code>JPA / Hibernate</code></li>
+</ul>
+<h3 id="9-3-JPA-和-MyBatis-先怎么理解"><a href="#9-3-JPA-和-MyBatis-先怎么理解" class="headerlink" title="9.3 JPA 和 MyBatis 先怎么理解"></a>9.3 JPA 和 MyBatis 先怎么理解</h3><h4 id="JPA"><a href="#JPA" class="headerlink" title="JPA"></a>JPA</h4><p>更偏对象映射。</p>
+<p>特点通常是：</p>
+<ul>
+<li>Spring 生态集成度很高</li>
+<li>开发速度快</li>
+<li>适合先跑通主线</li>
+</ul>
+<h4 id="MyBatis"><a href="#MyBatis" class="headerlink" title="MyBatis"></a>MyBatis</h4><p>更偏 SQL 可控。</p>
+<p>特点通常是：</p>
+<ul>
+<li>SQL 写得更明确</li>
+<li>对复杂查询控制感更强</li>
+<li>国内项目里很常见</li>
+</ul>
+<h3 id="9-4-你现在不用立刻二选一"><a href="#9-4-你现在不用立刻二选一" class="headerlink" title="9.4 你现在不用立刻二选一"></a>9.4 你现在不用立刻二选一</h3><p>你现在最需要知道的是：</p>
+<ul>
+<li>数据访问应该有独立层次</li>
+<li>不要把所有数据库逻辑塞进 Controller</li>
+</ul>
+<h2 id="10-事务：为什么它是后端核心能力"><a href="#10-事务：为什么它是后端核心能力" class="headerlink" title="10. 事务：为什么它是后端核心能力"></a>10. 事务：为什么它是后端核心能力</h2><p>事务是 Java 后端里非常核心的能力之一。</p>
+<p>例如转账场景：</p>
+<ul>
+<li>A 扣钱成功</li>
+<li>B 加钱失败</li>
+</ul>
+<p>如果没有事务，数据就不一致了。</p>
+<h3 id="10-1-事务最核心要解决什么"><a href="#10-1-事务最核心要解决什么" class="headerlink" title="10.1 事务最核心要解决什么"></a>10.1 事务最核心要解决什么</h3><p>一句话：</p>
+<ul>
+<li>保证一组操作要么都成功，要么都失败</li>
+</ul>
+<h3 id="10-2-Spring-里最常见的事务写法"><a href="#10-2-Spring-里最常见的事务写法" class="headerlink" title="10.2 Spring 里最常见的事务写法"></a>10.2 Spring 里最常见的事务写法</h3><p>你后面很常看到：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">createOrder</span><span class="params">(...)</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>入门阶段先记住：</p>
+<ul>
+<li>Spring 常用 <code>@Transactional</code> 管事务</li>
+<li>它通常加在 Service 层方法上更合理</li>
+</ul>
+<h2 id="11-把你熟悉的-Python-后端经验映射到-Spring"><a href="#11-把你熟悉的-Python-后端经验映射到-Spring" class="headerlink" title="11. 把你熟悉的 Python 后端经验映射到 Spring"></a>11. 把你熟悉的 Python 后端经验映射到 Spring</h2><p>如果你已经有 Python 后端经验，这一步很重要。</p>
+<p>因为很多概念你并不是“第一次学”，而是在“换一种工程化表达”。</p>
+<h3 id="11-1-一个粗略映射表"><a href="#11-1-一个粗略映射表" class="headerlink" title="11.1 一个粗略映射表"></a>11.1 一个粗略映射表</h3><table>
+<thead>
+<tr>
+<th>你熟悉的 Python 概念</th>
+<th>Spring 里常见对应感受</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Flask&#x2F;FastAPI 路由函数</td>
+<td>Controller 方法</td>
+</tr>
+<tr>
+<td>请求对象&#x2F;参数解析</td>
+<td><code>@PathVariable</code> &#x2F; <code>@RequestParam</code> &#x2F; <code>@RequestBody</code></td>
+</tr>
+<tr>
+<td>依赖注入机制</td>
+<td>Spring 容器 + DI</td>
+</tr>
+<tr>
+<td>ORM &#x2F; DB 层</td>
+<td>JPA &#x2F; MyBatis &#x2F; Repository</td>
+</tr>
+<tr>
+<td>装饰器式能力</td>
+<td>AOP &#x2F; 注解驱动</td>
+</tr>
+<tr>
+<td>配置文件</td>
+<td><code>application.yml</code></td>
+</tr>
+</tbody></table>
+<h3 id="11-2-最重要的思维切换是什么"><a href="#11-2-最重要的思维切换是什么" class="headerlink" title="11.2 最重要的思维切换是什么"></a>11.2 最重要的思维切换是什么</h3><p>Python 框架里很多东西你可以很直接地组织。</p>
+<p>Spring 则把依赖注入做成了整个框架的基础设施。</p>
+<p>所以你要适应的是：</p>
+<ul>
+<li>更强调分层</li>
+<li>更强调容器管理</li>
+<li>更强调工程化组织</li>
+</ul>
+<h3 id="11-3-哪些东西不要硬类比"><a href="#11-3-哪些东西不要硬类比" class="headerlink" title="11.3 哪些东西不要硬类比"></a>11.3 哪些东西不要硬类比</h3><p>也不要把所有概念生硬映射。</p>
+<p>例如：</p>
+<ul>
+<li><code>Interceptor</code> 更靠近 Spring MVC</li>
+<li>AOP 也不只是“Java 版装饰器”</li>
+</ul>
+<p>类比只是帮助你上手，不是让你忽略 Spring 自己的设计。</p>
+<h2 id="12-一条更适合你的学习顺序"><a href="#12-一条更适合你的学习顺序" class="headerlink" title="12. 一条更适合你的学习顺序"></a>12. 一条更适合你的学习顺序</h2><p>如果你的背景是“会 Python 后端、准备补 Java 全栈”，那我更建议按下面顺序学：</p>
+<ol>
+<li><code>Maven基础</code></li>
+<li><code>注解和依赖注入</code></li>
+<li><code>Servlet / Java Web 背景</code></li>
+<li><code>Spring Core</code></li>
+<li><code>Spring MVC</code></li>
+<li><code>Spring开发</code></li>
+<li><code>Spring Boot开发</code></li>
+<li><code>第一个Spring Boot应用</code></li>
+<li><code>参数绑定和JSON返回</code></li>
+<li><code>配置文件</code></li>
+<li><code>数据库访问基础</code></li>
+<li><code>事务</code></li>
+</ol>
+<p>如果你是按课程或资料章节看，也可以大致对照：</p>
+<ol>
+<li><code>使用Spring MVC</code></li>
+<li><code>Spring Boot开发</code></li>
+<li><code>第一个Spring Boot应用</code></li>
+<li><code>集成JPA</code></li>
+<li><code>集成MyBatis</code></li>
+<li><code>打包Spring Boot应用</code></li>
+</ol>
+<h3 id="12-1-官方资料怎么用更高效"><a href="#12-1-官方资料怎么用更高效" class="headerlink" title="12.1 官方资料怎么用更高效"></a>12.1 官方资料怎么用更高效</h3><p>再读 Spring 官方这几篇：</p>
+<ul>
+<li><code>Building an Application with Spring Boot</code></li>
+<li><code>Developing Your First Spring Boot Application</code></li>
+</ul>
+<p>会更有感觉。</p>
+<p>因为这时你已经知道：</p>
+<ul>
+<li>它们在解决什么问题</li>
+<li>每个概念在整个体系里的位置</li>
+</ul>
+<h2 id="13-学的时候怎么避免“看懂了，但不会做”"><a href="#13-学的时候怎么避免“看懂了，但不会做”" class="headerlink" title="13. 学的时候怎么避免“看懂了，但不会做”"></a>13. 学的时候怎么避免“看懂了，但不会做”</h2><p>这是很多人真正卡住的点。</p>
+<p>你可以每学完一块，就做一个很小的输出。</p>
+<p>例如学完 Spring Core 可以写：</p>
+<ul>
+<li>Bean 是什么</li>
+<li>为什么不推荐到处自己 <code>new</code></li>
+<li>依赖注入解决了什么问题</li>
+</ul>
+<p>学完 Spring MVC 可以写：</p>
+<ul>
+<li>一个 GET 接口怎么接参数</li>
+<li>一个 POST 接口怎么接 JSON</li>
+<li>为什么返回对象能自动变成 JSON</li>
+</ul>
+<p>这会让你的理解从“看过”变成“能说清楚”。</p>
+<h2 id="14-入门时最常见的误区"><a href="#14-入门时最常见的误区" class="headerlink" title="14. 入门时最常见的误区"></a>14. 入门时最常见的误区</h2><h3 id="14-1-一上来只学-Spring-Boot，不学-Spring-Core"><a href="#14-1-一上来只学-Spring-Boot，不学-Spring-Core" class="headerlink" title="14.1 一上来只学 Spring Boot，不学 Spring Core"></a>14.1 一上来只学 Spring Boot，不学 Spring Core</h3><p>这会让你项目能跑，但不理解容器和依赖注入。</p>
+<p>后面一遇到复杂问题就会很虚。</p>
+<h3 id="14-2-一上来就学微服务"><a href="#14-2-一上来就学微服务" class="headerlink" title="14.2 一上来就学微服务"></a>14.2 一上来就学微服务</h3><p>这基本等于主线还没打通，就先把复杂度拉满。</p>
+<h3 id="14-3-只背注解，不理解请求和对象是怎么流动的"><a href="#14-3-只背注解，不理解请求和对象是怎么流动的" class="headerlink" title="14.3 只背注解，不理解请求和对象是怎么流动的"></a>14.3 只背注解，不理解请求和对象是怎么流动的</h3><p>这样写代码会非常机械。</p>
+<h3 id="14-4-想一次把整个-Spring-生态学完"><a href="#14-4-想一次把整个-Spring-生态学完" class="headerlink" title="14.4 想一次把整个 Spring 生态学完"></a>14.4 想一次把整个 Spring 生态学完</h3><p>没必要。</p>
+<p>先把下面几条主线打通更重要：</p>
+<ul>
+<li>Spring Core</li>
+<li>Spring MVC</li>
+<li>Spring Boot</li>
+<li>数据访问基础</li>
+<li>事务</li>
+</ul>
+<h2 id="15-读完这篇后，你至少应该能回答什么"><a href="#15-读完这篇后，你至少应该能回答什么" class="headerlink" title="15. 读完这篇后，你至少应该能回答什么"></a>15. 读完这篇后，你至少应该能回答什么</h2><p>读完这篇，你至少应该能比较清楚地回答下面这些问题：</p>
+<ol>
+<li>Spring Framework、Spring MVC、Spring Boot 分别是什么</li>
+<li>IoC 和依赖注入在解决什么问题</li>
+<li>Bean 是什么</li>
+<li>为什么 Spring 里不推荐到处自己 <code>new</code></li>
+<li><code>@RestController</code> 和 <code>@Controller</code> 有什么区别</li>
+<li><code>@GetMapping</code>、<code>@PostMapping</code> 是做什么的</li>
+<li><code>@RequestBody</code>、<code>@PathVariable</code>、<code>@RequestParam</code> 分别解决什么问题</li>
+<li><code>@Transactional</code> 一般放在哪里，为什么</li>
+<li><code>application.yml</code> 和 <code>profile</code> 是干什么的</li>
+<li>一个最小 Spring Boot 接口项目通常有哪些层</li>
+</ol>
+<h2 id="16-入门后的下一步应该是什么"><a href="#16-入门后的下一步应该是什么" class="headerlink" title="16. 入门后的下一步应该是什么"></a>16. 入门后的下一步应该是什么</h2><p>这篇文章的目标是帮你入门，不是帮你一次学到工作全部细节。</p>
+<p>如果你已经读完这篇，最适合接着看的就是这组系列的第 2 篇：<strong>Spring 第一个项目实战：从 0 搭一个最小 REST 服务</strong>。</p>
+<p>它会带你从 0 搭一个最小 <code>Spring Boot</code> REST 项目，把这篇里的概念真正落到代码上。</p>
+<p>入门后最自然的下一步是：</p>
+<ol>
+<li>自己起一个最小 Spring Boot 项目</li>
+<li>写 3 到 5 个最基本的 REST 接口</li>
+<li>加一层 Service</li>
+<li>接一个简单数据库</li>
+<li>加上事务和基础配置</li>
+</ol>
+<p>再往后，你可以继续补：</p>
+<ul>
+<li>参数校验</li>
+<li>统一异常处理</li>
+<li>日志</li>
+<li>测试</li>
+<li>安全认证</li>
+<li>Redis</li>
+<li>部署</li>
+</ul>
+<p>微服务和 Spring Cloud 一定放到更后面。</p>
+<h2 id="17-最后的学习建议"><a href="#17-最后的学习建议" class="headerlink" title="17. 最后的学习建议"></a>17. 最后的学习建议</h2><p>对你这种人，最大的优势不是“时间多”，而是：</p>
+<ul>
+<li>你已经懂后端开发</li>
+<li>你有 Python Web 框架经验</li>
+<li>你不是从零开始理解请求、路由、业务、数据库</li>
+</ul>
+<p>所以你学 Spring 最重要的不是“刷量”，而是：</p>
+<ul>
+<li>把旧 Java Web 认知接上</li>
+<li>把 Python 后端经验映射过来</li>
+<li>把 Spring 的核心心智真正理解清楚</li>
+</ul>
+<p>只要你把这三个点打通，后面进入项目会很快。</p>
+<p>如果你打算继续顺着这组文章往下走，建议下一篇直接进入最小项目实战，再用后两篇把校验、异常处理、数据库和事务逐步补全。</p>
+<p>一句话总结：</p>
+<blockquote>
+<p>Spring 入门的关键，不是背多少注解，而是理解容器、分层、Web 调度、自动配置和事务这几条主线。</p>
+</blockquote>
+</article>
+<div class="article-footer">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    
+
+
+    <section id="share">
+      <div class="header"><span>分享文章</span></div>
+      <div class="body">
+        <div class="link"><input class="copy-area" readonly="true" id="copy-link" value="https://minniexcode.github.io/memoirs/20260613/learning/spring-beginner-learning-path/" /></div>
+        <div class="social-wrap dis-select"><a class="social share-item wechat" onclick="util.toggle(&quot;qrcode-wechat&quot;)"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/b32ef3da1162a.svg" /></a><a class="social share-item weibo" target="_blank" rel="external nofollow noopener noreferrer" href="https://service.weibo.com/share/share.php?url=https://minniexcode.github.io/memoirs/20260613/learning/spring-beginner-learning-path/&title=Spring 入门教程：给会 Python 后端、准备转 Java 全栈的人 - ash&summary=如果你已经写过 Flask、FastAPI 这类 Python 后端，第一次接触 Spring 时最常见的痛点不是“完全看不懂”，而是总觉得概念很多、名词很重、体系边界不清楚。
+这篇文章的目标不是给你一份资料清单，而是先把 Sprin..."><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/80c07e4dbb303.svg" /></a><a class="social share-item email" href="mailto:?subject=Spring 入门教程：给会 Python 后端、准备转 Java 全栈的人 - ash&amp;body=https://minniexcode.github.io/memoirs/20260613/learning/spring-beginner-learning-path/"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/a1b00e20f425d.svg" /></a><a class="social share-item link" onclick="util.copy(&quot;copy-link&quot;, &quot;复制成功&quot;)"><img  src="https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/social/8411ed322ced6.svg" /></a></div>
+        
+        <div class="qrcode" id="qrcode-wechat" style="opacity:0;height:0">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=https://minniexcode.github.io/memoirs/20260613/learning/spring-beginner-learning-path/"/>
+        </div>
+        
+      </div>
+    </section>
+    </div>
+
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">较早文章</div><a href="/memoirs/20260613/learning/spring-first-project-guide/">Spring 第一个项目实战：从 0 搭一个最小 REST 服务</a></div></section></div>
+
+
+
+
+  <div class="related-wrap md-text" id="comments">
+    <section class='header cmt-title cap theme'>
+      <p>来都来了，聊两句吧</p>
+
+    </section>
+    <section class='body cmt-body beaudar'>
+      
+
+<svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg>
+
+<div id="beaudar" repo="minniexcode/blog-comments" issue-term="pathname" theme="preferred-color-scheme" label="comments" input-position="top" comment-order="desc" loading="false" branch="main"></div>
+
+    </section>
+  </div>
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">ash66</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.33.1">Stellar 1.33.1</a> 主题创建。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right"><div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%85%88%E5%BB%BA%E7%AB%8B%E6%95%B4%E4%BD%93%E8%AE%A4%E7%9F%A5"><span class="toc-text">1. 先建立整体认知</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-Spring-%E5%AE%B6%E6%97%8F%E9%87%8C%E4%BD%A0%E7%8E%B0%E5%9C%A8%E6%9C%80%E9%9C%80%E8%A6%81%E5%85%B3%E5%BF%83%E7%9A%84%E4%B8%89%E4%B8%AA%E8%AF%8D"><span class="toc-text">1.1 Spring 家族里你现在最需要关心的三个词</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Spring-Framework-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">Spring Framework 是什么</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Spring-MVC-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">Spring MVC 是什么</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Spring-Boot-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">Spring Boot 是什么</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E4%BD%A0%E5%BA%94%E8%AF%A5%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3%E5%AE%83%E4%BB%AC%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-text">1.2 你应该怎样理解它们的关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%85%88%E8%A1%A5%E4%B8%80%E7%82%B9-Java-%E8%83%8C%E6%99%AF%EF%BC%8C%E4%BD%86%E5%8F%AA%E8%A1%A5-Spring-%E7%9C%9F%E4%BC%9A%E7%94%A8%E5%88%B0%E7%9A%84%E9%83%A8%E5%88%86"><span class="toc-text">2. 先补一点 Java 背景，但只补 Spring 真会用到的部分</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Maven%EF%BC%9AJava-%E4%B8%96%E7%95%8C%E7%9A%84%E4%BE%9D%E8%B5%96%E5%92%8C%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7"><span class="toc-text">2.1 Maven：Java 世界的依赖和构建工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%A0%E7%8E%B0%E5%9C%A8%E8%A6%81%E6%8E%8C%E6%8F%A1%E5%88%B0%E4%BB%80%E4%B9%88%E7%A8%8B%E5%BA%A6"><span class="toc-text">你现在要掌握到什么程度</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%B3%A8%E8%A7%A3%EF%BC%9ASpring-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E4%BE%9D%E8%B5%96%E5%AE%83"><span class="toc-text">2.2 注解：Spring 为什么这么依赖它</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E8%A7%A3%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">注解是什么</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-JDBC%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%A0%E5%8D%B3%E4%BD%BF%E4%B8%8D%E7%94%A8%E5%8E%9F%E7%94%9F-JDBC%EF%BC%8C%E4%B9%9F%E6%9C%80%E5%A5%BD%E7%9F%A5%E9%81%93%E5%AE%83"><span class="toc-text">2.3 JDBC：为什么你即使不用原生 JDBC，也最好知道它</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Java-Web-%E8%83%8C%E6%99%AF%EF%BC%9ASpring-MVC-%E4%B8%8D%E6%98%AF%E4%BB%8E%E5%A4%A9%E4%B8%8A%E6%8E%89%E4%B8%8B%E6%9D%A5%E7%9A%84"><span class="toc-text">3. Java Web 背景：Spring MVC 不是从天上掉下来的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%85%88%E7%9C%8B%E6%9C%80%E5%8E%9F%E5%A7%8B%E7%9A%84-Java-Web-%E6%80%9D%E8%B7%AF"><span class="toc-text">3.1 先看最原始的 Java Web 思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-MVC-%E6%80%9D%E6%83%B3%E5%85%88%E6%80%8E%E4%B9%88%E7%90%86%E8%A7%A3"><span class="toc-text">3.2 MVC 思想先怎么理解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Spring-Core%EF%BC%9A%E6%95%B4%E4%B8%AA-Spring-%E4%BD%93%E7%B3%BB%E7%9C%9F%E6%AD%A3%E7%9A%84%E5%9C%B0%E5%9F%BA"><span class="toc-text">4. Spring Core：整个 Spring 体系真正的地基</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-IoC-%E5%85%88%E6%80%8E%E4%B9%88%E7%90%86%E8%A7%A3"><span class="toc-text">4.1 IoC 先怎么理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Bean-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">4.2 Bean 是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E4%B8%BA%E4%BB%80%E4%B9%88%E9%87%8D%E8%A6%81"><span class="toc-text">4.3 依赖注入为什么重要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-Component%E3%80%81-Service%E3%80%81-Repository%E3%80%81-Controller-%E5%A4%A7%E6%A6%82%E6%80%8E%E4%B9%88%E5%88%86"><span class="toc-text">4.4 @Component、@Service、@Repository、@Controller 大概怎么分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-Bean-%E5%8F%88%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">4.5 @Bean 又是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6-Spring-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E8%AE%A9%E4%BA%BA%E8%A7%89%E5%BE%97%E2%80%9C%E5%83%8F%E9%AD%94%E6%B3%95%E2%80%9D"><span class="toc-text">4.6 Spring 为什么会让人觉得“像魔法”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-7-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E6%8E%A8%E8%8D%90%E5%88%B0%E5%A4%84%E8%87%AA%E5%B7%B1-new"><span class="toc-text">4.7 为什么不推荐到处自己 new</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-AOP-%E5%92%8C%E4%BA%8B%E5%8A%A1%EF%BC%9A%E5%85%88%E5%BB%BA%E7%AB%8B%E2%80%9C%E5%AE%83%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%E2%80%9D%E7%9A%84%E8%AE%A4%E7%9F%A5"><span class="toc-text">5. AOP 和事务：先建立“它解决什么问题”的认知</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-AOP-%E6%98%AF%E5%B9%B2%E4%BB%80%E4%B9%88%E7%9A%84"><span class="toc-text">5.1 AOP 是干什么的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BA%8B%E5%8A%A1%E5%B8%B8%E5%92%8C-AOP-%E4%B8%80%E8%B5%B7%E5%87%BA%E7%8E%B0"><span class="toc-text">5.2 为什么事务常和 AOP 一起出现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Spring-MVC%EF%BC%9A%E7%8E%B0%E4%BB%A3-Java-Web-%E6%8E%A5%E5%8F%A3%E5%BC%80%E5%8F%91%E4%B8%BB%E7%BA%BF"><span class="toc-text">6. Spring MVC：现代 Java Web 接口开发主线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-DispatcherServlet-%E5%85%88%E6%80%8E%E4%B9%88%E7%90%86%E8%A7%A3"><span class="toc-text">6.1 DispatcherServlet 先怎么理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-RestController-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">6.2 @RestController 是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E8%B7%AF%E7%94%B1%E6%B3%A8%E8%A7%A3%E6%80%8E%E4%B9%88%E7%90%86%E8%A7%A3"><span class="toc-text">6.3 路由注解怎么理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-%E5%8F%82%E6%95%B0%E7%BB%91%E5%AE%9A%EF%BC%9ASpring-MVC-%E5%BE%88%E9%87%8D%E8%A6%81%E7%9A%84%E4%B8%80%E5%9D%97%E4%BD%93%E9%AA%8C"><span class="toc-text">6.4 参数绑定：Spring MVC 很重要的一块体验</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#PathVariable"><span class="toc-text">@PathVariable</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RequestParam"><span class="toc-text">@RequestParam</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RequestBody"><span class="toc-text">@RequestBody</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-5-%E8%BF%94%E5%9B%9E-JSON-%E6%98%AF%E6%80%8E%E4%B9%88%E5%8F%91%E7%94%9F%E7%9A%84"><span class="toc-text">6.5 返回 JSON 是怎么发生的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-6-Filter-%E5%92%8C-Interceptor-%E5%85%88%E6%80%8E%E4%B9%88%E5%8C%BA%E5%88%86"><span class="toc-text">6.6 Filter 和 Interceptor 先怎么区分</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-Spring-Boot%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E7%8E%B0%E4%BB%A3-Spring-%E9%A1%B9%E7%9B%AE%E5%87%A0%E4%B9%8E%E9%83%BD%E4%BB%8E%E5%AE%83%E5%BC%80%E5%A7%8B"><span class="toc-text">7. Spring Boot：为什么现代 Spring 项目几乎都从它开始</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-Spring-Boot-%E5%88%B0%E5%BA%95%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="toc-text">7.1 Spring Boot 到底解决了什么问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%83%E4%B8%8D%E6%98%AF%E2%80%9C%E5%8F%AA%E6%98%AF%E6%9B%B4%E7%9C%81%E4%BA%8B%E2%80%9D"><span class="toc-text">7.2 为什么它不是“只是更省事”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-SpringBootApplication-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">7.3 @SpringBootApplication 是什么</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SpringBootApplication"><span class="toc-text">@SpringBootApplication</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SpringApplication-run"><span class="toc-text">SpringApplication.run(...)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%88%B0%E5%BA%95%E5%9C%A8%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-text">7.4 自动配置到底在做什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-5-starter-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">7.5 starter 是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-6-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%80%8E%E4%B9%88%E7%90%86%E8%A7%A3"><span class="toc-text">7.6 配置文件怎么理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-7-profile-%E6%98%AF%E5%81%9A%E4%BB%80%E4%B9%88%E7%9A%84"><span class="toc-text">7.7 profile 是做什么的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-8-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%98%E6%96%B9%E8%84%9A%E6%89%8B%E6%9E%B6%E5%BE%88%E9%87%8D%E8%A6%81"><span class="toc-text">7.8 为什么官方脚手架很重要</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F-Spring-Boot-REST-%E9%A1%B9%E7%9B%AE%E5%BA%94%E8%AF%A5%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="toc-text">8. 一个最小 Spring Boot REST 项目应该长什么样</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E5%90%AF%E5%8A%A8%E7%B1%BB"><span class="toc-text">8.1 启动类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-Controller"><span class="toc-text">8.2 Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-Service"><span class="toc-text">8.3 Service</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-4-%E8%BF%99%E5%B7%B2%E7%BB%8F%E8%AF%B4%E6%98%8E%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-text">8.4 这已经说明了什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE%EF%BC%9A%E4%BD%A0%E8%A6%81%E7%9F%A5%E9%81%93-Spring-%E6%80%8E%E4%B9%88%E7%A2%B0%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-text">9. 数据访问：你要知道 Spring 怎么碰数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E6%9C%80%E5%8E%9F%E5%A7%8B%E8%B7%AF%E7%BA%BF%EF%BC%9AJDBC"><span class="toc-text">9.1 最原始路线：JDBC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E5%86%8D%E5%BE%80%E4%B8%8A%EF%BC%9A%E6%9B%B4%E9%AB%98%E5%B1%82%E7%9A%84%E5%B0%81%E8%A3%85"><span class="toc-text">9.2 再往上：更高层的封装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-JPA-%E5%92%8C-MyBatis-%E5%85%88%E6%80%8E%E4%B9%88%E7%90%86%E8%A7%A3"><span class="toc-text">9.3 JPA 和 MyBatis 先怎么理解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#JPA"><span class="toc-text">JPA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MyBatis"><span class="toc-text">MyBatis</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-4-%E4%BD%A0%E7%8E%B0%E5%9C%A8%E4%B8%8D%E7%94%A8%E7%AB%8B%E5%88%BB%E4%BA%8C%E9%80%89%E4%B8%80"><span class="toc-text">9.4 你现在不用立刻二选一</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E4%BA%8B%E5%8A%A1%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%83%E6%98%AF%E5%90%8E%E7%AB%AF%E6%A0%B8%E5%BF%83%E8%83%BD%E5%8A%9B"><span class="toc-text">10. 事务：为什么它是后端核心能力</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-%E4%BA%8B%E5%8A%A1%E6%9C%80%E6%A0%B8%E5%BF%83%E8%A6%81%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88"><span class="toc-text">10.1 事务最核心要解决什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-2-Spring-%E9%87%8C%E6%9C%80%E5%B8%B8%E8%A7%81%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%86%99%E6%B3%95"><span class="toc-text">10.2 Spring 里最常见的事务写法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E6%8A%8A%E4%BD%A0%E7%86%9F%E6%82%89%E7%9A%84-Python-%E5%90%8E%E7%AB%AF%E7%BB%8F%E9%AA%8C%E6%98%A0%E5%B0%84%E5%88%B0-Spring"><span class="toc-text">11. 把你熟悉的 Python 后端经验映射到 Spring</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-%E4%B8%80%E4%B8%AA%E7%B2%97%E7%95%A5%E6%98%A0%E5%B0%84%E8%A1%A8"><span class="toc-text">11.1 一个粗略映射表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-%E6%9C%80%E9%87%8D%E8%A6%81%E7%9A%84%E6%80%9D%E7%BB%B4%E5%88%87%E6%8D%A2%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">11.2 最重要的思维切换是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-3-%E5%93%AA%E4%BA%9B%E4%B8%9C%E8%A5%BF%E4%B8%8D%E8%A6%81%E7%A1%AC%E7%B1%BB%E6%AF%94"><span class="toc-text">11.3 哪些东西不要硬类比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E4%B8%80%E6%9D%A1%E6%9B%B4%E9%80%82%E5%90%88%E4%BD%A0%E7%9A%84%E5%AD%A6%E4%B9%A0%E9%A1%BA%E5%BA%8F"><span class="toc-text">12. 一条更适合你的学习顺序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#12-1-%E5%AE%98%E6%96%B9%E8%B5%84%E6%96%99%E6%80%8E%E4%B9%88%E7%94%A8%E6%9B%B4%E9%AB%98%E6%95%88"><span class="toc-text">12.1 官方资料怎么用更高效</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E5%AD%A6%E7%9A%84%E6%97%B6%E5%80%99%E6%80%8E%E4%B9%88%E9%81%BF%E5%85%8D%E2%80%9C%E7%9C%8B%E6%87%82%E4%BA%86%EF%BC%8C%E4%BD%86%E4%B8%8D%E4%BC%9A%E5%81%9A%E2%80%9D"><span class="toc-text">13. 学的时候怎么避免“看懂了，但不会做”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-%E5%85%A5%E9%97%A8%E6%97%B6%E6%9C%80%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AF%AF%E5%8C%BA"><span class="toc-text">14. 入门时最常见的误区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#14-1-%E4%B8%80%E4%B8%8A%E6%9D%A5%E5%8F%AA%E5%AD%A6-Spring-Boot%EF%BC%8C%E4%B8%8D%E5%AD%A6-Spring-Core"><span class="toc-text">14.1 一上来只学 Spring Boot，不学 Spring Core</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-2-%E4%B8%80%E4%B8%8A%E6%9D%A5%E5%B0%B1%E5%AD%A6%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="toc-text">14.2 一上来就学微服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-3-%E5%8F%AA%E8%83%8C%E6%B3%A8%E8%A7%A3%EF%BC%8C%E4%B8%8D%E7%90%86%E8%A7%A3%E8%AF%B7%E6%B1%82%E5%92%8C%E5%AF%B9%E8%B1%A1%E6%98%AF%E6%80%8E%E4%B9%88%E6%B5%81%E5%8A%A8%E7%9A%84"><span class="toc-text">14.3 只背注解，不理解请求和对象是怎么流动的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-4-%E6%83%B3%E4%B8%80%E6%AC%A1%E6%8A%8A%E6%95%B4%E4%B8%AA-Spring-%E7%94%9F%E6%80%81%E5%AD%A6%E5%AE%8C"><span class="toc-text">14.4 想一次把整个 Spring 生态学完</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-%E8%AF%BB%E5%AE%8C%E8%BF%99%E7%AF%87%E5%90%8E%EF%BC%8C%E4%BD%A0%E8%87%B3%E5%B0%91%E5%BA%94%E8%AF%A5%E8%83%BD%E5%9B%9E%E7%AD%94%E4%BB%80%E4%B9%88"><span class="toc-text">15. 读完这篇后，你至少应该能回答什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-%E5%85%A5%E9%97%A8%E5%90%8E%E7%9A%84%E4%B8%8B%E4%B8%80%E6%AD%A5%E5%BA%94%E8%AF%A5%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">16. 入门后的下一步应该是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#17-%E6%9C%80%E5%90%8E%E7%9A%84%E5%AD%A6%E4%B9%A0%E5%BB%BA%E8%AE%AE"><span class="toc-text">17. 最后的学习建议</span></a></li></ol></div><div class="widget-footer"><a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/><path d="M7 3.338A9.95 9.95 0 0 1 12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12c0-1.821.487-3.53 1.338-5"/></g></svg><span>回到顶部</span></a><a class="buttom" onclick="util.scrollComment()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M8 10.5h8M8 14h5.5M17 3.338A9.95 9.95 0 0 0 12 2C6.477 2 2 6.477 2 12c0 1.6.376 3.112 1.043 4.453c.178.356.237.763.134 1.148l-.595 2.226a1.3 1.3 0 0 0 1.591 1.592l2.226-.596a1.63 1.63 0 0 1 1.149.133A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10c0-1.821-.487-3.53-1.338-5"/></svg><span>参与讨论</span></a></div></widget>
+</div></aside><div class='float-panel'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+
+
+<script type="text/javascript">
+  window.canonical = {"closeEnable":true,"closeText":"关闭提示","originalHost":null,"officialHosts":["localhost"],"encoded":""};
+  window.canonical["param"] = {"permalink":"https://minniexcode.github.io/memoirs/20260613/learning/spring-beginner-learning-path/","checklink":"/js/plugins/video.js"};
+  // Fix: Ensure page is at the correct top position on data load
+  if (history.scrollRestoration) {
+    history.scrollRestoration = 'auto';
+  }
+  (function() {
+    const scrollHandler = () => {
+      const wikiCover = document.querySelector('#l_cover .l_cover.wiki');
+      const startEl = document.getElementById('start');
+      if (wikiCover && startEl) {
+        window.scrollTo(0, startEl.offsetTop);
+      } else {
+        window.scrollTo(0, 0);
+      }
+    };
+    if (document.readyState !== 'loading') scrollHandler();
+    else document.addEventListener('DOMContentLoaded', scrollHandler);
+  })();
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/memoirs/`,
+    tag_plugins: {
+      chat: Object.assign({"api":"https://siteinfo.listentothewind.cn/api/v1"}),
+    }
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"skip_search":null,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+    loading: `https://api.iconify.design/eos-icons:three-dots-loading.svg?color=%231cd0fd`,
+  };
+  const deps = {
+    jquery: `https://gcore.jsdelivr.net/npm/jquery@3.7/dist/jquery.min.js`,
+    marked: `https://gcore.jsdelivr.net/npm/marked@13.0/lib/marked.umd.min.js`,
+    lazyload: `/memoirs/%5Bobject%20Object%5D`
+  }
+</script>
+
+<script type="text/javascript">
+  
+  function RunItem() {
+    this.list = []; // 存放回调函数
+    this.start = () => {
+      for (var i = 0; i < this.list.length; i++) {
+        this.list[i].run();
+      }
+    };
+    this.push = (fn, name, setRequestAnimationFrame = true) => {
+      let myfn = fn
+      if (setRequestAnimationFrame) {
+        myfn = () => {
+          utils.requestAnimationFrame(fn)
+        }
+      }
+      var f = new Item(myfn, name);
+      this.list.push(f);
+    };
+    this.remove = (name) => {
+      // 倒序遍历避免 splice 后的索引问题
+      for (let index = this.list.length - 1; index >= 0; index--) {
+        const e = this.list[index];
+        if (e.name === name) {
+          this.list.splice(index, 1);
+        }
+      }
+    }
+    // 构造一个可以run的对象
+    function Item(fn, name) {
+      // 函数名称
+      this.name = name || fn.name;
+      // run方法
+      this.run = () => {
+        try {
+          fn()
+        } catch (error) {
+          console.log(error);
+        }
+      };
+    }
+  }
+
+  const utils = {
+    // 已加载样式缓存
+    _loadedStyles: new Set(),
+
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      // 如果样式已加载，直接返回 null
+      if (utils._loadedStyles.has(href)) {
+        return null;
+      }
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      // 标记样式为已加载 (在创建元素后立即标记，防止重复创建)
+      utils._loadedStyles.add(href);
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 已加载脚本缓存
+    _loadedScripts: new Set(),
+
+    // 已加载元素缓存 (使用 WeakSet 追踪元素实例,避免 PJAX 导航时的状态混淆)
+    _loadedElements: new WeakSet(),
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      if (src.startsWith('/')) {
+        src = ctx.root + src.substring(1);
+      }
+      // 如果脚本已加载，直接返回
+      if (utils._loadedScripts.has(src)) {
+        resolve();
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function () {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        utils._loadedScripts.add(src);
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // PJAX 事件监听器管理
+    _pjaxListeners: new Set(),
+    
+    jq: (fn, pjax = true) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+      if (pjax && !fn._pjax_registered) {
+        document.addEventListener('pjax:complete', fn);
+        fn._pjax_registered = true;
+        utils._pjaxListeners.add(fn); // 追踪监听器以便清理
+      }
+    },
+    
+    // 清理所有 PJAX 事件监听器
+    cleanupPjaxListeners: () => {
+      utils._pjaxListeners.forEach(fn => {
+        document.removeEventListener('pjax:complete', fn);
+        fn._pjax_registered = false;
+      });
+      utils._pjaxListeners.clear();
+    },
+
+    onLoading: (el) => {
+      if (el) {
+        if ($(el).find('.loading-wrap').length === 0){
+          $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+        }
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      // 检查元素实例是否已加载 (而不是检查属性)
+      if (el && utils._loadedElements.has(el)) {
+        return;
+      }
+      const maxRetry = 3;
+      let retryCount = 0;
+
+      return new Promise((resolve, reject) => {
+        const load = () => {
+          utils.onLoading?.(el);
+
+          let timedOut = false;
+          const timeout = setTimeout(() => {
+            timedOut = true;
+            console.warn('[request] 超时:', url);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject('请求超时');
+            } else {
+              setTimeout(load, 1000);
+            }
+          }, 5000);
+
+          fetch(url).then(resp => {
+            if (timedOut) return;
+            clearTimeout(timeout);
+
+            if (!resp.ok) throw new Error('响应失败');
+            return resp;
+          }).then(data => {
+            if (timedOut) return;
+            // 标记元素实例为已加载
+            if (el) utils._loadedElements.add(el);
+            utils.onLoadSuccess?.(el);
+            callback(data);
+            resolve(data);
+          }).catch(err => {
+            clearTimeout(timeout);
+            console.warn('[request] 错误:', err);
+
+            if (++retryCount >= maxRetry) {
+              utils.onLoadFailure?.(el);
+              onFailure?.();
+              reject(err);
+            } else {
+              setTimeout(load, 1000);
+            }
+          });
+        };
+
+        load();
+      });
+    },
+    requestWithoutLoading: (url, options = {}, maxRetry = 2, timeout = 5000) => {
+      return new Promise((resolve, reject) => {
+        let retryCount = 0;
+
+        const tryRequest = () => {
+          let timedOut = false;
+          const timer = setTimeout(() => {
+            timedOut = true;
+            if (++retryCount > maxRetry) reject('timeout');
+            else tryRequest();
+          }, timeout);
+
+          fetch(url, options)
+            .then(resp => {
+              clearTimeout(timer);
+              if (!resp.ok) throw new Error('bad response');
+              resolve(resp);
+            })
+            .catch(err => {
+              clearTimeout(timer);
+              if (++retryCount > maxRetry) reject(err);
+              else setTimeout(tryRequest, 500);
+            });
+        };
+
+        tryRequest();
+      });
+    },
+    /********************** requestAnimationFrame ********************************/
+    // 1、requestAnimationFrame 会把每一帧中的所有 DOM 操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率，一般来说，这个频率为每秒60帧。
+    // 2、在隐藏或不可见的元素中，requestAnimationFrame 将不会进行重绘或回流，这当然就意味着更少的的 cpu，gpu 和内存使用量。
+    requestAnimationFrame: (fn) => {
+      if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame;
+      }
+      window.requestAnimationFrame(fn)
+    },
+    dark: {},
+
+    // 插件初始化管理器 - 统一处理 DOMContentLoaded 和 pjax:complete 事件
+    _pluginInitializers: [],
+    _pluginCleanups: new Map(), // 存储每个插件的清理函数
+    
+    initPlugin: (initFn, name, options = {}) => {
+      if (!initFn || typeof initFn !== 'function') return;
+      
+      // 避免重复注册
+      const pluginName = name || initFn.name;
+      if (utils._pluginInitializers.some(p => p.name === pluginName)) return;
+      
+      // 包装初始化函数，添加防重复执行的保护
+      const wrappedInit = () => {
+        try {
+          // 在执行前先清理旧的资源
+          if (utils._pluginCleanups.has(pluginName)) {
+            const cleanup = utils._pluginCleanups.get(pluginName);
+            if (typeof cleanup === 'function') {
+              cleanup();
+            }
+          }
+          
+          // 执行初始化，可能返回清理函数
+          const cleanup = initFn();
+          
+          // 如果初始化函数返回了清理函数，保存它
+          if (typeof cleanup === 'function') {
+            utils._pluginCleanups.set(pluginName, cleanup);
+          }
+        } catch (error) {
+          console.error(`[Plugin ${pluginName}] 初始化失败:`, error);
+        }
+      };
+      
+      utils._pluginInitializers.push({ 
+        fn: wrappedInit, 
+        name: pluginName,
+        options: options 
+      });
+      
+      // 如果 DOM 已经加载完成，立即执行
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        wrappedInit();
+      } else {
+        // 否则等待 DOMContentLoaded
+        window.addEventListener('DOMContentLoaded', wrappedInit, { once: true });
+      }
+    },
+
+    // 重新初始化所有插件（用于 PJAX 等场景）
+    reinitPlugins: () => {
+      utils._pluginInitializers.forEach(plugin => {
+        // 跳过标记为不需要重新初始化的插件
+        if (plugin.options.skipReinit) return;
+        
+        try {
+          plugin.fn();
+        } catch (error) {
+          console.error(`[Plugin ${plugin.name}] 重新初始化失败:`, error);
+        }
+      });
+    },
+    
+    // 清理所有插件资源
+    cleanupPlugins: () => {
+      utils._pluginCleanups.forEach((cleanup, name) => {
+        try {
+          cleanup();
+        } catch (error) {
+          console.error(`[Plugin ${name}] 清理失败:`, error);
+        }
+      });
+      utils._pluginCleanups.clear();
+    },
+    
+    // 清理所有资源（用于页面卸载或重置）
+    cleanupAll: () => {
+      utils.cleanupPlugins();
+      utils.cleanupPjaxListeners();
+    },
+  };
+
+  // 自动处理 PJAX 事件
+  document.addEventListener('pjax:before', () => {
+    // 在导航前清理旧的 PJAX 监听器（如果需要重新注册）
+    // 注意：这里不清理，因为监听器应该是持久的
+    // utils.cleanupPjaxListeners();
+  });
+  
+  document.addEventListener('pjax:complete', () => {
+    utils.reinitPlugins();
+  });
+
+  // utils.dark.mode 当前模式 dark or light
+  // utils.dark.toggle() 暗黑模式触发器
+  // utils.dark.push(callBack[,"callBackName"]) 传入触发器回调函数
+  utils.dark.method = {
+    toggle: new RunItem(),
+  };
+  utils.dark = Object.assign(utils.dark, {
+    push: utils.dark.method.toggle.push,
+  });
+</script>
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+<script async src="https://gcore.jsdelivr.net/npm/vanilla-lazyload@19.1/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+    callback_loaded: (el) => {
+      el.classList.add('loaded');
+      const wrapper = el.closest('.lazy-box');
+      const icon = wrapper?.querySelector('.lazy-icon');
+      if (icon) icon.remove();
+    }
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+
+  window.wrapLazyloadImages = (container) => {
+    if (typeof container === 'string') {
+      container = document.querySelector(container);
+    }
+    if (!container) return;
+
+    const images = container.querySelectorAll('img');
+    images.forEach((img) => {
+      if (img.classList.contains('lazy')) return;
+
+      const src = img.getAttribute('src');
+      if (!src) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'lazy-box';
+
+      const newImg = img.cloneNode();
+      newImg.removeAttribute('src');
+      newImg.setAttribute('data-src', src);
+      newImg.classList.add('lazy');
+
+      const icon = document.createElement('div');
+      icon.className = 'lazy-icon';
+      if (def.loading) {
+        icon.style.backgroundImage = `url("${def.loading}")`;
+      }
+
+      wrapper.appendChild(newImg);
+      wrapper.appendChild(icon);
+
+      img.replaceWith(wrapper);
+    });
+
+    // 通知 LazyLoad 更新
+    if (window.lazyLoadInstance?.update) {
+      window.lazyLoadInstance.update();
+    }
+  }
+
+</script>
+
+<!-- required -->
+<script src="/memoirs/js/main.js?v=1.33.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    // applyThemeToGiscus(theme)
+  }
+
+  // FIXME: 这会导致无法使用 preferred_color_scheme 以外的主题
+  const applyThemeToGiscus = (theme) => {
+    // theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+    utils.dark.mode = newTheme === 'auto' ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : newTheme;
+    utils.dark.method.toggle.start();
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    } else {
+      utils.dark.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    utils.dark.method.toggle.start();
+  })()
+</script>
+
+
+<!-- optional -->
+
+  <script>
+  (function() {
+    const lazyload = false;
+    
+    function initBeaudar() {
+      const el = document.querySelector('#comments #beaudar');
+      if (!el) return;
+      
+      function load_beaudar() {
+        try {
+          el.innerHTML = '';
+        } catch (error) {
+          console.error(error);
+        }
+        const script = document.createElement('script');
+        script.src = 'https://beaudar.lipk.org/client.js';
+        script.async = true;
+        for (const key of Object.keys(el.attributes)) {
+          const attr = el.attributes[key];
+          if (['class', 'id'].includes(attr.name) === false) {
+            script.setAttribute(attr.name, attr.value);
+          }
+        }
+        el.appendChild(script);
+      }
+      
+      util.viewportLazyload(el, load_beaudar, lazyload);
+    }
+    
+    // Store in global stellar namespace for PJAX reinitialization
+    window.stellar = window.stellar || {};
+    window.stellar.initComments = window.stellar.initComments || {};
+    window.stellar.initComments.beaudar = initBeaudar;
+    
+    // Initialize on page load
+    initBeaudar();
+  })();
+</script>
+
+
+
+
+<script defer>
+  const initServices = () => {
+    // 用于存储需要清理的资源
+    let timers = [];
+    
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"rating":{"js":"/js/services/rating.js","api":"https://star-vote.xaox.cc/api/rating"},"vote":{"js":"/js/services/vote.js","api":"https://star-vote.xaox.cc/api/vote"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"friends_and_posts":{"js":"/js/services/friends_and_posts.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"},"voice":{"js":"/js/plugins/voice.js"},"video":{"js":"/js/plugins/video.js"},"download-file":{"js":"/js/plugins/download-file.js"},"twikoo":{"js":"/js/services/twikoo_latest_comment.js"},"waline":{"js":"/js/services/waline_latest_comment.js"},"artalk":{"js":"/js/services/artalk_latest_comment.js"},"giscus":{"js":"/js/services/giscus_latest_comment.js"},"contributors":{"edit_this_page":{"_posts/":null,"wiki/stellar/":"https://github.com/xaoxuu/hexo-theme-stellar-docs/blob/main/"},"js":"/js/services/contributors.js"},"rss":{"js":"/js/services/rss.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        const cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(cardlinks);
+          });
+        }
+      } else if (id == 'ghinfo') {
+        const els = document.querySelectorAll('.ds-ghinfo');
+        if (els.length > 0) {
+          utils.js(js, { defer: true });
+        }
+      } else if (id == 'voice') {
+        const voiceAudios = document.querySelectorAll('.voice>audio');
+        if (voiceAudios?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            createVoiceDom(voiceAudios);
+          });
+        }
+      } else if (id == 'video') {
+        const videos = document.querySelectorAll('.video>video');
+        if (videos?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            videoEvents(videos);
+          });
+        }
+      } else if (id == 'download-file') {
+        const files = document.querySelectorAll('.chat-file');
+        if (files?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            downloadFileEvent(files);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || id == 'memos' || id == 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          }, false);
+        }
+      }
+    }
+
+    // search
+    if (ctx.search && typeof searchFunc === 'function') {
+      const $inputArea = $("input#search-input");
+      if ($inputArea.length > 0 && !$inputArea[0]._searchInitialized) {
+        const path = ctx.search.path.startsWith('/') ? ctx.root + ctx.search.path.substring(1) : ctx.root + ctx.search.path;
+        const filter = $inputArea.attr('data-filter') || '';
+        searchFunc(path, filter, 'search-wrapper', 'search-input', 'search-result');
+        // 标记为已初始化，防止重复绑定
+        $inputArea[0]._searchInitialized = true;
+      }
+    }
+
+    // chat iphone time
+    let phoneTimes = document.querySelectorAll('.chat .status-bar .time');
+    let firstAdjustInterval = null;
+    let mainInterval = null;
+
+    if (phoneTimes.length > 0) {
+      NowTime();
+      const date = new Date();
+      const sec = date.getSeconds();
+      firstAdjustInterval = setInterval(firstAdjustTime, 1000 * (60 - sec));
+      timers.push(firstAdjustInterval);
+
+      function firstAdjustTime() {
+        NowTime();
+        if (firstAdjustInterval) {
+          clearInterval(firstAdjustInterval);
+          firstAdjustInterval = null;
+        }
+        mainInterval = setInterval(NowTime, 1000 * 60);
+        timers.push(mainInterval);
+      }
+
+      function NowTime() {
+        for (let i = 0; i < phoneTimes.length; ++i) {
+          const timeSpan = phoneTimes[i];
+          const date = new Date();
+          const hour = date.getHours();
+          const min = date.getMinutes();
+          timeSpan.innerHTML = check(hour) + ":" + check(min);
+        }
+      };
+
+      function check(val) {
+        if (val < 10) {
+          return ("0" + val);
+        }
+        return (val);
+      }
+    }
+
+    // chat quote - 存储事件监听器以便清理
+    const quoteClickHandlers = new Map();
+    const chat_quote_obverser = new IntersectionObserver((entries, observer) => {
+      entries.filter((entry) => { return entry.isIntersecting }).sort((a, b) => a.intersectionRect.y !== b.intersectionRect.y ? a.intersectionRect.y - b.intersectionRect.y : a.intersectionRect.x - b.intersectionRect.x).forEach((entry, index) => {
+          observer.unobserve(entry.target);
+          setTimeout(() => {
+            entry.target.classList.add('quote-blink');
+            setTimeout(() => {
+              entry.target.classList.remove('quote-blink');
+            }, 1000);
+          }, Math.max(100, 16) * (index + 1));
+        });
+    });
+
+    var chatQuotes = document.querySelectorAll(".chat .talk .quote");
+    chatQuotes.forEach((quote) => {
+      const handler = function () {
+        var chatCellDom = document.getElementById("quote-" + quote.getAttribute("quotedCellTag"));
+        if (chatCellDom) {
+          var chatDiv = chatCellDom.parentElement;
+          var mid = chatDiv.clientHeight / 2;
+          var offsetTop = chatCellDom.offsetTop;
+          if (offsetTop > mid - chatCellDom.clientHeight / 2) {
+            chatDiv.scrollTo({
+              top: chatCellDom.offsetTop - mid + chatCellDom.clientHeight / 2,
+              behavior: "smooth"
+            });
+          } else {
+            chatDiv.scrollTo({
+              top: 0,
+              behavior: "smooth"
+            });
+          }
+          chat_quote_obverser.observe(chatCellDom);
+        }
+      };
+      quote.addEventListener('click', handler);
+      quoteClickHandlers.set(quote, handler); // 保存处理器引用
+    });
+
+    // 返回清理函数，用于清理定时器和观察器
+    return () => {
+      // 清理所有定时器（包括可能未完成的 firstAdjustInterval）
+      timers.forEach(timer => {
+        if (timer) clearInterval(timer);
+      });
+      timers = [];
+      if (firstAdjustInterval) {
+        clearInterval(firstAdjustInterval);
+        firstAdjustInterval = null;
+      }
+      if (mainInterval) {
+        clearInterval(mainInterval);
+        mainInterval = null;
+      }
+      
+      // 断开观察器
+      if (chat_quote_obverser) {
+        chat_quote_obverser.disconnect();
+      }
+      
+      // 移除所有 click 事件监听器
+      quoteClickHandlers.forEach((handler, quote) => {
+        quote.removeEventListener('click', handler);
+      });
+      quoteClickHandlers.clear();
+    };
+  };
+
+  utils.initPlugin(initServices, 'services');
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://gcore.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://gcore.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error), .with-fancybox .atk-content img:not([atk-emoticon])';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const memos = document.getElementsByClassName('ds-memos');
+    if (memos != undefined && memos.length > 0) {
+      needFancybox = true;
+    }
+    const fancybox = document.getElementsByClassName('with-fancybox');
+    if (fancybox != undefined && fancybox.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  utils.initPlugin(() => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  }, 'swiper');
+</script>
+<script>
+  utils.initPlugin(() => {
+    const codeElements = document.querySelectorAll('.code');
+    if (codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js', { defer: true }).then(() => {
+        if (typeof createCopyButtons === 'function') {
+          createCopyButtons(codeElements);
+        }
+      });
+    }
+  }, 'copycode');
+</script>
+
+
+<!-- inject -->
+
+</div><div class="page-loading-bar"><img src="https://api.iconify.design/eos-icons:three-dots-loading.svg?color=%231cd0fd"></div></body></html>
